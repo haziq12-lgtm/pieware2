@@ -4,7 +4,9 @@
 
 Pieware 2 is a web-based electronics education platform that helps students plan circuits, generate code, and buy components — all in one place.
 
-[Live Demo](https://pieware2.netlify.app)
+OLD DOMAIN [Live Demo](https://pieware2.netlify.app)
+
+NEW DOMAIN [Live Demo](https://pieware2.vercel.app)
 
 ---
 
@@ -28,7 +30,7 @@ Pieware 2 is a web-based electronics education platform that helps students plan
 
 - **Frontend:** Vanilla HTML, CSS, JavaScript
 - **Backend:** Firebase Realtime Database + Firebase Auth
-- **Hosting:** Netlify (We might either change to a different hosting domain or get our own domain)
+- **Hosting:** Vercel (previously Netlify)
 - **Deployment:** Automatic via GitHub
 
 ---
