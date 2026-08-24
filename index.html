@@ -1,0 +1,1728 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Pieware 2 | Premium Electronics Hub</title>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ===================================================================
+           CSS VARIABLES & THEMING
+           =================================================================== */
+        :root {
+            --bg-base: #060913;
+            --bg-surface: #111827;
+            --bg-glass: rgba(17, 24, 39, 0.7);
+            --bg-glass-card: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --secondary: #10b981;
+            --secondary-hover: #059669;
+            --accent: #f59e0b;
+            --danger: #f43f5e;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.15);
+            --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --gold: #D4AF37;
+            --gold-light: #F5D76E;
+            --gold-dark: #B8960C;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --home-bg: #000;
+            --home-sub: rgba(255, 255, 255, 0.7);
+            --home-feat-text: rgba(255, 255, 255, 0.6);
+            --home-btn: #fff;
+            --home-btn-border: rgba(255, 255, 255, 0.3);
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 2.5rem;
+            --space-3xl: 4rem;
+            --container-px: 1rem;
+        }
+        [data-theme="light"] {
+            --bg-base: #e9ecf1;
+            --bg-surface: #f4f5f8;
+            --bg-glass: rgba(238, 241, 246, 0.88);
+            --bg-glass-card: rgba(240, 242, 246, 0.9);
+            --border-glass: rgba(176, 184, 198, 0.6);
+            --text-main: #1c2433;
+            --text-muted: #5d6b80;
+            --shadow-card: 0 10px 25px -5px rgba(30, 40, 60, 0.12);
+            --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.08);
+            --home-bg: #eee7d3;
+            --home-sub: rgba(55, 45, 15, 0.7);
+            --home-feat-text: rgba(55, 45, 15, 0.65);
+            --home-btn: #2a2308;
+            --home-btn-border: rgba(184, 150, 12, 0.5);
+        }
+        @media (min-width: 480px) { :root { --container-px: 1.25rem; } }
+        @media (min-width: 768px) {
+            :root { --container-px: 2rem; --space-md: 1.25rem; --space-lg: 1.75rem; --space-xl: 2.5rem; --space-2xl: 3rem; --space-3xl: 4rem; }
+        }
+        @media (min-width: 1024px) { :root { --container-px: 2rem; } }
+
+/* ===================================================================
+           RESET & GLOBAL
+           =================================================================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            transition: background-color var(--transition), color var(--transition);
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%), radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+
+-webkit-tap-highlight-color: transparent;
+        }
+        ul { list-style: none; }
+        a { text-decoration: none; color: inherit; transition: color var(--transition); }
+        button, input, select, textarea { font-family: inherit; outline: none; border: none; }
+        button { cursor: pointer; -webkit-appearance: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; color: var(--text-main); }
+        h1 { font-size: clamp(1.75rem, 5vw + 0.5rem, 3rem); letter-spacing: -0.5px; }
+        h2 { font-size: clamp(1.4rem, 4vw + 0.5rem, 2.25rem); letter-spacing: -0.5px; }
+        h3 { font-size: clamp(1.05rem, 2vw + 0.5rem, 1.35rem); }
+        p { color: var(--text-muted); }
+        .text-center { text-align: center; }
+        .text-primary { color: var(--primary); }
+        .font-mono { font-family: var(--font-mono); }
+        .hidden { display: none !important; }
+
+/* ===================================================================
+           HEADER & NAVIGATION
+           =================================================================== */
+        header {
+    position: sticky; top: 0; z-index: 1000;
+    background-color: var(--bg-glass);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-glass);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+.nav-container {
+    max-width: 1400px; margin: 0 auto;
+    padding: 0.75rem var(--container-px);
+    display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+}
+@media (min-width: 768px) { .nav-container { padding: 1.1rem var(--container-px); } }
+.brand {
+    font-size: clamp(1rem, 3vw, 1.35rem); font-weight: 800; color: var(--gold-light);
+    display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.5px;
+    white-space: nowrap; flex-shrink: 0;
+}
+.brand-icon {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    color: #000; width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+    box-shadow: 0 4px 12px var(--gold-glow); flex-shrink: 0; font-weight: 800;
+}
+@media (min-width: 768px) { .brand-icon { width: 36px; height: 36px; font-size: 1.1rem; border-radius: 10px; } }
+.nav-links { display: none; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+@media (min-width: 900px) { .nav-links { display: flex; } }
+.nav-links li {
+    font-weight: 600; font-size: 0.82rem; cursor: pointer;
+    padding: 0.45rem 0.85rem; border-radius: var(--radius-full);
+    transition: var(--transition); color: var(--text-muted); white-space: nowrap;
+    background: var(--bg-glass-card);
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+@media (min-width: 1024px) { .nav-links li { font-size: 0.85rem; padding: 0.5rem 0.95rem; } }
+.nav-links li:hover {
+    transform: translateY(-3px);
+    background: rgba(212, 175, 55, 0.12);
+    border-color: rgba(212, 175, 55, 0.45);
+    color: var(--gold-light);
+    box-shadow: 0 8px 18px rgba(212, 175, 55, 0.18);
+}
+.nav-links li.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-color: var(--gold);
+    color: #000;
+    box-shadow: 0 6px 16px var(--gold-glow);
+    transform: translateY(-2px);
+}
+.nav-links li.admin-link.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    color: #000;
+}
+.nav-links.mobile-open {
+    display: flex; flex-direction: column;
+    position: absolute; top: 100%; left: 0; width: 100%;
+    background: var(--bg-surface); border-bottom: 1px solid var(--border-glass);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
+    padding: var(--space-md); gap: 0.25rem;
+    animation: slideDown 0.3s ease forwards;
+}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.nav-links.mobile-open li { width: 100%; text-align: center; padding: 0.85rem; font-size: 0.95rem; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); }
+.nav-actions { display: flex; gap: 0.4rem; align-items: center; flex-shrink: 0; }
+@media (min-width: 768px) { .nav-actions { gap: 0.75rem; } }
+.icon-btn {
+    background: var(--bg-glass-card); border: 1px solid var(--border-glass);
+    color: var(--text-main); font-size: 1rem; width: 38px; height: 38px;
+    border-radius: var(--radius-full); transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
+}
+@media (min-width: 768px) { .icon-btn { width: 40px; height: 40px; font-size: 1.1rem; } }
+.icon-btn:hover { background-color: var(--gold); color: #000; border-color: var(--gold); transform: translateY(-2px); }
+.icon-btn:active { transform: scale(0.95); }
+.cart-badge {
+    position: absolute; top: -3px; right: -3px;
+    background-color: var(--danger); color: white;
+    font-size: 0.6rem; font-weight: 800;
+    height: 17px; min-width: 17px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 5px rgba(244, 63, 94, 0.4); padding: 0 3px;
+}
+.hamburger {
+    display: flex; background: transparent; font-size: 1.35rem; color: var(--gold-light);
+    width: 38px; height: 38px; align-items: center; justify-content: center;
+    border-radius: var(--radius-full); transition: var(--transition); flex-shrink: 0;
+}
+.hamburger:hover { background: var(--bg-glass-card); }
+@media (min-width: 900px) { .hamburger { display: none; } }
+.fb-status {
+    display: none; align-items: center; gap: 0.4rem;
+    font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+    padding: 0.25rem 0.5rem; border-radius: var(--radius-full);
+    background: var(--bg-glass-card); border: 1px solid var(--border-glass); white-space: nowrap;
+}
+@media (min-width: 1024px) { .fb-status { display: flex; } }
+.fb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--danger); transition: background 0.3s; }
+.fb-dot.online { background: var(--secondary); box-shadow: 0 0 6px rgba(16,185,129,0.6); }
+.fb-dot.syncing { background: var(--accent); animation: pulse-dot 1s infinite; }
+@keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* ===================================================================
+           LAYOUT & CARDS
+           =================================================================== */
+       main { max-width: 100%; margin: 0 auto; padding: 0; min-height: 80vh; }
+
+/* Padding untuk section bukan home */
+			main > section:not(#home) {
+				padding: 2rem clamp(1.25rem, 4vw, 3.5rem);
+			}
+			@media (min-width: 768px) {
+				main > section:not(#home) {
+					padding: 3rem clamp(2rem, 5vw, 5rem);
+				}
+			}
+			/* Semua kandungan section berpusat & konsisten dengan tajuk */
+			main > section:not(#home) > * {
+				max-width: 1400px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+section { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+			section.active { display: block; }
+			@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.grid-2 { display: grid; grid-template-columns: 1fr; gap: var(--space-lg); }
+			@media (min-width: 640px) { .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); } }
+			@media (min-width: 1024px) { .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); } }
+			.grid-3 { display: grid; grid-template-columns: 1fr; gap: var(--space-lg); }
+			@media (min-width: 520px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+			@media (min-width: 900px) { .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); } }
+			.grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+			@media (min-width: 768px) { .grid-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+
+.card {
+				background-color: var(--bg-surface); border: 1px solid var(--border-glass);
+				border-radius: var(--radius-lg); padding: var(--space-lg);
+				box-shadow: var(--shadow-card); transition: var(--transition);
+				position: relative; overflow: hidden; display: flex; flex-direction: column;
+			}
+			@media (min-width: 768px) { .card { padding: 1.75rem; } }
+			.card::before {
+				content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+				background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+				opacity: 0; transition: opacity var(--transition);
+			}
+			.card:hover { transform: translateY(-4px); border-color: rgba(212, 175, 55, 0.4); box-shadow: var(--shadow-glow); }
+			.card:hover::before { opacity: 1; }
+			@media (hover: none) { .card:hover { transform: none; } }
+
+/* ===================================================================
+           BUTTONS
+           =================================================================== */
+        .btn {
+            padding: 0.65rem 1.1rem; border-radius: var(--radius-md); font-weight: 600;
+            font-size: 0.88rem; transition: var(--transition); text-align: center;
+            display: inline-flex; justify-content: center; align-items: center; gap: 0.4rem;
+            cursor: pointer; position: relative; overflow: hidden;
+            min-height: 44px; -webkit-tap-highlight-color: transparent;
+        }
+        @media (min-width: 768px) { .btn { padding: 0.75rem 1.5rem; font-size: 0.95rem; gap: 0.5rem; } }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6); }
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #059669);
+            color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .btn-secondary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--border-glass); color: var(--text-main); }
+        .btn-outline:hover { background-color: rgba(99, 102, 241, 0.1); border-color: var(--primary); color: var(--primary); }
+        .btn-block { width: 100%; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.78rem; min-height: 34px; }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+            color: #000; font-weight: 800; box-shadow: 0 4px 20px var(--gold-glow);
+        }
+        .btn-gold:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 30px var(--gold-glow); }
+
+/* ===================================================================
+           FORMS
+           =================================================================== */
+        .form-group { margin-bottom: var(--space-md); }
+        @media (min-width: 768px) { .form-group { margin-bottom: 1.25rem; } }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.82rem; color: var(--text-main); }
+        @media (min-width: 768px) { .form-group label { font-size: 0.875rem; margin-bottom: 0.5rem; } }
+        .form-control {
+            width: 100%; padding: 0.75rem 0.85rem; border-radius: var(--radius-md);
+            border: 1px solid var(--border-glass); background-color: var(--bg-base);
+            color: var(--text-main); font-size: 0.9rem; transition: var(--transition); min-height: 44px;
+        }
+        @media (min-width: 768px) { .form-control { padding: 0.85rem 1rem; font-size: 0.95rem; } }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+
+/* ===================================================================
+           ALERTS
+           =================================================================== */
+        .alert {
+            padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: var(--space-md);
+            display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem;
+        }
+        @media (min-width: 768px) { .alert { padding: 1rem 1.25rem; font-size: 0.95rem; } }
+        .alert-info { background-color: rgba(99, 102, 241, 0.1); border-left: 4px solid var(--primary); color: var(--text-main); }
+        .alert-warning { background-color: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--accent); color: var(--text-main); }
+        .alert-danger { background-color: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--danger); color: var(--text-main); }
+        .alert-success { background-color: rgba(16,185,129,0.1); border-left: 4px solid var(--secondary); color: var(--text-main); }
+
+/* ===================================================================
+   HOME PREMIUM — BLACK & GOLD WITH LIGHTNING
+   =================================================================== */
+#home {
+    background: var(--home-bg) !important;
+    background-image: none !important;
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#home.active {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    position: relative;
+}
+
+.home-premium-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 4.5rem 1rem 3rem;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+        .home-pre-label {
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem); font-weight: 700;
+            letter-spacing: 6px; text-transform: uppercase;
+            color: var(--gold); opacity: 0;
+            animation: fadeSlideUp 0.8s 0.3s ease forwards;
+            margin-bottom: var(--space-md);
+        }
+        .home-pre-title {
+            font-family: var(--font-display); font-weight: 900;
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            line-height: 1.05; letter-spacing: -2px;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 30%, var(--gold-dark) 60%, #fff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(212,175,55,0.3));
+            opacity: 0; animation: fadeSlideUp 1s 0.6s ease forwards;
+            margin-bottom: var(--space-lg);
+        }
+        .home-pre-sub {
+            font-size: clamp(1rem, 2.5vw, 1.4rem); color: var(--home-sub);
+            font-weight: 400; line-height: 1.6; max-width: 650px; margin: 0 auto var(--space-2xl);
+            opacity: 0; animation: fadeSlideUp 1s 0.9s ease forwards;
+        }
+        .home-pre-actions {
+            display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;
+            opacity: 0; animation: fadeSlideUp 1s 1.2s ease forwards;
+        }
+        .home-pre-features {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);
+            margin-top: var(--space-3xl); max-width: 800px; width: 100%;
+            opacity: 0; animation: fadeSlideUp 1s 1.5s ease forwards;
+        }
+        @media (max-width: 600px) { .home-pre-features { grid-template-columns: 1fr; max-width: 350px; } }
+        .home-feat-item {
+            padding: var(--space-md); border: 1px solid rgba(212,175,55,0.2);
+            border-radius: var(--radius-md); background: rgba(212,175,55,0.05);
+            transition: var(--transition); cursor: pointer; position: relative; overflow: hidden;
+        }
+        .home-feat-item:hover { border-color: var(--gold); background: rgba(212,175,55,0.14); transform: translateY(-6px) scale(1.03); box-shadow: 0 12px 28px rgba(212,175,55,0.25); }
+        .home-feat-item::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+            background: linear-gradient(105deg, transparent, rgba(245,215,110,0.18), transparent);
+            animation: featShine 4s ease-in-out infinite;
+        }
+        .home-feat-item:nth-child(1)::after { animation-delay: 0.2s; }
+        .home-feat-item:nth-child(2)::after { animation-delay: 1.6s; }
+        .home-feat-item:nth-child(3)::after { animation-delay: 3s; }
+        @keyframes featShine { 0%, 55% { left: -100%; } 75%, 100% { left: 160%; } }
+        .home-feat-icon {
+            font-size: 1.5rem; margin-bottom: 0.5rem;
+            animation: featIconBob 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
+        }
+        .home-feat-item:nth-child(2) .home-feat-icon { animation-delay: 0.5s; }
+        .home-feat-item:nth-child(3) .home-feat-icon { animation-delay: 1s; }
+        @keyframes featIconBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .home-feat-text { font-size: 0.8rem; color: var(--home-feat-text); font-weight: 600; transition: color var(--transition); }
+        .home-feat-item:hover .home-feat-text { color: var(--gold-light); }
+        @media (prefers-reduced-motion: reduce) {
+            .home-feat-item::after, .home-feat-icon { animation: none; }
+        }
+        .home-outline-btn { color: var(--home-btn) !important; border-color: var(--home-btn-border) !important; }
+        .home-outline-btn:hover { color: var(--gold) !important; border-color: var(--gold) !important; }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gold-particles {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; overflow: hidden;
+        }
+        .gold-particle {
+            position: absolute; width: 3px; height: 3px;
+            background: var(--gold); border-radius: 50%;
+            animation: floatParticle linear infinite;
+            box-shadow: 0 0 6px var(--gold-glow);
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20px) scale(1); opacity: 0; }
+        }
+
+/* ===================================================================
+           ANNOUNCEMENT BANNER
+           =================================================================== */
+        .announcement-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15));
+            border: 1px solid var(--border-glass); color: var(--text-main);
+            padding: 0.85rem var(--space-md); text-align: center; font-weight: 600;
+            font-size: 0.85rem; border-radius: var(--radius-lg); margin-bottom: var(--space-xl);
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+        }
+        @media (min-width: 768px) { .announcement-banner { padding: 1rem 1.5rem; font-size: 1rem; margin-bottom: 2rem; } }
+
+/* ===================================================================
+           VISUALIZER
+           =================================================================== */
+        .visualizer-workspace {
+            display: flex; flex-direction: column; align-items: center; gap: var(--space-lg);
+            margin-top: var(--space-xl); padding: var(--space-lg);
+            background: var(--bg-surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border-glass); box-shadow: var(--shadow-card);
+        }
+        @media (min-width: 768px) { .visualizer-workspace { padding: 2.5rem; margin-top: 2rem; } }
+        .board-visual {
+            background-color: var(--bg-base); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md); padding: var(--space-md);
+            width: 100%; max-width: 450px; text-align: center;
+            position: relative; box-shadow: var(--shadow-card);
+        }
+        @media (min-width: 768px) { .board-visual { padding: 1.5rem; } }
+        .board-visual h3 { font-family: var(--font-mono); color: var(--primary); margin-bottom: var(--space-md); font-size: 1rem; }
+        @media (min-width: 768px) { .board-visual h3 { font-size: 1.1rem; margin-bottom: 1.25rem; } }
+        .pins-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; }
+        @media (min-width: 768px) { .pins-grid { gap: 0.5rem; } }
+        .pin-node {
+            background: var(--bg-surface); border: 1px solid var(--border-glass);
+            padding: 0.3rem 0.55rem; border-radius: 5px; font-family: var(--font-mono);
+            font-size: 0.72rem; font-weight: 600; transition: var(--transition);
+        }
+        @media (min-width: 768px) { .pin-node { padding: 0.4rem 0.7rem; font-size: 0.85rem; } }
+        .pin-node.highlight {
+            background: var(--accent); color: white; border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.5); transform: scale(1.05);
+        }
+        .connection-flow {
+            width: 4px; height: 40px;
+            background: repeating-linear-gradient(to bottom, var(--secondary) 0, var(--secondary) 6px, transparent 6px, transparent 12px);
+            animation: dataFlow 1s linear infinite; margin: 0 auto;
+        }
+        @media (min-width: 768px) {
+            .connection-flow { height: 50px; width: 50px; background: repeating-linear-gradient(to right, var(--secondary) 0, var(--secondary) 6px, transparent 6px, transparent 12px); animation: dataFlowH 1s linear infinite; }
+            @keyframes dataFlowH { from { background-position: 0 0; } to { background-position: 24px 0; } }
+        }
+        @keyframes dataFlow { from { background-position: 0 0; } to { background-position: 0 24px; } }
+        /* Visualizer layout: MCU — [breadboard] — komponen */
+        .visualizer-workspace { flex-direction: column; }
+        @media (min-width: 900px) {
+            .visualizer-workspace { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-lg); }
+        }
+        #vis-middle { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; }
+        @media (min-width: 900px) { #vis-middle { flex: 0 0 auto; } }
+        #vis-comps { display: flex; flex-direction: column; gap: var(--space-md); align-items: stretch; justify-content: center; }
+        @media (min-width: 900px) { #vis-comps { max-width: 420px; flex-wrap: wrap; flex-direction: row; } }
+        /* Breadboard visual */
+        .breadboard-visual {
+            background: #ece5d3; border: 3px solid #c9b98f; border-radius: 6px;
+            padding: 0.6rem 0.7rem; width: 230px; position: relative;
+            box-shadow: var(--shadow-card);
+        }
+        .bb-title { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; text-align: center; color: #6b5d33; margin-bottom: 0.45rem; }
+        .bb-rail { height: 10px; border-radius: 3px; margin-bottom: 0.45rem; position: relative; }
+        .bb-rail.plus { background: repeating-linear-gradient(90deg, #d64545 0 14px, #ece5d3 14px 20px); }
+        .bb-rail.minus { background: repeating-linear-gradient(90deg, #4567d6 0 14px, #ece5d3 14px 20px); }
+        .bb-rail-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #ece5d3; padding: 0 0.4rem; font-size: 0.6rem; font-weight: 800; color: #555; font-family: var(--font-mono); }
+        .bb-holes {
+            height: 52px; border-radius: 3px;
+            background-image: radial-gradient(circle, #8a7d55 1.6px, transparent 1.8px);
+            background-size: 14px 13px;
+            background-position: center;
+        }
+        .bb-wire-note { font-family: var(--font-mono); font-size: 0.62rem; color: #6b5d33; text-align: center; margin-top: 0.4rem; }
+        .table-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 calc(-1 * var(--space-md)); padding: 0 var(--space-md); }
+        .wiring-table { width: 100%; border-collapse: collapse; margin-bottom: var(--space-md); min-width: 280px; }
+        .wiring-table th, .wiring-table td { padding: 0.7rem; text-align: left; border-bottom: 1px solid var(--border-glass); font-size: 0.82rem; }
+        @media (min-width: 768px) { .wiring-table th, .wiring-table td { padding: 0.85rem; font-size: 0.9rem; } }
+        .wiring-table th { font-weight: 600; background: var(--bg-base); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .wiring-table td { font-family: var(--font-mono); }
+
+/* ===================================================================
+           CODE CONTAINER
+           =================================================================== */
+        .code-container { position: relative; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-glass); }
+        pre {
+            background-color: #0b0f19; color: #e2e8f0; padding: var(--space-md);
+            font-family: var(--font-mono); font-size: 0.75rem; overflow-x: auto;
+            margin: 0; line-height: 1.5; -webkit-overflow-scrolling: touch;
+        }
+        @media (min-width: 768px) { pre { padding: 1.75rem; font-size: 0.9rem; line-height: 1.6; } }
+        .copy-btn {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            background: rgba(255,255,255,0.1); color: white; border: none;
+            padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.72rem; cursor: pointer;
+            transition: background 0.2s; font-weight: 600; z-index: 2;
+        }
+        @media (min-width: 768px) { .copy-btn { top: 0.75rem; right: 0.75rem; padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
+        .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* ===================================================================
+           SHOP
+           =================================================================== */
+        /* Skeleton loading */
+        .skeleton-card {
+            background: var(--bg-surface); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg); padding: var(--space-lg);
+            display: flex; flex-direction: column; gap: 0.6rem; overflow: hidden;
+        }
+        .skeleton-block, .skeleton-line {
+            background: linear-gradient(90deg, var(--bg-base) 25%, var(--border-glass) 50%, var(--bg-base) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite linear;
+            border-radius: var(--radius-md);
+        }
+        .skeleton-block { height: 130px; }
+        @media (min-width: 768px) { .skeleton-block { height: 180px; } }
+        .skeleton-line { height: 14px; }
+        .skeleton-line.w60 { width: 60%; }
+        .skeleton-line.w40 { width: 40%; }
+        .skeleton-line.w80 { width: 80%; }
+        @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+        /* Feedback */
+        .star-picker { display: flex; gap: 0.35rem; margin-bottom: var(--space-md); }
+        .star-btn {
+            background: transparent; font-size: 1.75rem; line-height: 1;
+            color: var(--border-glass); padding: 0.15rem; transition: var(--transition);
+        }
+        .star-btn:hover, .star-btn.active { color: var(--gold); transform: scale(1.15); }
+        .feedback-item {
+            padding: var(--space-md); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md); background: var(--bg-base);
+            margin-bottom: var(--space-md);
+        }
+        .feedback-stars { color: var(--gold); font-size: 0.95rem; letter-spacing: 2px; }
+        .feedback-meta { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.35rem; }
+        .feedback-name { font-weight: 700; font-size: 0.88rem; }
+        .feedback-date { font-size: 0.72rem; color: var(--text-muted); }
+        .feedback-msg { font-size: 0.85rem; color: var(--text-muted); white-space: pre-wrap; word-break: break-word; }
+        #feedback-list { max-height: 520px; overflow-y: auto; }
+
+                /* Footer */
+        .site-footer {
+            background: var(--bg-glass); border-top: 1px solid var(--border-glass);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: var(--space-2xl) clamp(1.25rem, 4vw, 3.5rem) var(--space-lg);
+        }
+        .footer-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: var(--space-xl); }
+        @media (min-width: 640px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
+        .footer-grid span[onclick]:hover { color: var(--gold-light); cursor: pointer; }
+
+/* Why? button (wiring table) */
+        .why-btn {
+            background: rgba(99, 102, 241, 0.15); color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.35); border-radius: var(--radius-full);
+            font-size: 0.6rem; font-weight: 800; padding: 0.12rem 0.5rem;
+            margin-left: 0.35rem; cursor: pointer; vertical-align: middle;
+            transition: var(--transition);
+        }
+        .why-btn:hover { background: rgba(99, 102, 241, 0.3); }
+
+/* Step indicator (Helper) */
+        .pw-step {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.35rem 0.85rem; border-radius: var(--radius-full);
+            border: 1px solid var(--border-glass); color: var(--text-muted);
+            background: var(--bg-glass-card); transition: var(--transition);
+        }
+        .pw-step.active { border-color: var(--gold); color: var(--gold-light); background: rgba(212,175,55,0.12); box-shadow: 0 0 10px rgba(212,175,55,0.15); }
+        .pw-step.done { border-color: var(--secondary); color: var(--secondary); background: rgba(16,185,129,0.1); }
+        .pw-step-arrow { color: var(--text-muted); opacity: 0.5; font-size: 0.9rem; }
+
+/* Hub cards — tinggi sekata, kandungan tersusun */
+        #hub .card { text-align: left; }
+        #hub .card > p { flex: 1; }
+        #hub .card .product-price { margin-top: auto; padding-top: 0.5rem; }
+        #hub .card .hub-buy-chip { align-self: flex-start; }
+
+/* Hub buy chips */
+        .hub-buy-chip {
+            display: inline-block; margin-top: 0.6rem; padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-full); background: rgba(16,185,129,0.15);
+            color: var(--secondary); font-weight: 700; font-size: 0.74rem;
+            border: 1px solid rgba(16,185,129,0.35); transition: var(--transition);
+        }
+        .hub-buy-chip:hover { background: rgba(16,185,129,0.25); transform: translateY(-2px); }
+
+        /* Empty states */
+        .empty-state {
+            grid-column: 1 / -1; text-align: center; padding: var(--space-3xl) var(--space-lg);
+            display: flex; flex-direction: column; align-items: center; gap: var(--space-sm);
+        }
+        .empty-state-icon { font-size: 3rem; opacity: 0.6; }
+        .empty-state-title { font-weight: 700; font-size: 1rem; color: var(--text-main); }
+        .empty-state-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: var(--space-sm); }
+
+        .product-image-ph {
+            height: 130px; background-color: var(--bg-base); border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center; font-size: 2.75rem;
+            margin-bottom: var(--space-md); border: 1px dashed var(--border-glass);
+            transition: transform var(--transition);
+        }
+        @media (min-width: 768px) { .product-image-ph { height: 180px; font-size: 3.5rem; margin-bottom: 1.25rem; } }
+        .card:hover .product-image-ph { transform: scale(1.03); }
+        @media (hover: none) { .card:hover .product-image-ph { transform: none; } }
+        .product-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0; }
+        @media (min-width: 768px) { .product-price { font-size: 1.4rem; margin: 0.75rem 0; } }
+        .stock-badge {
+            display: inline-block; padding: 0.2rem 0.55rem; border-radius: var(--radius-full);
+            font-size: 0.7rem; font-weight: 700; background: rgba(16,185,129,0.15); color: var(--secondary);
+            margin-bottom: 0.4rem;
+        }
+
+/* ===================================================================
+           UPLOADER
+           =================================================================== */
+        .upload-dropzone {
+            border: 2px dashed var(--primary); border-radius: var(--radius-lg);
+            padding: var(--space-xl) var(--space-md); text-align: center;
+            background: rgba(99, 102, 241, 0.03); cursor: pointer; transition: var(--transition);
+        }
+        @media (min-width: 768px) { .upload-dropzone { padding: 2.5rem; } }
+        .upload-dropzone:hover { background: rgba(99, 102, 241, 0.08); border-color: var(--secondary); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); margin-top: var(--space-xl); }
+        @media (min-width: 520px) { .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); } }
+        @media (min-width: 900px) { .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; } }
+        .gallery-item {
+            background: var(--bg-surface); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card);
+            display: flex; flex-direction: column; transition: var(--transition);
+        }
+        .gallery-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+        @media (hover: none) { .gallery-item:hover { transform: none; } }
+        .gallery-img-wrap { width: 100%; height: 120px; background: var(--bg-base); position: relative; overflow: hidden; }
+        @media (min-width: 520px) { .gallery-img-wrap { height: 140px; } }
+        @media (min-width: 768px) { .gallery-img-wrap { height: 160px; } }
+        .gallery-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-info { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1; }
+        @media (min-width: 768px) { .gallery-info { padding: 1rem; gap: 0.5rem; } }
+
+/* ===================================================================
+           CART DRAWER
+           =================================================================== */
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); z-index: 1050; opacity: 0; visibility: hidden;
+            transition: var(--transition); backdrop-filter: blur(4px);
+        }
+        .cart-overlay.active { opacity: 1; visibility: visible; }
+        .cart-drawer {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 420px; height: 100vh;
+            background: var(--bg-surface); z-index: 1100; border-left: 1px solid var(--border-glass);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column;
+        }
+        @media (max-width: 480px) { .cart-drawer { max-width: 100%; } }
+        .cart-drawer.open { right: 0; }
+        .cart-header { padding: var(--space-lg); border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; }
+        @media (min-width: 768px) { .cart-header { padding: 1.75rem; } }
+        .cart-body { flex: 1; overflow-y: auto; padding: var(--space-lg); -webkit-overflow-scrolling: touch; }
+        @media (min-width: 768px) { .cart-body { padding: 1.75rem; } }
+        .cart-footer { padding: var(--space-lg); border-top: 1px solid var(--border-glass); background: var(--bg-base); }
+        @media (min-width: 768px) { .cart-footer { padding: 1.75rem; } }
+        .cart-item {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: var(--space-lg); padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--border-glass); gap: var(--space-sm);
+        }
+        .qty-control { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem; }
+        .qty-btn {
+            width: 28px; height: 28px; border-radius: 6px; background: var(--border-glass);
+            color: var(--text-main); display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.9rem;
+        }
+        .qty-btn:hover { background: var(--primary); color: white; }
+
+/* ===================================================================
+           MODALS
+           =================================================================== */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.75); z-index: 2000; display: flex;
+            justify-content: center; align-items: center; padding: var(--space-sm);
+            opacity: 0; visibility: hidden; transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            width: 100%; max-width: 520px; background: var(--bg-surface);
+            border: 1px solid var(--border-glass); border-radius: var(--radius-lg);
+            padding: var(--space-lg); box-shadow: var(--shadow-card);
+            max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        @media (min-width: 768px) { .modal-box { padding: 2.25rem; } }
+        .bank-gateway-box {
+            width: 100%; max-width: 480px; background: #ffffff; color: #1e293b;
+            border-radius: var(--radius-lg); padding: var(--space-lg);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: left;
+        }
+        @media (min-width: 768px) { .bank-gateway-box { padding: 2.5rem; } }
+        .bank-logo-header {
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 2px solid #e2e8f0; padding-bottom: 0.85rem; margin-bottom: var(--space-lg); gap: 0.5rem;
+        }
+        @media (min-width: 768px) { .bank-logo-header { padding-bottom: 1rem; margin-bottom: 1.5rem; } }
+        .fpx-badge { background: #0284c7; color: white; font-weight: 800; font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; letter-spacing: 1px; white-space: nowrap; }
+        @media (min-width: 768px) { .fpx-badge { font-size: 0.8rem; padding: 0.25rem 0.6rem; } }
+        .search-modal-wrap { align-items: flex-start; padding-top: 10vh; }
+        @media (min-width: 768px) { .search-modal-wrap { padding-top: 15vh; } }
+        .search-box-inner { width: 100%; max-width: 650px; background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); }
+        @media (min-width: 768px) { .search-box-inner { padding: 2rem; } }
+        .search-input-lg {
+            width: 100%; font-size: clamp(1rem, 3vw, 1.35rem); padding: 0.75rem 0;
+            border: none; border-bottom: 2px solid var(--primary);
+            background: transparent; color: var(--text-main); outline: none;
+        }
+        #search-results { margin-top: var(--space-lg); max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .search-result-item {
+            padding: 0.85rem; border-bottom: 1px solid var(--border-glass); cursor: pointer;
+            transition: background 0.2s; border-radius: var(--radius-md);
+            display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem;
+        }
+        .search-result-item:hover { background: rgba(99, 102, 241, 0.1); }
+
+/* ===================================================================
+           TOAST
+           =================================================================== */
+        .toast {
+            position: fixed; bottom: var(--space-md); right: var(--space-md);
+            left: var(--space-md);
+            background: var(--bg-surface); color: var(--text-main);
+            border: 1px solid var(--border-glass);
+            padding: 0.85rem 1rem; border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 3000;
+            font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        @media (min-width: 640px) {
+            .toast { left: auto; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; font-size: 0.95rem; gap: 0.75rem; }
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+/* ===================================================================
+           LOADING OVERLAY
+           =================================================================== */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-base); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: var(--space-lg); transition: opacity 0.5s ease;
+        }
+        .loading-overlay.fade-out { opacity: 0; pointer-events: none; }
+        .loader-ring {
+            width: 40px; height: 40px; border: 3px solid var(--border-glass);
+            border-top-color: var(--gold); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @media (min-width: 768px) { .loader-ring { width: 48px; height: 48px; border-width: 4px; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===================================================================
+           ADMIN PANEL
+           =================================================================== */
+        .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl); }
+        @media (min-width: 768px) { .admin-stats { grid-template-columns: repeat(4, 1fr); } }
+        .stat-card {
+            background: var(--bg-surface); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg); padding: var(--space-lg);
+            position: relative; overflow: hidden;
+        }
+        .stat-card::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 80px; height: 80px; border-radius: 50%;
+            filter: blur(40px); opacity: 0.15;
+        }
+        .stat-card:nth-child(1)::after { background: var(--primary); }
+        .stat-card:nth-child(2)::after { background: var(--secondary); }
+        .stat-card:nth-child(3)::after { background: var(--accent); }
+        .stat-card:nth-child(4)::after { background: var(--danger); }
+        .stat-label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem; }
+        .stat-value { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800; color: var(--text-main); }
+        .stat-card:nth-child(1) .stat-value { color: var(--primary); }
+        .stat-card:nth-child(2) .stat-value { color: var(--secondary); }
+        .stat-card:nth-child(3) .stat-value { color: var(--accent); }
+        .stat-card:nth-child(4) .stat-value { color: var(--danger); }
+        .admin-charts { display: grid; grid-template-columns: 1fr; gap: var(--space-xl); margin-bottom: var(--space-xl); }
+        @media (min-width: 900px) { .admin-charts { grid-template-columns: 2fr 1fr; } }
+        .chart-card {
+            background: var(--bg-surface); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg); padding: var(--space-lg);
+        }
+        @media (min-width: 768px) { .chart-card { padding: 1.75rem; } }
+        .chart-card canvas { max-height: 350px; }
+        .admin-orders-table { width: 100%; border-collapse: collapse; }
+        .admin-orders-table th, .admin-orders-table td {
+            padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-glass); font-size: 0.82rem;
+        }
+        @media (min-width: 768px) { .admin-orders-table th, .admin-orders-table td { padding: 0.85rem; font-size: 0.88rem; } }
+        .admin-orders-table th {
+            background: var(--bg-base); font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; font-size: 0.72rem; color: var(--text-muted);
+        }
+        .status-badge {
+            display: inline-block; padding: 0.2rem 0.6rem; border-radius: var(--radius-full);
+            font-size: 0.7rem; font-weight: 700;
+        }
+        .status-completed { background: rgba(16,185,129,0.15); color: var(--secondary); }
+        .status-pending { background: rgba(245,158,11,0.15); color: var(--accent); }
+
+/* ===================================================================
+           RECEIPT
+           =================================================================== */
+        .receipt-box {
+            background: #fff; color: #1e293b; border-radius: var(--radius-md);
+            padding: var(--space-xl); max-width: 400px; margin: 0 auto;
+            font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;
+        }
+        @media (min-width: 768px) { .receipt-box { padding: 2.5rem; font-size: 0.88rem; } }
+        .receipt-box h2 {
+            text-align: center; font-family: var(--font-display);
+            font-size: 1.5rem; color: #000; margin-bottom: 0.25rem;
+        }
+        .receipt-box .receipt-sub { text-align: center; font-size: 0.75rem; color: #64748b; margin-bottom: var(--space-md); }
+        .receipt-divider { border: none; border-top: 1px dashed #cbd5e1; margin: var(--space-sm) 0; }
+        .receipt-row { display: flex; justify-content: space-between; padding: 0.2rem 0; }
+        .receipt-items-list { margin: var(--space-sm) 0; }
+        .receipt-item-row { display: flex; justify-content: space-between; padding: 0.15rem 0; font-size: 0.8rem; }
+        .receipt-total-row { display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; padding: var(--space-sm) 0; }
+        .receipt-footer { text-align: center; margin-top: var(--space-md); font-size: 0.75rem; color: #64748b; }
+
+/* ===================================================================
+           PRINT STYLES
+           =================================================================== */
+        @media print {
+            body * { visibility: hidden; }
+            .receipt-box, .receipt-box * { visibility: visible; }
+            .receipt-box {
+                position: absolute; left: 50%; top: 50%;
+                transform: translate(-50%, -50%); width: 80mm;
+                padding: 5mm; box-shadow: none; border: none;
+            }
+            .receipt-actions { display: none !important; }
+            .modal-overlay { position: static; background: none; backdrop-filter: none; }
+        }
+
+/* ===================================================================
+           SAFE AREA
+           =================================================================== */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            .cart-footer { padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom)); }
+            .toast { bottom: calc(var(--space-md) + env(safe-area-inset-bottom)); }
+        }
+        .card .grid-2 { gap: var(--space-sm); }
+        @media (min-width: 768px) { .card .grid-2 { gap: var(--space-md); } }
+
+.admin-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-xl); }
+        @media (max-width: 600px) { .admin-toolbar { flex-direction: column; align-items: stretch; } }
+		
+		/* ===================================================================
+
+/* ===================================================================
+   HOME CENTER — scrollable, kandungan berpusat menegak bila muat
+   =================================================================== */
+#home {
+    background: var(--home-bg) !important;
+    background-image: none !important;
+    position: relative !important;
+    min-height: 100vh !important;
+    min-height: 100svh !important;
+    display: none;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    top: 0;
+    left: 0;
+}
+
+#home.active {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative !important;
+    width: 100%;
+    min-height: 100vh !important;
+    min-height: 100svh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.home-premium-content {
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 4.5rem 1rem 3rem;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+/* ===================================================================
+   APP SHELL — main ialah scroll container
+   =================================================================== */
+html, body {
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden !important;
+}
+
+main {
+    height: 100vh;
+    height: 100svh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Home scrollable sendiri bila kandungan melebihi skrin */
+#home, #home.active {
+    overflow-y: auto !important;
+}
+
+#lightning-canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.gold-particles {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* Scrollbar styling - nipis & bergaya emas */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.4) transparent;
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.35); border-radius: 3px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.6); }
+
+/* ===================================================================
+   RESPONSIVE REFINEMENTS — desktop sederhana & mobile
+   =================================================================== */
+/* Skrin sederhana (900-1249px): nav pill lebih padat supaya tak wrap */
+@media (min-width: 900px) and (max-width: 1249px) {
+    .nav-container { padding: 0.75rem 1rem; }
+    .nav-links { gap: 0.25rem; }
+    .nav-links li { font-size: 0.72rem; padding: 0.38rem 0.55rem; }
+    .fb-status { display: none !important; }
+    .brand { font-size: 0.95rem; }
+    .brand-icon { width: 28px; height: 28px; font-size: 0.85rem; }
+}
+
+/* Mobile (<768px): jadual, kod & dictionary mesra sentuh */
+@media (max-width: 767px) {
+    .wiring-table { min-width: 340px; }
+    .admin-orders-table { min-width: 560px; }
+    pre { font-size: 0.7rem; padding: var(--space-md); }
+    .code-container { margin: 0 calc(-1 * var(--space-sm)); }
+    #dict-area { max-height: 320px; }
+    #feedback-list { max-height: 400px; }
+    .visualizer-workspace { padding: var(--space-md); }
+    .modal-overlay { padding: var(--space-xs); }
+    .modal-box { max-height: 92vh; }
+    .search-modal-wrap { padding-top: 6vh; }
+    /* Header actions jangan terlalu lebar */
+    .nav-actions { gap: 0.25rem; }
+    .icon-btn { width: 36px; height: 36px; font-size: 0.95rem; }
+    /* Tajuk section lebih kecil */
+    h2 { font-size: clamp(1.25rem, 5vw, 1.6rem); }
+    /* Hub cards */
+    .grid-3 { gap: var(--space-md); }
+}
+
+/* Telefon kecil (<380px) */
+@media (max-width: 379px) {
+    .brand span { display: none; }
+    .icon-btn { width: 32px; height: 32px; }
+    .cart-drawer { max-width: 100%; }
+}
+
+/* Sentuhan: hover transform dimatikan pada peranti tanpa hover (sedia ada) + pill nav aktif sentuh */
+@media (hover: none) {
+    .nav-links li:hover { transform: none; }
+    .search-result-item:hover { background: transparent; }
+    .upload-dropzone:hover { background: rgba(99, 102, 241, 0.03); }
+}
+/* Teks panjang (nama komponen) tak melimpah */
+.pin-node, .search-result-item span, #active-comps span, select.form-control option { overflow-wrap: anywhere; }
+.wiring-table td:last-child { white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loader-ring"></div>
+    <p style="color: var(--text-muted); font-weight: 600; font-size: 0.9rem;">Connecting to Firebase Cloud...</p>
+</div>
+
+<!-- HEADER -->
+<header>
+    <div class="nav-container">
+        <a href="#" class="brand" onclick="navTo('home'); return false;">
+            <div class="brand-icon">⚡</div>
+            <span>Pieware 2</span>
+        </a>
+        <button class="hamburger" aria-label="Toggle Menu" onclick="toggleMenu()" id="hamburger-btn">☰</button>
+        <ul class="nav-links" id="nav-links">
+            <li data-target="home" class="active" onclick="navTo('home')">Home</li>
+            <li data-target="hub" onclick="navTo('hub')">Hub</li>
+            <li data-target="helper" onclick="navTo('helper')">Helper</li>
+            <li data-target="source" onclick="navTo('source')">Source Code</li>
+            <li data-target="calculator" onclick="navTo('calculator')">Calculator</li>
+            <li data-target="shop" onclick="navTo('shop')">Shop</li>
+            <li data-target="feedback" onclick="navTo('feedback')">Feedback</li>
+            <li data-target="about" onclick="navTo('about')">About</li>
+        </ul>
+        <div class="nav-actions">
+            <div class="fb-status" id="fb-status">
+                <span class="fb-dot" id="fb-dot"></span>
+                <span id="fb-status-text">Offline</span>
+            </div>
+            <button class="icon-btn" aria-label="Search" onclick="toggleSearch()">🔍</button>
+            <button class="icon-btn" aria-label="Settings" onclick="openSettings()">⚙️</button>
+            <button class="icon-btn" aria-label="Admin Login" id="admin-login-btn" onclick="onLoginBtnClick()">🔐</button>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main>
+
+<!-- ==================== HOME — BLACK & GOLD WITH LIGHTNING ==================== -->
+<section id="home" class="active">
+    <canvas id="lightning-canvas"></canvas>
+    <div class="gold-particles" id="gold-particles"></div>
+    <div class="home-premium-content">
+        <div class="home-pre-label">Welcome to</div>
+            <h1 class="home-pre-title">PIEWARE 2!</h1>
+        <p class="home-pre-sub">Learn, Build & Understand Electronics Easily</p>
+        <p style="font-style:italic; font-size:clamp(0.8rem,1.8vw,0.95rem); color:var(--gold); opacity:0.85; margin-bottom:var(--space-lg);">"From idea to circuit — in one place."</p>
+        <div class="home-pre-actions">
+            <button class="btn btn-gold" onclick="navTo('helper')">Launch Helper</button>
+            <button class="btn btn-outline home-outline-btn" onclick="navTo('shop')">Browse Store</button>
+        </div>
+        <div class="home-pre-features">
+            <div class="home-feat-item" onclick="navTo('helper')">
+                <div class="home-feat-icon">🔌</div>
+                <div class="home-feat-text">Pinout Visualizer</div>
+                <div style="font-size:0.68rem; color:var(--home-feat-text); opacity:0.8; margin-top:0.25rem;">Wiring & validation for 57 boards</div>
+                <div style="font-size:0.68rem; font-weight:800; color:var(--gold); margin-top:0.35rem;">Open →</div>
+            </div>
+            <div class="home-feat-item" onclick="navTo('source')">
+                <div class="home-feat-icon">💻</div>
+                <div class="home-feat-text">Code Generator</div>
+                <div style="font-size:0.68rem; color:var(--home-feat-text); opacity:0.8; margin-top:0.25rem;">Auto-generated, ready to flash</div>
+                <div style="font-size:0.68rem; font-weight:800; color:var(--gold); margin-top:0.35rem;">Open →</div>
+            </div>
+            <div class="home-feat-item" onclick="navTo('shop')">
+                <div class="home-feat-icon">🛒</div>
+                <div class="home-feat-text">Hardware Store</div>
+                <div style="font-size:0.68rem; color:var(--home-feat-text); opacity:0.8; margin-top:0.25rem;">Full Cytron catalog + buy links</div>
+                <div style="font-size:0.68rem; font-weight:800; color:var(--gold); margin-top:0.35rem;">Shop Now →</div>
+            </div>
+        </div>
+        <div style="max-width:620px; width:100%; margin-top:var(--space-2xl); text-align:left; border:1px solid rgba(212,175,55,0.35); border-radius:var(--radius-lg); background:rgba(0,0,0,0.55); overflow:hidden;" class="home-demo-card">
+            <div style="padding:0.7rem 1rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25);">
+                <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:var(--gold-light);">⚡ LIVE DEMO — ESP32 + DHT11 Sensor</span>
+                <span style="font-size:0.65rem; color:rgba(255,255,255,0.5); font-family:var(--font-mono);">sketch.ino</span>
+            </div>
+            <pre style="margin:0; padding:0.9rem 1rem; font-size:0.68rem; max-height:170px; overflow-y:auto; background:transparent;"><code id="demo-code"></code></pre>
+            <div style="padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(212,175,55,0.25);">
+                <span style="font-size:0.68rem; color:rgba(255,255,255,0.55);">Wiring: VCC→3.3V · DATA→D4 · GND→GND</span>
+                <button class="btn btn-gold btn-sm" style="font-size:0.72rem;" onclick="loadDemo()">Try it in Helper →</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== ABOUT ==================== -->
+<section id="about">
+    <h2>About Pieware 2</h2>
+    <p style="margin-bottom: var(--space-xl);">Ketahui lebih lanjut tentang kami.</p>
+    <div class="card">
+        <div id="about-content" style="font-size:0.92rem; color:var(--text-muted); white-space:pre-wrap; line-height:1.8;">
+            <div class="skeleton-line w60"></div>
+            <div class="skeleton-line w80"></div>
+            <div class="skeleton-line w80"></div>
+            <div class="skeleton-line w40"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== HUB — PROJECT REFERENCES ==================== -->
+<section id="hub">
+    <div class="announcement-banner">
+        <span>📢</span> <span id="announcement-text">Welcome to Semester 1! High-performance MCU kits now restocked.</span>
+    </div>
+    <h2>Project Hub</h2>
+    <p style="margin-bottom: var(--space-xl);">Popular open-source project sources &mdash; reference sites that makers commonly use for Arduino, ESP32 and electronics projects.</p>
+    <div class="grid-3">
+        `<a class="card" href="https://projecthub.arduino.cc/" target="_blank" rel="noopener">
+            <div class="product-image-ph">🧪</div>
+            <h3 style="font-size:0.98rem;">Arduino Project Hub</h3>
+            <p style="font-size:0.8rem;">Official Arduino community — thousands of guided projects with code, wiring diagrams and tutorials.</p>
+            <div class="product-price" style="font-size:0.85rem;">projecthub.arduino.cc</div><a class="hub-buy-chip" data-query="arduino starter kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://github.com/topics/arduino-projects" target="_blank" rel="noopener">
+            <div class="product-image-ph">🐙</div>
+            <h3 style="font-size:0.98rem;">GitHub: Arduino Projects</h3>
+            <p style="font-size:0.8rem;">Open-source repositories for Arduino projects — full source code, libraries and community contributions.</p>
+            <div class="product-price" style="font-size:0.85rem;">github.com/topics</div><a class="hub-buy-chip" data-query="arduino project kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://www.instructables.com/circuits/" target="_blank" rel="noopener">
+            <div class="product-image-ph">💡</div>
+            <h3 style="font-size:0.98rem;">Instructables Circuits</h3>
+            <p style="font-size:0.8rem;">Step-by-step electronics &amp; Arduino builds with photos, videos and downloadable resources.</p>
+            <div class="product-price" style="font-size:0.85rem;">instructables.com</div><a class="hub-buy-chip" data-query="electronics starter kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://randomnerdtutorials.com/" target="_blank" rel="noopener">
+            <div class="product-image-ph">📚</div>
+            <h3 style="font-size:0.98rem;">Random Nerd Tutorials</h3>
+            <p style="font-size:0.8rem;">Deep-dive tutorials for ESP32, ESP8266 and Arduino — complete with schematics and code.</p>
+            <div class="product-price" style="font-size:0.85rem;">randomnerdtutorials.com</div><a class="hub-buy-chip" data-query="esp32 kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://learn.adafruit.com/" target="_blank" rel="noopener">
+            <div class="product-image-ph">🦄</div>
+            <h3 style="font-size:0.98rem;">Adafruit Learn System</h3>
+            <p style="font-size:0.8rem;">Beginner-friendly guides for sensors, displays, wearables and IoT projects.</p>
+            <div class="product-price" style="font-size:0.85rem;">learn.adafruit.com</div><a class="hub-buy-chip" data-query="adafruit sensor kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://forum.arduino.cc/" target="_blank" rel="noopener">
+            <div class="product-image-ph">💬</div>
+            <h3 style="font-size:0.98rem;">Arduino Forum</h3>
+            <p style="font-size:0.8rem;">Ask questions, troubleshoot circuits and learn from the global Arduino community.</p>
+            <div class="product-price" style="font-size:0.85rem;">forum.arduino.cc</div><a class="hub-buy-chip" data-query="arduino" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://www.tinkercad.com/circuits" target="_blank" rel="noopener">
+            <div class="product-image-ph">🖥️</div>
+            <h3 style="font-size:0.98rem;">Tinkercad Circuits</h3>
+            <p style="font-size:0.8rem;">Simulate Arduino circuits in the browser for free — build &amp; test before wiring real hardware.</p>
+            <div class="product-price" style="font-size:0.85rem;">tinkercad.com</div><a class="hub-buy-chip" data-query="breadboard jumper wires" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://learn.sparkfun.com/" target="_blank" rel="noopener">
+            <div class="product-image-ph">⚡</div>
+            <h3 style="font-size:0.98rem;">SparkFun Learn</h3>
+            <p style="font-size:0.8rem;">Concept tutorials from basics to advanced — electronics fundamentals, sensors and robotics.</p>
+            <div class="product-price" style="font-size:0.85rem;">learn.sparkfun.com</div><a class="hub-buy-chip" data-query="sparkfun kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+        `<a class="card" href="https://www.hackster.io/" target="_blank" rel="noopener">
+            <div class="product-image-ph">🚀</div>
+            <h3 style="font-size:0.98rem;">Hackster.io</h3>
+            <p style="font-size:0.8rem;">IoT &amp; hardware project platform with contests, dev boards showcases and full build guides.</p>
+            <div class="product-price" style="font-size:0.85rem;">hackster.io</div><a class="hub-buy-chip" data-query="iot starter kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
+        </a>
+    </div>
+
+    <!-- ==================== MINI PROJECT IDEAS ==================== -->
+    <div class="card" style="margin-top: var(--space-2xl);">
+        <h3 style="margin-bottom: 0.4rem;">🚀 Mini Project Ideas</h3>
+        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">35 beginner-friendly projects — each mapped to components in our database. Press <strong>Load in Helper</strong> to get wiring + code instantly.</p>
+        <input type="text" id="mini-search" class="form-control" placeholder="Search projects... (e.g. rain, RFID, smart)" oninput="renderMiniProjects(this.value)" style="margin-bottom: var(--space-md);">
+        <div id="mini-level-chips" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);">
+            <button data-level="all" onclick="setProjectLevel('all')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--gold); background:rgba(212,175,55,0.15); color:var(--gold-light);">All</button>
+            <button data-level="Easy" onclick="setProjectLevel('Easy')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🟢 Easy</button>
+            <button data-level="Medium" onclick="setProjectLevel('Medium')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🟡 Medium</button>
+        </div>
+        <div id="mini-projects-area" style="max-height: 480px; overflow-y: auto;"></div>
+    </div>
+</section>
+
+<!-- ==================== HELPER ==================== -->
+<section id="helper">
+    <h2>Hardware Pinout Visualizer</h2>
+    <p style="margin-bottom: var(--space-md);">Select your MCU board, add components (up to 5), and get wiring + source code with validation checks.</p>
+    <div id="helper-steps" style="display:flex; align-items:center; justify-content:center; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-xl); font-size:0.78rem; font-weight:700;"></div>
+    <div class="card grid-2" style="margin-bottom: var(--space-md);">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="mcu-select">1. Select MCU Board</label>
+            <select id="mcu-select" class="form-control" onchange="onMcuChange()">
+                <option value="" disabled selected>-- Choose MCU --</option>
+            </select>
+            <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; font-weight:600; cursor:pointer; margin-top:0.6rem;">
+                <input type="checkbox" id="wifi-toggle" onchange="setWifiOnly(this.checked)" style="width:16px; height:16px; accent-color: var(--gold); cursor:pointer;">
+                📶 WiFi boards only
+            </label>
+            <div id="mcu-info-chips" style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-top:0.5rem;"></div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="comp-select">2. Select Component</label>
+            <select id="comp-select" class="form-control" onchange="onCompChange()" disabled>
+                <option value="" disabled selected>-- Select MCU First --</option>
+            </select>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom: var(--space-xl); display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap;">
+        <button class="btn btn-gold btn-sm" id="btn-add-comp" onclick="addComponent()" disabled>+ Add More Component</button>
+        <button class="btn btn-outline btn-sm" onclick="clearAllComps()" id="btn-clear-comps" disabled>🔄 Clear All</button>
+        <span id="comp-count" style="font-size:0.78rem; color: var(--text-muted); font-weight:600;">0 / 10 components</span>
+        <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.85rem; font-weight:600; cursor:pointer; margin-left:auto;">
+            <input type="checkbox" id="breadboard-toggle" onchange="onBreadboardToggle()" style="width:17px; height:17px; accent-color: var(--gold); cursor:pointer;">
+            🍞 Use Breadboard
+        </label>
+    </div>
+    <div id="active-comps" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: var(--space-lg);"></div>
+
+    <!-- VALIDATION CARD -->
+    <div class="card hidden" id="validation-card" style="margin-bottom: var(--space-xl); padding: var(--space-lg);"></div>
+    <div id="visualizer-area" class="hidden">
+        <div class="alert alert-info" id="helper-msg"></div>
+        <div id="power-estimate" class="hidden" style="padding:0.7rem 0.9rem; margin-bottom: var(--space-lg); background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.35); border-radius:var(--radius-md); font-size:0.82rem; font-family:var(--font-mono);"></div>
+        <div id="buy-suggest" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; padding:0.7rem 0.9rem; margin-bottom: var(--space-lg); background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:var(--radius-md); font-size:0.82rem;"></div>
+        <div class="visualizer-workspace">
+            <div class="board-visual" style="max-width:340px;">
+                <h3 id="vis-mcu-name">MCU</h3>
+                <div class="pins-grid" id="vis-mcu-pins"></div>
+            </div>
+            <div id="vis-middle">
+                <div class="connection-flow" id="conn-flow"></div>
+                <div class="breadboard-visual hidden" id="breadboard-visual">
+                    <div class="bb-title">🍞 BREADBOARD</div>
+                    <div class="bb-rail plus"><span class="bb-rail-label">+</span></div>
+                    <div class="bb-holes"></div>
+                    <div class="bb-rail minus"><span class="bb-rail-label">−</span></div>
+                    <div class="bb-wire-note" id="bb-note">MCU & components share the +/− rails</div>
+                </div>
+                <div class="connection-flow hidden" id="conn-flow-2"></div>
+            </div>
+            <div id="vis-comps"></div>
+        </div>
+        <div class="grid-2" style="margin-top: var(--space-xl);">
+            <div class="card">
+                <h3>Connection Mapping Table</h3>
+                <div class="table-scroll-wrap">
+                    <table class="wiring-table">
+                        <thead><tr><th>Component</th><th>Component Pin</th><th>MCU Pin / Breadboard</th></tr></thead>
+                        <tbody id="wiring-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Wiring Instructions</h3>
+                <ol id="wiring-steps" style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: var(--space-md); color: var(--text-muted); font-size: 0.88rem;"></ol>
+                <div id="wiring-warning" class="alert alert-warning hidden" style="margin-bottom:0;"></div>
+                <div style="display:flex; gap:0.5rem; margin-top: var(--space-md); flex-wrap:wrap;">
+                    <button class="btn btn-secondary" style="flex:1;" onclick="navToCodeFromHelper()">Generate Source Code</button>
+                    <button class="btn btn-outline btn-sm" onclick="copyWiring()" title="Copy wiring instructions as text">📋 Copy Wiring</button>
+                    <button class="btn btn-outline btn-sm" onclick="shareProject()" title="Copy shareable project link">📤 Share</button>
+                    <button class="btn btn-outline btn-sm" onclick="exportBOM()" title="Download Bill of Materials as CSV">📦 BOM</button>
+                    <button class="btn btn-outline btn-sm" onclick="exportChatGPT()" title="Copy a ready prompt for ChatGPT / AI assistants">🤖 AI Prompt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MY PROJECTS ==================== -->
+    <div class="card" style="margin-top: var(--space-2xl);">
+        <h3 style="margin-bottom: 0.4rem;">💾 My Projects</h3>
+        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">Save your MCU + component selections and reload them anytime (stored in this browser).</p>
+        <div style="margin-bottom: var(--space-md);">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--gold); margin-bottom:0.5rem;">⚡ Quick Start Templates</div>
+            <div id="template-chips" style="display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-bottom: var(--space-md); flex-wrap:wrap;">
+            <input type="text" id="proj-name" class="form-control" placeholder="Project name (e.g. Weather Station)" style="flex:1; min-width:180px;" maxlength="40">
+            <button class="btn btn-gold btn-sm" onclick="saveMyProject()">💾 Save Current</button>
+        </div>
+        <div id="my-projects-list"></div>
+    </div>
+
+    <!-- ==================== DICTIONARY ==================== -->
+    <div class="card" style="margin-top: var(--space-2xl);">
+        <h3 style="margin-bottom: 0.4rem;">📖 Dictionary</h3>
+        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">All MCU boards & components by category — click any item to select it above.</p>
+        <input type="text" id="dict-search" class="form-control" placeholder="Search dictionary... (e.g. DHT22, ESP32, relay)" oninput="renderDictionary(this.value)" style="margin-bottom: var(--space-md);">
+        <div id="dict-filters" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);"></div>
+        <div id="dict-area" style="max-height: 420px; overflow-y: auto;"></div>
+    </div>
+</section>
+
+<!-- ==================== SOURCE CODE ==================== -->
+<section id="source">
+    <h2>Source Code</h2>
+    <p style="margin-bottom: var(--space-xl);">Source code generated from your Helper selections — pick an MCU and components in the Helper tab, then press "Generate Source Code".</p>
+    <button class="btn btn-outline btn-sm" style="margin-bottom: var(--space-xl);" onclick="navTo('helper')">⬅ Back to Helper</button>
+    <div id="code-output" class="hidden">
+        <div class="alert alert-info" id="code-explanation"></div>
+        <div class="code-container">
+            <div style="position:absolute; top:0.5rem; right:0.5rem; display:flex; gap:0.35rem; z-index:2;">
+                <button class="copy-btn" style="position:static;" onclick="copyCode()">Copy</button>
+                <button class="copy-btn" style="position:static;" onclick="downloadCode()">Download .ino</button>
+            </div>
+            <pre><code id="code-block"></code></pre>
+        </div>
+    </div>
+    <div id="code-empty" class="empty-state">
+        <div class="empty-state-icon">💻</div>
+        <div class="empty-state-title">No code generated yet</div>
+        <div class="empty-state-sub">Select an MCU & components in the Helper tab, then press "Generate Source Code".</div>
+    </div>
+</section>
+
+<!-- ==================== CALCULATOR ==================== -->
+<section id="calculator">
+    <h2>Electronics Calculators</h2>
+    <p style="margin-bottom: var(--space-xl);">Essential engineering calculators for laboratory computations.</p>
+    <div class="grid-2">
+        <div class="card">
+            <h3>Ohm's Law Solver</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">Enter any TWO parameters to compute the third.</p>
+            <div class="form-group"><input type="number" id="calc-v" class="form-control" placeholder="Voltage (V)" step="any" inputmode="decimal"></div>
+            <div class="form-group"><input type="number" id="calc-i" class="form-control" placeholder="Current (A)" step="any" inputmode="decimal"></div>
+            <div class="form-group"><input type="number" id="calc-r" class="form-control" placeholder="Resistance (Ω)" step="any" inputmode="decimal"></div>
+            <button class="btn btn-primary btn-block" onclick="calculateOhm()">Calculate</button>
+            <div id="ohm-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
+        <div class="card">
+            <h3>LED Resistor Calculator</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">R = (Vs - Vf) / If</p>
+            <div class="form-group"><label>Source Voltage (Vs)</label><input type="number" id="led-vs" class="form-control" value="5" step="0.1" inputmode="decimal"></div>
+            <div class="form-group"><label>Forward Voltage (Vf)</label><input type="number" id="led-vf" class="form-control" value="2" step="0.1" inputmode="decimal"></div>
+            <div class="form-group"><label>Forward Current (mA)</label><input type="number" id="led-if" class="form-control" value="20" inputmode="numeric"></div>
+            <button class="btn btn-primary btn-block" onclick="calculateLED()">Calculate</button>
+            <div id="led-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
+        <div class="card">
+            <h3>Voltage Divider</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">Vout = Vin × R2 / (R1 + R2)</p>
+            <div class="form-group"><label>Input Voltage (Vin)</label><input type="number" id="vd-vin" class="form-control" value="5" step="0.1" inputmode="decimal"></div>
+            <div class="form-group"><label>Resistor R1 (Ω)</label><input type="number" id="vd-r1" class="form-control" value="10000" step="any" inputmode="decimal"></div>
+            <div class="form-group"><label>Resistor R2 (Ω)</label><input type="number" id="vd-r2" class="form-control" value="4700" step="any" inputmode="decimal"></div>
+            <button class="btn btn-primary btn-block" onclick="calculateDivider()">Calculate</button>
+            <div id="vd-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
+        <div class="card">
+            <h3>RC Time Constant</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">τ = R × C &mdash; capacitor charges ~63% in 1τ, ~99% in 5τ</p>
+            <div class="form-group"><label>Resistance (Ω)</label><input type="number" id="rc-r" class="form-control" value="10000" step="any" inputmode="decimal"></div>
+            <div class="form-group"><label>Capacitance (µF)</label><input type="number" id="rc-c" class="form-control" value="100" step="any" inputmode="decimal"></div>
+            <button class="btn btn-primary btn-block" onclick="calculateRC()">Calculate</button>
+            <div id="rc-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SHOP ==================== -->
+<section id="shop">
+    <h2>Hardware Store</h2>
+    <p style="margin-bottom: var(--space-xl);">Official components and lab bundles — loaded from Firebase Cloud.</p>
+    <div class="card" style="margin-bottom: var(--space-2xl);">
+        <h3 style="margin-bottom: 0.4rem;">📖 Full Cytron Catalog</h3>
+        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">Semua MCU board &amp; komponen dalam Pieware — setiap item disambung ke Cytron. Klik untuk beli.</p>
+        <input type="text" id="catalog-search" class="form-control" placeholder="Search catalog... (e.g. ESP32, sensor, relay)" oninput="renderCatalog(this.value)" style="margin-bottom: var(--space-md);">
+        <div id="catalog-filters" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);"></div>
+        <div id="catalog-area" style="max-height: 520px; overflow-y: auto;"></div>
+        <p style="font-size:0.8rem; margin-top: var(--space-md); margin-bottom:0; color:var(--text-muted);">💡 Can't find what you need? <span onclick="navTo('feedback')" style="color:var(--gold-light); font-weight:700; cursor:pointer; text-decoration:underline;">Pull a request on Feedback!</span></p>
+    </div>
+    <div class="grid-3" id="shop-grid">
+        <div class="skeleton-card"><div class="skeleton-block"></div><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w40"></div></div>
+        <div class="skeleton-card"><div class="skeleton-block"></div><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w40"></div></div>
+        <div class="skeleton-card"><div class="skeleton-block"></div><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w40"></div></div>
+        <div class="skeleton-card"><div class="skeleton-block"></div><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w40"></div></div>
+        <div class="skeleton-card"><div class="skeleton-block"></div><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w40"></div></div>
+        <div class="skeleton-card"><div class="skeleton-block"></div><div class="skeleton-line w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w40"></div></div>
+</div>
+</section>
+
+<!-- ==================== FEEDBACK / REVIEWS ==================== -->
+<section id="feedback">
+    <h2>Feedback & Reviews</h2>
+    <p style="margin-bottom: var(--space-xl);">Share your experience using Pieware 2 — your review helps us improve.</p>
+    <div class="grid-2">
+        <div class="card">
+            <h3 style="margin-bottom: var(--space-md);">Write a Review</h3>
+            <div class="form-group">
+                <label for="fb-name">Name *</label>
+                <input type="text" id="fb-name" class="form-control" placeholder="Your name" maxlength="50">
+            </div>
+            <div class="form-group">
+                <label>Rating *</label>
+                <div class="star-picker" id="star-picker">
+                    <button type="button" class="star-btn" onclick="setRating(1)" aria-label="1 star">★</button>
+                    <button type="button" class="star-btn" onclick="setRating(2)" aria-label="2 stars">★</button>
+                    <button type="button" class="star-btn active" onclick="setRating(3)" aria-label="3 stars">★</button>
+                    <button type="button" class="star-btn" onclick="setRating(4)" aria-label="4 stars">★</button>
+                    <button type="button" class="star-btn" onclick="setRating(5)" aria-label="5 stars">★</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="fb-msg">Message *</label>
+                <textarea id="fb-msg" class="form-control" rows="4" placeholder="Your suggestions, thoughts or experience..." maxlength="500" style="min-height:100px; resize:vertical;"></textarea>
+            </div>
+            <button class="btn btn-gold btn-block" onclick="submitFeedback()" id="btn-feedback">Send Review</button>
+        </div>
+        <div class="card">
+            <h3 style="margin-bottom: var(--space-md);">User Reviews</h3>
+            <div id="feedback-list">
+                <div class="skeleton-card"><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w60"></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== ADMIN PANEL ==================== -->
+<section id="admin">
+    <div class="admin-toolbar">
+        <div>
+            <h2>Admin Panel</h2>
+            <p style="font-size: 0.85rem; margin-top: 0.25rem;">Sales analytics & order management</p>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" onclick="adminLogout()">Logout</button>
+            <button class="btn btn-gold btn-sm" onclick="exportToGoogleSheets()">📥 Download CSV (Google Sheets)</button>
+        </div>
+    </div>
+
+<!-- Stat Cards -->
+    <div class="admin-stats" id="admin-stats">
+        <div class="stat-card">
+            <div class="stat-label">Total Sales</div>
+            <div class="stat-value" id="stat-total-sales">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value" id="stat-revenue">RM 0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Orders</div>
+            <div class="stat-value" id="stat-orders">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg. Order Value</div>
+            <div class="stat-value" id="stat-avg">RM 0</div>
+        </div>
+    </div>
+
+<!-- Charts -->
+    <div class="admin-charts">
+        <div class="chart-card">
+            <h3 style="margin-bottom: var(--space-md);">Sales Graph</h3>
+            <canvas id="sales-chart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 style="margin-bottom: var(--space-md);">Best Selling Items</h3>
+            <canvas id="pie-chart"></canvas>
+        </div>
+    </div>
+
+<!-- Orders Table -->
+    <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding: var(--space-lg); border-bottom: 1px solid var(--border-glass);">
+            <h3>Recent Orders</h3>
+        </div>
+        <div class="table-scroll-wrap">
+            <table class="admin-orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-orders-tbody">
+                    <tr><td colspan="7" style="text-align:center; padding: var(--space-xl); color: var(--text-muted);">Loading orders...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<!-- About Editor -->
+    <div class="card" style="margin-top: var(--space-xl);">
+        <div style="margin-bottom: var(--space-md);">
+            <h3>About Editor</h3>
+            <p style="font-size:0.8rem;">Content of the "About" page seen by users. Can be changed at any time.</p>
+        </div>
+        <div class="form-group">
+            <label for="about-text">About Text</label>
+            <textarea id="about-text" class="form-control" rows="7" placeholder="Write about Pieware 2 here..." maxlength="3000" style="min-height:140px; resize:vertical;"></textarea>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="saveAbout()" id="btn-save-about">Save About</button>
+    </div>
+
+<!-- Product Management -->
+    <div class="card" style="padding:0; overflow:hidden; margin-top: var(--space-xl);">
+        <div style="padding: var(--space-lg); border-bottom: 1px solid var(--border-glass); display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <h3>Product Management</h3>
+            <button class="btn btn-gold btn-sm" onclick="openProductForm()">+ Add Product</button>
+        </div>
+        <div id="product-form" class="hidden" style="padding: var(--space-lg); border-bottom: 1px solid var(--border-glass); background: var(--bg-base);">
+            <input type="hidden" id="prod-key">
+            <div class="grid-2" style="margin-bottom: var(--space-md);">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Product Name *</label>
+                    <input type="text" id="prod-name" class="form-control" placeholder="Arduino Uno R3">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Description</label>
+                    <input type="text" id="prod-desc" class="form-control" placeholder="MCU board ATmega328P">
+                </div>
+            </div>
+            <div class="grid-4" style="margin-bottom: var(--space-md);">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Price (RM) *</label>
+                    <input type="number" id="prod-price" class="form-control" step="0.01" min="0" inputmode="decimal" placeholder="25.90">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Stock *</label>
+                    <input type="number" id="prod-stock" class="form-control" min="0" inputmode="numeric" placeholder="10">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Icon (emoji)</label>
+                    <input type="text" id="prod-icon" class="form-control" placeholder="🔌" maxlength="8">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Image URL</label>
+                    <input type="url" id="prod-image" class="form-control" placeholder="https://...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Affiliate / Buy URL (optional)</label>
+                <input type="url" id="prod-buyurl" class="form-control" placeholder="https://my.cytron.io/p/... atau link Shopee affiliate">
+                <p style="font-size:0.72rem; margin-top:0.3rem;">Jika kosong, butang "Buy from Cytron" guna carian automatik nama produk. Affiliate tag dari config akan ditambah secara automatik.</p>
+            </div>
+            <p style="font-size:0.75rem; margin-bottom: var(--space-md);">Jika Image URL diisi, gambar akan dipaparkan; jika kosong, emoji icon digunakan.</p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm" onclick="saveProduct()">Save Product</button>
+                <button class="btn btn-outline btn-sm" onclick="closeProductForm()">Cancel</button>
+            </div>
+        </div>
+        <div class="table-scroll-wrap">
+            <table class="admin-orders-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-products-tbody">
+                    <tr><td colspan="4" style="text-align:center; padding: var(--space-xl); color: var(--text-muted);">Loading products...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+    <div class="footer-grid">
+        <div>
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                <div class="brand-icon" style="width:28px; height:28px; font-size:0.85rem;">⚡</div>
+                <span style="font-weight:800; font-size:1rem; color:var(--gold-light);">Pieware 2</span>
+            </div>
+            <p style="font-size:0.8rem; max-width:240px;">Learn, Build &amp; Understand Electronics Easily — from idea to circuit, in one place.</p>
+        </div>
+        <div>
+            <div style="font-weight:800; font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:0.6rem;">🔗 Quick Links</div>
+            <div style="display:flex; flex-direction:column; gap:0.35rem; font-size:0.82rem;">
+                <span onclick="navTo('hub')" style="cursor:pointer;">📂 Project Hub</span>
+                <span onclick="navTo('helper')" style="cursor:pointer;">🔌 Helper</span>
+                <span onclick="navTo('calculator')" style="cursor:pointer;">🧮 Calculators</span>
+                <span onclick="navTo('shop')" style="cursor:pointer;">🛒 Store</span>
+                <span onclick="navTo('feedback')" style="cursor:pointer;">💬 Feedback</span>
+                <span onclick="navTo('about')" style="cursor:pointer;">ℹ️ About</span>
+            </div>
+        </div>
+        <div>
+            <div style="font-weight:800; font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:0.6rem;">📌 Info</div>
+            <div style="font-size:0.78rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.35rem;">
+                <span>Version <strong style="color:var(--text-main);">v2.1.0</strong></span>
+                <span>Updated: <strong style="color:var(--text-main);">23 August 2026</strong></span>
+                <span>Powered by Firebase &amp; Cytron</span>
+                <span style="opacity:0.75;">More optimization, features and products coming soon~!</span>
+            </div>
+        </div>
+    </div>
+    <div style="border-top:1px solid var(--border-glass); margin-top:var(--space-lg); padding-top:var(--space-md); text-align:center; font-size:0.75rem; color:var(--text-muted);">
+        © 2026 Pieware 2 · Built for electronics students &amp; makers
+    </div>
+</footer>
+
+<!-- ==================== SEARCH MODAL ==================== -->
+<div class="modal-overlay search-modal-wrap" id="search-modal">
+    <div class="search-box-inner">
+        <input type="text" class="search-input-lg" placeholder="Search components, pages..." id="search-input" oninput="performSearch(this.value)">
+        <div id="search-results"></div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="modal-overlay" id="login-modal">
+    <div class="modal-box" style="max-width:380px; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:var(--space-md);">🔐</div>
+        <h3 style="margin-bottom:var(--space-sm);">Admin Access</h3>
+        <p style="font-size:0.82rem; margin-bottom:var(--space-lg);">Sign in with the admin email to access the admin panel.</p>
+        <input type="email" id="admin-email" class="form-control" placeholder="Admin Email" style="text-align:center; margin-bottom:var(--space-sm);" onkeydown="if(event.key==='Enter')document.getElementById('admin-password').focus()">
+        <input type="password" id="admin-password" class="form-control" placeholder="Password" style="text-align:center; margin-bottom:var(--space-md);" onkeydown="if(event.key==='Enter')checkAdminLogin()">
+        <button class="btn btn-gold btn-block" onclick="checkAdminLogin()">Login</button>
+        <button class="btn btn-outline btn-block" style="margin-top:0.5rem;" onclick="document.getElementById('login-modal').classList.remove('active')">Cancel</button>
+    </div>
+</div>
+
+<!-- ==================== SETTINGS MODAL ==================== -->
+<div class="modal-overlay" id="settings-modal">
+    <div class="modal-box" style="max-width:400px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-lg);">
+            <h3>⚙️ Settings</h3>
+            <button class="icon-btn" onclick="closeSettings()" style="width:34px;height:34px;font-size:0.9rem;">✕</button>
+        </div>
+        <div class="form-group">
+            <label>Theme</label>
+            <div style="display:flex; gap:0.5rem;">
+                <button class="btn btn-outline btn-sm" id="theme-dark-btn" style="flex:1;" onclick="setTheme('dark')">🌙 Dark Mode</button>
+                <button class="btn btn-outline btn-sm" id="theme-light-btn" style="flex:1;" onclick="setTheme('light')">☀️ Light Mode</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lang-select">Language / Bahasa / Wika</label>
+            <select id="lang-select" class="form-control" onchange="setLang(this.value)">
+                <option value="en">🇬🇧 English</option>
+                <option value="id">🇮🇩 Bahasa Indonesia</option>
+                <option value="tl">🇵🇭 Tagalog</option>
+            </select>
+        </div>
+        <button class="btn btn-gold btn-block btn-sm" onclick="closeSettings()">Done</button>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script defer src="app.js"></script>
+</body>
+</html>
