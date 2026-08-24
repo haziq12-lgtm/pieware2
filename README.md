@@ -1,10 +1,10 @@
-[Live Demo](https://pieware2.netlify.app)
-
 # 🔌 PIEWARE 2
 
 **Learn, Build & Understand Electronics Easily**
 
 Pieware 2 is a web-based electronics education platform that helps students plan circuits, generate code, and buy components — all in one place.
+
+[Live Demo](https://pieware2.netlify.app)
 
 ---
 
@@ -35,3 +35,6 @@ Pieware 2 is a web-based electronics education platform that helps students plan
 
 ## 📂 Project Structure
 N/A
+
+Clone the repository to contribute ideas/changes:
+git clone https://github.com/haziq12-lgtm/pieware2.git
