@@ -1425,7 +1425,7 @@ const MINI_PROJECTS = [
     ['Auto Feed System (Pet/Chicken)', 'Medium', UNO, ['Servo MG996R', 'RTC DS3231']],
     ['Smart Street Light + Motion', 'Easy', UNO, ['HC-SR501 PIR Motion Sensor', 'LDR Light Sensor Module', 'Relay Module 1 Channel (5V)']],
     ['Sound Activated Room Fan', 'Easy', UNO, ['KY-038 Sound Detection Sensor', 'L298N Motor Driver']],
-    ['Tank Overflow Alarm', 'Easy', UNO, ['Ultrasonic JSN-SR04T (Waterproof)', 'Buzzer (Active)']],
+    ['Tank Overflow Alarm', 'Easy', UNO, ['JSN-SR04T Ultrasonic (Waterproof)', 'Buzzer (Active)']],
     ['Smart Parking Slot Detector', 'Easy', ESP32D, ['HC-SR04 Ultrasonic Sensor', 'IR Sensor Module (TCRT5000)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
     ['Expression Candy Dispenser', 'Medium', 'Maker Uno (Cytron)', ['OLED 0.96" SSD1306 (I2C)', 'Servo SG90']],
     ['Bluetooth Car', 'Medium', UNO, ['HC-05 Bluetooth Module', 'L298N Motor Driver']],
