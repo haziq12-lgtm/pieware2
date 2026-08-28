@@ -671,10 +671,13 @@ function renderCatalog(q) {
     if (!area) return;
     q = (q || '').toLowerCase().trim();
     let html = '';
-    const item = (name, icon) =>
-        '<a class="search-result-item" style="border:1px solid var(--border-glass); margin-bottom:0.4rem;" href="' + esc(cytronUrl(name)) + '" target="_blank" rel="noopener nofollow">' +
-        '<span>' + icon + '</span> <span>' + esc(name) + '</span>' +
+    const item = (name, icon) => {
+        const hasGuide = (typeof COMPONENT_GUIDES !== 'undefined') && COMPONENT_GUIDES[name];
+        const guideBtn = hasGuide ? '<button class="why-btn" style="margin-left:0.4rem;" onclick="event.preventDefault(); openGuide(\'' + esc(name).replace(/'/g, "\\'") + '\')">📖 Guide</button>' : '';
+        return '<a class="search-result-item" style="border:1px solid var(--border-glass); margin-bottom:0.4rem;" href="' + esc(cytronUrl(name)) + '" target="_blank" rel="noopener nofollow">' +
+        '<span>' + icon + '</span> <span>' + esc(name) + guideBtn + '</span>' +
         '<span style="margin-left:auto; color:var(--secondary); font-size:0.72rem; font-weight:700;">Buy ↗</span></a>';
+    };
 
     Object.entries(MCU_SERIES).forEach(([series, list]) => {
         if (catalogFilter !== 'all' && catalogFilter !== series) return;
@@ -1710,6 +1713,36 @@ function loadMiniProject(i) {
     showToast('Mini project loaded: ' + p[0] + ' — press Generate Source Code!');
 }
 
+// ===================================================================
+// COMPONENT GUIDES — modal tutorial pemasangan
+// ===================================================================
+function openGuide(name) {
+    const g = (typeof COMPONENT_GUIDES !== 'undefined') && COMPONENT_GUIDES[name];
+    if (!g) return showToast('No guide available for this component yet');
+    const box = document.getElementById('guide-box');
+    const sec = (title, body) => '<div style="margin-bottom: var(--space-md);"><div style="font-weight:800; font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:0.4rem;">' + title + '</div>' + body + '</div>';
+    const wiringHtml = '<ol style="padding-left:1.2rem; color:var(--text-muted); font-size:0.85rem; display:flex; flex-direction:column; gap:0.25rem;">' + g.wiring.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol>';
+    const tipsHtml = g.tips ? '<ul style="padding-left:1.2rem; color:var(--text-muted); font-size:0.82rem; display:flex; flex-direction:column; gap:0.25rem;">' + g.tips.map(s => '<li>💡 ' + esc(s) + '</li>').join('') + '</ul>' : '';
+    const codeHtml = '<div class="code-container" style="max-height:220px; overflow-y:auto;"><pre style="padding:0.8rem; font-size:0.68rem;"><code>' + esc(g.code) + '</code></pre></div>';
+    const issuesHtml = sec('🐛 Common issues', '<div style="display:flex; flex-direction:column; gap:0.4rem;">' + g.issues.map(i =>
+        '<div style="padding:0.5rem 0.7rem; border:1px solid var(--border-glass); border-left:3px solid var(--accent); border-radius:var(--radius-md); font-size:0.8rem;"><div style="font-weight:700;">' + esc(i[0]) + '</div><div style="color:var(--text-muted); font-size:0.75rem; margin-top:0.15rem;">' + esc(i[1]) + '</div></div>'
+    ).join('') + '</div>');
+    box.innerHTML =
+        '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:var(--space-md);">' +
+        '<h3 style="font-size:1.05rem;">📖 ' + esc(name) + '</h3>' +
+        '<button class="icon-btn" onclick="closeGuide()" style="width:34px;height:34px;font-size:0.9rem;flex-shrink:0;">✕</button></div>' +
+        sec('📋 What is it?', '<p style="font-size:0.85rem; color:var(--text-muted);">' + esc(g.what) + '</p>') +
+        sec('🔌 Wiring (step by step)', wiringHtml) +
+        (tipsHtml ? sec('💡 Tips', tipsHtml) : '') +
+        sec('💾 Starter code', codeHtml) +
+        issuesHtml +
+        sec('📚 Library', '<p style="font-size:0.82rem; color:var(--text-muted);">' + esc(g.lib) + '</p>');
+    document.getElementById('guide-modal').classList.add('active');
+}
+function closeGuide() {
+    document.getElementById('guide-modal').classList.remove('active');
+}
+
 function toggleWhy(i) {
     const el = document.getElementById('why-' + i);
     if (el) el.classList.toggle('hidden');
@@ -2238,11 +2271,17 @@ function renderHelper() {
     }).join('');
 
     // Mapping table — dengan penjelasan "Why?" boleh expand
+    const seenComps = new Set();
     document.getElementById('wiring-tbody').innerHTML = w.rows.map((r, i) => {
         const whyBtn = r.why
             ? ' <button class="why-btn" onclick="toggleWhy(' + i + ')" title="Why this pin?">Why?</button><div class="hidden" id="why-' + i + '" style="font-size:0.72rem; color:var(--text-muted); padding-top:0.25rem;">' + esc(r.why) + '</div>'
             : '';
-        return '<tr><td style="font-size:0.8rem;">' + esc(r.comp) + '</td><td>' + esc(r.pin) + whyBtn + '</td><td style="color:var(--gold-light); font-weight:700;">' + esc(r.mcu) + '</td></tr>';
+        let guideBtn = '';
+        if (COMPONENT_GUIDES && COMPONENT_GUIDES[r.comp] && !seenComps.has(r.comp)) {
+            seenComps.add(r.comp);
+            guideBtn = ' <button class="why-btn" style="background:rgba(212,175,55,0.15); color:var(--gold-light); border-color:rgba(212,175,55,0.4);" onclick="openGuide(\'' + esc(r.comp).replace(/'/g, "\\'") + '\')">📖 Guide</button>';
+        }
+        return '<tr><td style="font-size:0.8rem;">' + esc(r.comp) + '</td><td>' + esc(r.pin) + whyBtn + guideBtn + '</td><td style="color:var(--gold-light); font-weight:700;">' + esc(r.mcu) + '</td></tr>';
     }).join('');
 
     // Steps
@@ -2986,6 +3025,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         document.getElementById('search-modal').classList.remove('active');
         document.getElementById('settings-modal').classList.remove('active');
+        document.getElementById('guide-modal').classList.remove('active');
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); toggleSearch(); }
     // Helper shortcuts
