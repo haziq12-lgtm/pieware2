@@ -112,6 +112,12 @@ window.addEventListener('load', () => {
     initDemo();
     initGoldParticles();
     initLightning();
+    // PWA — daftar service worker (hanya berfungsi atas HTTPS/localhost)
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        navigator.serviceWorker.register('sw.js').then(() => {
+            // senyap sahaja — app berfungsi sama ada offline mahupun tidak
+        }).catch(() => {});
+    }
 });
 
 // ===================================================================

@@ -1,0 +1,25 @@
+{
+    "name": "Pieware 2 — Premium Electronics Hub",
+    "short_name": "Pieware 2",
+    "description": "Learn, Build & Understand Electronics Easily — wiring, validation, source code & component catalog for 57+ MCU boards.",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#060913",
+    "theme_color": "#D4AF37",
+    "icons": [
+        {
+            "src": "icons/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-maskable.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "maskable"
+        }
+    ]
+}
