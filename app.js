@@ -1144,9 +1144,11 @@ const COMPONENT_CATEGORIES = {
         { n: 'GY-271 Compass (HMC5883L)', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] }
     ],
     'Display': [
-        { n: 'LED 5mm (Red/Green/Blue/Yellow/White)', k: 'dout', p: ['Anode (+)', 'Cathode (-)'], warn: 'Always use a series resistor (220-330 ohm).' },
-        { n: 'RGB LED Module', k: 'rgb', p: ['R', 'GND', 'G', 'B'] },
-        { n: 'WS2812B NeoPixel Strip/Ring', k: 'dout', p: ['5V', 'DIN', 'GND'], warn: 'Use the FastLED or Adafruit NeoPixel library. Add 300-500 ohm resistor on DIN.' },
+        { n: 'LED 5mm (Red/Green/Blue/Yellow/White)', k: 'dout', p: ['Anode (+)', 'Cathode (-)'], output: 'led', warn: 'Always use a series resistor (220-330 ohm).' },
+        { n: 'RGB LED Module', k: 'rgb', p: ['R', 'GND', 'G', 'B'], output: 'led' },
+        { n: 'WS2812B NeoPixel Strip/Ring', k: 'dout', p: ['5V', 'DIN', 'GND'], output: 'led', warn: 'Use the FastLED or Adafruit NeoPixel library. Add 300-500 ohm resistor on DIN.' },
+        { n: 'Light Bulb (5V)', k: 'dout', p: ['+', '-'], output: 'led', warn: 'Use with appropriate relay for mains voltage.' },
+        { n: 'Strip Light LED', k: 'dout', p: ['+', '-'], output: 'led', warn: 'May require external power supply for long strips.' },
         { n: 'LCD 16x2 Character (parallel)', k: 'lcd', p: ['VSS', 'VDD', 'VO', 'RS', 'E', 'D4', 'D5', 'D6', 'D7'], warn: 'Use a potentiometer on VO for contrast. Consider the I2C version to save pins.' },
         { n: 'LCD 20x4 Character (parallel)', k: 'lcd', p: ['VSS', 'VDD', 'VO', 'RS', 'E', 'D4', 'D5', 'D6', 'D7'] },
         { n: 'LCD 16x2 with I2C Adapter', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'], warn: 'I2C address is usually 0x27 or 0x3F — run an I2C scanner if unsure.' },
@@ -1154,20 +1156,22 @@ const COMPONENT_CATEGORIES = {
         { n: 'OLED 1.3" SH1106 (I2C)', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'TFT LCD 2.4" Touchscreen', k: 'spi', p: ['VCC', 'GND', 'CS', 'RESET', 'DC', 'MOSI', 'SCK', 'LED'] },
         { n: 'TFT LCD 3.5" Touchscreen', k: 'spi', p: ['VCC', 'GND', 'CS', 'RESET', 'DC', 'MOSI', 'SCK', 'LED'] },
-        { n: '7-Segment Display (1/2/4 digit)', k: 'seg', p: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'dp'], warn: 'Consider a MAX7219 driver or TM1637 module to save pins.' },
-        { n: '8x8 LED Matrix', k: 'seg', p: ['R1-R8', 'C1-C8'], warn: 'Strongly consider a MAX7219 driver module.' },
-        { n: 'Buzzer (Active)', k: 'dout', p: ['+', '-'] },
-        { n: 'Buzzer (Passive)', k: 'dout', p: ['+', '-'], warn: 'Use tone() to play different frequencies.' },
-        { n: 'Speaker 8 ohm (0.25W/0.5W)', k: 'dout', p: ['+', '-'], warn: 'Do not drive directly from a pin — use a transistor or amplifier.' }
+        { n: '7-Segment Display (1/2/4 digit)', k: 'seg', p: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'dp'], output: 'led', warn: 'Consider a MAX7219 driver or TM1637 module to save pins.' },
+        { n: '8x8 LED Matrix', k: 'seg', p: ['R1-R8', 'C1-C8'], output: 'led', warn: 'Strongly consider a MAX7219 driver module.' },
+        { n: 'Buzzer (Active)', k: 'dout', p: ['+', '-'], output: 'buzzer' },
+        { n: 'Buzzer (Passive)', k: 'dout', p: ['+', '-'], output: 'buzzer', warn: 'Use tone() to play different frequencies.' },
+        { n: 'Speaker 8 ohm (0.25W/0.5W)', k: 'dout', p: ['+', '-'], output: 'buzzer', warn: 'Do not drive directly from a pin — use a transistor or amplifier.' }
     ],
     'Actuators & Motors': [
-        { n: 'Servo SG90', k: 'servo', p: ['VCC', 'SIG', 'GND'], warn: 'May draw more current than USB provides — use external 5V supply.' },
-        { n: 'Servo MG996R', k: 'servo', p: ['VCC', 'SIG', 'GND'], warn: 'High current — external 5-6V supply with common GND is required.' },
-        { n: 'Servo MG995', k: 'servo', p: ['VCC', 'SIG', 'GND'], warn: 'High current — external 5-6V supply required.' },
-        { n: 'DC Motor (3V-6V)', k: 'motor', p: ['IN1', 'IN2', 'EN'], warn: 'Never connect directly to MCU pins — use a motor driver (L298N/L293D).' },
-        { n: 'DC Geared Motor (TT Motor)', k: 'motor', p: ['IN1', 'IN2', 'EN'], warn: 'Use a driver module (L298N or L9110S).' },
-        { n: 'Stepper Motor 28BYJ-48', k: 'stepper4', p: ['IN1', 'IN2', 'IN3', 'IN4'], warn: 'Driven via ULN2003 driver board (usually bundled).' },
-        { n: 'Stepper Motor NEMA17', k: 'stepper2', p: ['STEP', 'DIR'], warn: 'Requires a stepper driver (A4988/DRV8825). Set current limit before connecting!' },
+        { n: 'Servo SG90', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'May draw more current than USB provides — use external 5V supply.' },
+        { n: 'Servo MG996R', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'High current — external 5-6V supply with common GND is required.' },
+        { n: 'Servo MG995', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'High current — external 5-6V supply required.' },
+        { n: 'DC Motor (3V-6V)', k: 'motor', p: ['IN1', 'IN2', 'EN'], output: 'motor', warn: 'Never connect directly to MCU pins — use a motor driver (L298N/L293D).' },
+        { n: 'DC Geared Motor (TT Motor)', k: 'motor', p: ['IN1', 'IN2', 'EN'], output: 'motor', warn: 'Use a driver module (L298N or L9110S).' },
+        { n: 'DC Fan 5V', k: 'motor', p: ['+', '-'], output: 'fan', warn: 'Check current rating - may need transistor for high-power fans.' },
+        { n: 'Stepper Motor 28BYJ-48', k: 'stepper4', p: ['IN1', 'IN2', 'IN3', 'IN4'], output: 'motor', warn: 'Driven via ULN2003 driver board (usually bundled).' },
+        { n: 'Stepper Motor NEMA17', k: 'stepper2', p: ['STEP', 'DIR'], output: 'motor', warn: 'Requires a stepper driver (A4988/DRV8825). Set current limit before connecting!' },
+        { n: 'Brushless DC Motor', k: 'motor', p: ['ESC Signal'], output: 'motor', warn: 'Requires ESC controller - not direct MCU connection.' },
         { n: 'L298N Motor Driver', k: 'motor', p: ['IN1', 'IN2', 'ENA'] },
         { n: 'L293D Motor Driver', k: 'motor', p: ['IN1', 'IN2', 'EN1,2'] },
         { n: 'DRV8825 Stepper Driver', k: 'stepper2', p: ['STEP', 'DIR'], warn: 'Adjust Vref current limit before connecting the motor.' },
@@ -1175,11 +1179,11 @@ const COMPONENT_CATEGORIES = {
         { n: 'BTS7960 Motor Driver (High Power)', k: 'motor', p: ['RPWM', 'LPWM', 'R_EN'] }
     ],
     'Relay & Switching': [
-        { n: 'Relay Module 1 Channel (5V)', k: 'dout', p: ['VCC', 'IN', 'GND'], v: '5', warn: 'Mains voltage is dangerous — only use with low-voltage loads as a student.' },
-        { n: 'Relay Module 2 Channel (5V)', k: 'multi2', p: ['VCC', 'IN1', 'IN2', 'GND'] },
-        { n: 'Relay Module 4 Channel (5V)', k: 'multi4', p: ['VCC', 'IN1', 'IN2', 'IN3', 'IN4', 'GND'] },
-        { n: 'Relay Module 8 Channel (5V)', k: 'multi8', p: ['VCC', 'IN1', 'IN2', 'IN3', 'IN4', 'IN5', 'IN6', 'IN7', 'IN8', 'GND'] },
-        { n: 'Solid State Relay (SSR)', k: 'dout', p: ['IN +', 'IN -', 'LOAD'] },
+        { n: 'Relay Module 1 Channel (5V)', k: 'dout', p: ['VCC', 'IN', 'GND'], v: '5', output: 'relay', warn: 'Mains voltage is dangerous — only use with low-voltage loads as a student.' },
+        { n: 'Relay Module 2 Channel (5V)', k: 'multi2', p: ['VCC', 'IN1', 'IN2', 'GND'], output: 'relay' },
+        { n: 'Relay Module 4 Channel (5V)', k: 'multi4', p: ['VCC', 'IN1', 'IN2', 'IN3', 'IN4', 'GND'], output: 'relay' },
+        { n: 'Relay Module 8 Channel (5V)', k: 'multi8', p: ['VCC', 'IN1', 'IN2', 'IN3', 'IN4', 'IN5', 'IN6', 'IN7', 'IN8', 'GND'], output: 'relay' },
+        { n: 'Solid State Relay (SSR)', k: 'dout', p: ['IN +', 'IN -', 'LOAD'], output: 'relay' },
         { n: 'MOSFET IRF540', k: 'dout', p: ['G', 'D', 'S'], warn: 'Gate threshold is high — prefer logic-level IRLZ44N with 3.3V MCUs.' },
         { n: 'MOSFET IRLZ44N', k: 'dout', p: ['G', 'D', 'S'] },
         { n: 'Transistor 2N2222', k: 'dout', p: ['B', 'C', 'E'], warn: 'Add ~1K base resistor.' },
@@ -1252,7 +1256,189 @@ let helperMcu = '';
 let helperComps = [];   // max 5
 let helperBreadboard = false;
 let helperWifiOnly = false;
+
+// --- Output Simulation State ---
+let simulationActive = false;
+let simulationInterval = null;
 const MAX_COMPS = 5;
+
+// --- Output Simulation Controller ---
+function startOutputSimulation() {
+    if (simulationActive) return;
+    
+    const validation = validateProject();
+    if (validation.some(v => v.level === 'red')) {
+        resetOutputVisuals(); // Ensure everything stays OFF when simulation can't start
+        showToast('Fix wiring errors before simulation');
+        return;
+    }
+    
+    simulationActive = true;
+    updateOutputVisuals();
+    
+    // Update visuals every 100ms for animation
+    simulationInterval = setInterval(updateOutputVisuals, 100);
+    
+    showToast('🎬 Output simulation started');
+}
+
+function stopOutputSimulation() {
+    simulationActive = false;
+    if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+    }
+    resetOutputVisuals();
+    showToast('⏹️ Simulation stopped');
+}
+
+function toggleSimulation() {
+    const btn = document.getElementById('sim-btn');
+    if (simulationActive) {
+        stopOutputSimulation();
+        btn.textContent = '▶️ Start Simulation';
+        btn.classList.remove('btn-outline');
+        btn.classList.add('btn-gold');
+    } else {
+        // Ensure outputs are OFF before attempting to start
+        resetOutputVisuals();
+        
+        // Check if simulation can start (no validation errors)
+        const validation = validateProject();
+        if (validation.some(v => v.level === 'red')) {
+            showToast('Fix wiring errors before simulation');
+            return; // Don't change button state
+        }
+        
+        // Start simulation
+        startOutputSimulation();
+        btn.textContent = '⏹️ Stop Simulation';
+        btn.classList.remove('btn-gold');
+        btn.classList.add('btn-outline');
+    }
+}
+
+function updateOutputVisuals() {
+    helperComps.forEach(compName => {
+        const comp = COMP_INDEX[compName];
+        if (!comp || !comp.output) return;
+        
+        const visElement = document.getElementById(`output-${compName.replace(/\s+/g, '-')}`);
+        if (!visElement) return;
+        
+        switch(comp.output) {
+            case 'led':
+                updateLEDVisual(visElement, simulationActive);
+                break;
+            case 'buzzer':
+                updateBuzzerVisual(visElement, simulationActive);
+                break;
+            case 'servo':
+                updateServoVisual(visElement, simulationActive);
+                break;
+            case 'motor':
+                updateMotorVisual(visElement, simulationActive);
+                break;
+            case 'relay':
+                updateRelayVisual(visElement, simulationActive);
+                break;
+            case 'fan':
+                updateFanVisual(visElement, simulationActive);
+                break;
+        }
+    });
+}
+
+function resetOutputVisuals() {
+    document.querySelectorAll('[id^="output-"]').forEach(el => {
+        el.className = el.className.replace(/simulating|active|on/g, '').trim();
+        el.style.animation = 'none';
+        el.textContent = '⭕ OFF';
+    });
+}
+
+// --- Output Visualizer Functions ---
+function updateLEDVisual(element, active) {
+    if (active) {
+        element.classList.add('simulating', 'led-glow');
+        element.style.animation = 'ledPulse 1s infinite';
+        element.textContent = '💡 ON';
+    } else {
+        element.classList.remove('simulating', 'led-glow');
+        element.style.animation = 'none';
+        element.textContent = '⭕ OFF';
+    }
+}
+
+function updateBuzzerVisual(element, active) {
+    if (active) {
+        element.classList.add('simulating', 'buzzer-active');
+        element.style.animation = 'buzzerWave 0.5s infinite';
+        element.textContent = '🔊 ON';
+    } else {
+        element.classList.remove('simulating', 'buzzer-active');
+        element.style.animation = 'none';
+        element.textContent = '⭕ OFF';
+    }
+}
+
+function updateServoVisual(element, active) {
+    if (active) {
+        element.classList.add('simulating', 'servo-moving');
+        element.style.animation = 'servoSweep 2s ease-in-out infinite';
+        element.textContent = '⚙️ ON';
+    } else {
+        element.classList.remove('simulating', 'servo-moving');
+        element.style.animation = 'none';
+        element.textContent = '⭕ OFF';
+    }
+}
+
+function updateMotorVisual(element, active) {
+    if (active) {
+        element.classList.add('simulating', 'motor-spinning');
+        element.style.animation = 'motorSpin 0.5s linear infinite';
+        element.textContent = '🔄 ON';
+    } else {
+        element.classList.remove('simulating', 'motor-spinning');
+        element.style.animation = 'none';
+        element.textContent = '⭕ OFF';
+    }
+}
+
+function updateRelayVisual(element, active) {
+    if (active) {
+        element.classList.add('simulating', 'relay-on');
+        element.textContent = '🔌 ON';
+    } else {
+        element.classList.remove('simulating', 'relay-on');
+        element.textContent = '⭕ OFF';
+    }
+}
+
+function updateFanVisual(element, active) {
+    if (active) {
+        element.classList.add('simulating', 'fan-spinning');
+        element.style.animation = 'fanSpin 0.6s linear infinite';
+        element.textContent = '🌀 ON';
+    } else {
+        element.classList.remove('simulating', 'fan-spinning');
+        element.style.animation = 'none';
+        element.textContent = '⭕ OFF';
+    }
+}
+
+function getOutputIcon(outputType) {
+    const icons = {
+        'led': '💡',
+        'buzzer': '🔊',
+        'servo': '⚙️',
+        'motor': '🔄',
+        'relay': '🔌',
+        'fan': '🌀'
+    };
+    return icons[outputType] || '';
+}
 
 // --- Populate selects ---
 function populateMcuSelect() {
@@ -1400,7 +1586,7 @@ function applyTemplate(i) {
     showToast('Template loaded: ' + tp.name + ' — press Generate Source Code!');
 }
 
-// --- Mini Project Ideas: 35 projek pelajar, dipetakan kepada komponen database ---
+// --- Mini Project Ideas: 69 projek pelajar, dipetakan kepada komponen database ---
 const UNO = 'Arduino Uno R3 (Original & Compatible)';
 const ESP32D = 'ESP32 DevKit V1 (DOIT)';
 const MINI_PROJECTS = [
@@ -1409,36 +1595,64 @@ const MINI_PROJECTS = [
     ['Automatic Car Gate', 'Medium', UNO, ['HC-SR04 Ultrasonic Sensor', 'Servo MG996R']],
     ['Smart Dustbin', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'Servo SG90']],
     ['Smart Door (RFID)', 'Medium', UNO, ['RFID RC522 Module', 'Servo SG90', 'Buzzer (Active)']],
-    ['Early TCAS (Collision Warning)', 'Medium', ESP32D, ['HC-SR04 Ultrasonic Sensor', 'MPU-6050 Gyro + Accelerometer']],
+    ['Early TCAS using Ultrasonic Sensor and IMU', 'Medium', ESP32D, ['HC-SR04 Ultrasonic Sensor', 'MPU-6050 Gyro + Accelerometer']],
     ['Automatic Night Light', 'Easy', UNO, ['LDR Light Sensor Module', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
     ['Laser Tripwire Alarm', 'Easy', UNO, ['LDR Light Sensor Module', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
     ['Smart Plant Watering System', 'Medium', UNO, ['Soil Moisture Sensor', 'Relay Module 1 Channel (5V)']],
-    ['Meeting Room AutoSync System', 'Medium', ESP32D, ['RTC DS3231', 'OLED 0.96" SSD1306 (I2C)', 'WiFi Web Client (HTTP)']],
-    ['Light Sensor + RFID Access', 'Medium', UNO, ['RFID RC522 Module', 'LDR Light Sensor Module', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
-    ['Soil Moisture Monitor', 'Easy', UNO, ['Soil Moisture Sensor', 'LCD 16x2 with I2C Adapter']],
+    ['MeetingRoom AutoSync System', 'Medium', ESP32D, ['RTC DS3231', 'OLED 0.96" SSD1306 (I2C)', 'WiFi Web Client (HTTP)']],
+    ['Manual Light Sensor RFID', 'Medium', UNO, ['RFID RC522 Module', 'LDR Light Sensor Module', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Soil Moisture Sensor Monitor', 'Easy', UNO, ['Soil Moisture Sensor', 'LCD 16x2 with I2C Adapter']],
     ['Digital LED Hourglass', 'Medium', UNO, ['MPU-6050 Gyro + Accelerometer', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
-    ['Fire Detection & Alert System', 'Easy', UNO, ['Flame Sensor Module', 'MQ-2 Gas Sensor', 'Buzzer (Active)']],
+    ['Fire Detection and Alert System', 'Easy', UNO, ['Flame Sensor Module', 'MQ-2 Gas Sensor', 'Buzzer (Active)']],
     ['Smart Medicine Reminder', 'Medium', UNO, ['RTC DS3231', 'Buzzer (Active)', 'LCD 16x2 with I2C Adapter']],
     ['Smart Home Lighting System', 'Easy', UNO, ['HC-SR501 PIR Motion Sensor', 'Relay Module 1 Channel (5V)', 'LDR Light Sensor Module']],
     ['Smart Clothes Dryer', 'Medium', UNO, ['DHT11 Temperature & Humidity Sensor', 'L298N Motor Driver']],
     ['Loud Noise Detector', 'Easy', UNO, ['KY-037 Microphone Sound Sensor', 'LED 5mm (Red/Green/Blue/Yellow/White)', 'Buzzer (Active)']],
-    ['Auto Feed System (Pet/Chicken)', 'Medium', UNO, ['Servo MG996R', 'RTC DS3231']],
-    ['Smart Street Light + Motion', 'Easy', UNO, ['HC-SR501 PIR Motion Sensor', 'LDR Light Sensor Module', 'Relay Module 1 Channel (5V)']],
-    ['Sound Activated Room Fan', 'Easy', UNO, ['KY-038 Sound Detection Sensor', 'L298N Motor Driver']],
-    ['Tank Overflow Alarm', 'Easy', UNO, ['JSN-SR04T Ultrasonic (Waterproof)', 'Buzzer (Active)']],
-    ['Smart Parking Slot Detector', 'Easy', ESP32D, ['HC-SR04 Ultrasonic Sensor', 'IR Sensor Module (TCRT5000)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
-    ['Expression Candy Dispenser', 'Medium', 'Maker Uno (Cytron)', ['OLED 0.96" SSD1306 (I2C)', 'Servo SG90']],
+    ['Autofeed System', 'Medium', UNO, ['Servo MG996R', 'RTC DS3231']],
+    ['Smart Street Light with Motion Sensor System', 'Easy', UNO, ['HC-SR501 PIR Motion Sensor', 'LDR Light Sensor Module', 'Relay Module 1 Channel (5V)']],
+    ['Sound Activated Room Fan', 'Easy', UNO, ['KY-037 Microphone Sound Sensor', 'Relay Module 1 Channel (5V)']],
+    ['Tank Overflow Alarm', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Smart Slot Parking Detector', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'LED 5mm (Red/Green/Blue/Yellow/White)', 'Servo SG90']],
+    ['Astroface Expression Candy', 'Medium', ESP32D, ['OLED 0.96" SSD1306 (I2C)', 'MPU-6050 Gyro + Accelerometer']],
     ['Bluetooth Car', 'Medium', UNO, ['HC-05 Bluetooth Module', 'L298N Motor Driver']],
-    ['Library Book Borrowing System', 'Medium', ESP32D, ['RFID RC522 Module', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Smart Library Book Borrowing System', 'Medium', ESP32D, ['RFID RC522 Module', 'OLED 0.96" SSD1306 (I2C)']],
     ['Smart Mailbox Notification', 'Easy', ESP32D, ['Hall Effect Sensor (A3144)', 'WiFi Web Client (HTTP)']],
-    ['Auto Hand Sanitizer Dispenser', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'Servo SG90']],
+    ['Automatic Hand Sanitizer Dispenser', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'Servo SG90']],
     ['Smart Blind Stick', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'Buzzer (Active)', 'MQ-2 Gas Sensor']],
-    ['Gas Leakage Detection & Alert', 'Easy', ESP32D, ['MQ-2 Gas Sensor', 'Buzzer (Active)', 'WiFi Web Client (HTTP)']],
+    ['Smart Gas Leakage Detection and Alert System', 'Easy', ESP32D, ['MQ-2 Gas Sensor', 'Buzzer (Active)', 'WiFi Web Client (HTTP)']],
     ['Interactive Electronic Dice', 'Medium', UNO, ['MPU-6050 Gyro + Accelerometer', '8x8 LED Matrix']],
     ['Anti-Theft Backpack Alarm', 'Easy', UNO, ['Hall Effect Sensor (A3144)', 'Buzzer (Active)']],
-    ['Classroom Noise Monitor', 'Easy', UNO, ['KY-037 Microphone Sound Sensor', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Smart Classroom Noise Monitor', 'Easy', UNO, ['KY-037 Microphone Sound Sensor', 'OLED 0.96" SSD1306 (I2C)']],
     ['Smart USB Cable Tester', 'Easy', 'Maker Uno (Cytron)', ['LED 5mm (Red/Green/Blue/Yellow/White)', 'Buzzer (Active)']],
-    ['Mini Temperature Warning System', 'Easy', UNO, ['DHT11 Temperature & Humidity Sensor', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)']]
+    ['Mini Temperature Warning System', 'Easy', UNO, ['DHT11 Temperature & Humidity Sensor', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    // Additional 34 new projects
+    ['Weather Station Advanced', 'Medium', ESP32D, ['DHT22 Temperature & Humidity Sensor', 'BMP280 Barometric Pressure Sensor', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Smart Home Hub', 'Medium', UNO, ['Relay Module 4 Channel (5V)', 'HC-SR501 PIR Motion Sensor', 'DHT11 Temperature & Humidity Sensor', 'Buzzer (Active)']],
+    ['Obstacle Avoidance Robot', 'Medium', UNO, ['L298N Motor Driver', 'IR Sensor Module (TCRT5000)', 'HC-SR04 Ultrasonic Sensor']],
+    ['IoT Temperature Monitor', 'Medium', ESP32D, ['WiFi Web Client (HTTP)', 'DHT11 Temperature & Humidity Sensor', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Beginner LED Blink', 'Easy', UNO, ['LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Smart Garden System', 'Medium', ESP32D, ['Soil Moisture Sensor', 'DHT22 Temperature & Humidity Sensor', 'Relay Module 1 Channel (5V)', 'WiFi Web Client (HTTP)']],
+    ['Automatic Door Opener', 'Medium', UNO, ['HC-SR04 Ultrasonic Sensor', 'Servo MG996R', 'L298N Motor Driver']],
+    ['Smart Thermostat', 'Medium', UNO, ['DHT22 Temperature & Humidity Sensor', 'Relay Module 2 Channel (5V)', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Security Alarm System', 'Medium', UNO, ['HC-SR501 PIR Motion Sensor', 'RFID RC522 Module', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Water Level Controller', 'Medium', UNO, ['HC-SR04 Ultrasonic Sensor', 'Relay Module 2 Channel (5V)', 'LCD 16x2 with I2C Adapter']],
+    ['Smart Fan Controller', 'Easy', UNO, ['DHT11 Temperature & Humidity Sensor', 'L298N Motor Driver']],
+    ['Automatic Curtain System', 'Medium', UNO, ['LDR Light Sensor Module', 'Servo MG996R', 'RTC DS3231']],
+    ['Smart Lock System', 'Medium', ESP32D, ['RFID RC522 Module', 'Servo MG996R', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Plant Health Monitor', 'Medium', ESP32D, ['Soil Moisture Sensor', 'DHT22 Temperature & Humidity Sensor', 'TDS Sensor', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Motion Activated Camera', 'Medium', ESP32D, ['HC-SR501 PIR Motion Sensor', 'WiFi Web Client (HTTP)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Smart Garage Door', 'Medium', UNO, ['HC-SR04 Ultrasonic Sensor', 'Servo MG996R', 'RFID RC522 Module', 'Buzzer (Active)']],
+    ['Automatic Pet Feeder', 'Medium', UNO, ['RTC DS3231', 'Servo MG996R', 'LCD 16x2 with I2C Adapter']],
+    ['Smart Lighting Controller', 'Easy', UNO, ['LDR Light Sensor Module', 'Relay Module 4 Channel (5V)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Noise Activated Alert', 'Easy', UNO, ['KY-037 Microphone Sound Sensor', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Ultrasonic Distance Alert', 'Easy', UNO, ['HC-SR04 Ultrasonic Sensor', 'Buzzer (Active)', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Smart Relay Timer', 'Medium', UNO, ['RTC DS3231', 'Relay Module 2 Channel (5V)', 'LCD 16x2 with I2C Adapter']],
+    ['Wireless Sensor Node', 'Medium', ESP32D, ['DHT11 Temperature & Humidity Sensor', 'HC-SR501 PIR Motion Sensor', 'WiFi Web Client (HTTP)']],
+    ['Motor Speed Controller', 'Medium', UNO, ['L298N Motor Driver', 'OLED 0.96" SSD1306 (I2C)']],
+    ['Smart Switch Board', 'Medium', UNO, ['Relay Module 4 Channel (5V)', 'RFID RC522 Module', 'LCD 16x2 with I2C Adapter']],
+    ['Automatic Night Light Plus', 'Easy', UNO, ['LDR Light Sensor Module', 'HC-SR501 PIR Motion Sensor', 'LED 5mm (Red/Green/Blue/Yellow/White)']],
+    ['Environment Monitor', 'Medium', ESP32D, ['DHT22 Temperature & Humidity Sensor', 'MQ-2 Gas Sensor', 'OLED 0.96" SSD1306 (I2C)', 'WiFi Web Client (HTTP)']],
+    ['Smart Doorbell System', 'Medium', UNO, ['RFID RC522 Module', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)', 'OLED 0.96" SSD1306 (I2C)']]
 ];
 let projectLevelFilter = 'all';
 
@@ -1595,6 +1809,13 @@ function buyChip(label) {
 const INPUT_ONLY_PINS = {
     esp32: ['D34', 'D35', 'VP', 'VN']
 };
+
+// Cari pin digital bebas dari wiring table (untuk codegen bila komponen tiada pin signal)
+function allocFreeDig(w, fam) {
+    const taken = new Set(w.rows.map(r => String(r.mcu)));
+    const free = fam.dig.find(p => !taken.has(p));
+    return free || fam.dig[0];
+}
 
 // Penjelasan "Why?" — hanya berdasarkan data yang digunakan oleh allocator
 function explainPin(pin, target, c, fam, compName) {
@@ -1999,9 +2220,14 @@ function renderHelper() {
     document.getElementById('vis-comps').innerHTML = helperComps.map(n => {
         const c = COMP_INDEX[n] || { p: [] };
         const pins = (c.k === 'passive') ? ['—'] : (c.p.length ? c.p : ['📶']);
+        const outputId = c.output ? `output-${n.replace(/\s+/g, '-')}` : '';
+        const outputIcon = c.output ? getOutputIcon(c.output) : '';
+        const outputIndicator = c.output ? `<div id="${outputId}" class="output-indicator">⭕ OFF</div>` : '';
+        
         return '<div class="board-visual" style="max-width:340px;">' +
-            '<h3 style="font-size:0.82rem;">' + esc(n) + '</h3>' +
+            '<h3 style="font-size:0.82rem;">' + esc(n) + ' ' + outputIcon + '</h3>' +
             '<div class="pins-grid">' + pins.map(p => '<span class="pin-node highlight">' + esc(p) + '</span>').join('') + '</div>' +
+            outputIndicator +
             '</div>';
     }).join('');
 
@@ -2167,17 +2393,36 @@ function generateCode() {
             defines += '#define ' + id + '_PIN ' + (pin === 'N/A' ? 'A0' : pin) + '\n';
             loop += '  int raw' + count + ' = analogRead(' + id + '_PIN);\n  Serial.print("' + name.replace(/"/g, '') + ' raw: "); Serial.println(raw' + count + ');\n  delay(300);\n';
         } else if (c.k === 'dout') {
-            const sigPin = c.p.find(p => !/^(VCC|GND|5V|3V|\+|-|Anode|Cathode)/i.test(p)) || c.p[0];
-            const pin = P(rowFor(sigPin));
+            // Cari pin signal sebenar; jika tiada (cth. hanya +/-), alloc pin digital bebas — jangan guna '+' sebagai nama pin
+            const sigPin = c.p.find(p => !/^(VCC|GND|5V|3V|\+|-|−|Anode|Cathode)/i.test(p));
+            let pin;
+            if (sigPin) {
+                pin = P(rowFor(sigPin));
+            } else {
+                const alt = w.rows.find(r => r.comp === name && !/^(VCC|GND|5V|3V|\+|-|−|IN \+|IN -)/i.test(r.pin) && r.mcu !== 'N/A');
+                pin = alt ? P(alt.mcu) : P(allocFreeDig(w, fam));
+            }
+            if (pin === '+' || pin === '-' || pin === 'N/A') pin = P(allocFreeDig(w, fam));
             defines += '#define ' + id + '_PIN ' + pin + '\n';
             setup += '  pinMode(' + id + '_PIN, OUTPUT);\n';
-            loop += '  digitalWrite(' + id + '_PIN, HIGH); delay(1000);\n  digitalWrite(' + id + '_PIN, LOW); delay(1000);\n';
+            // Enhanced code for output components with simulation comments
+            if (c.output === 'led') {
+                loop += '  // LED simulation - blinks every second\n  digitalWrite(' + id + '_PIN, HIGH); delay(1000);\n  digitalWrite(' + id + '_PIN, LOW); delay(1000);\n';
+            } else if (c.output === 'buzzer') {
+                loop += '  // Buzzer simulation - pulses every second\n  digitalWrite(' + id + '_PIN, HIGH); delay(200);\n  digitalWrite(' + id + '_PIN, LOW); delay(800);\n';
+            } else {
+                loop += '  digitalWrite(' + id + '_PIN, HIGH); delay(1000);\n  digitalWrite(' + id + '_PIN, LOW); delay(1000);\n';
+            }
         } else if (c.k === 'servo') {
             const pin = P(rowFor('SIG'));
             includes += '#include <Servo.h>\n';
             defines += '#define ' + id + '_PIN ' + pin + '\nServo servo' + count + ';\n';
             setup += '  servo' + count + '.attach(' + id + '_PIN);\n';
-            loop += '  servo' + count + '.write(0); delay(1000);\n  servo' + count + '.write(180); delay(1000);\n';
+            if (c.output === 'servo') {
+                loop += '  // Servo simulation - sweeps between 0-180 degrees\n  servo' + count + '.write(0); delay(1000);\n  servo' + count + '.write(180); delay(1000);\n';
+            } else {
+                loop += '  servo' + count + '.write(0); delay(1000);\n  servo' + count + '.write(180); delay(1000);\n';
+            }
         } else if (c.k === 'stepper4') {
             const pins = ['IN1', 'IN2', 'IN3', 'IN4'].map(pn => P(rowFor(pn)));
             includes += '#include <Stepper.h>\n';
@@ -2190,15 +2435,42 @@ function generateCode() {
             setup += '  pinMode(' + id + '_STEP, OUTPUT);\n  pinMode(' + id + '_DIR, OUTPUT);\n';
             loop += '  digitalWrite(' + id + '_DIR, HIGH);\n  for (int i = 0; i < 200; i++) { digitalWrite(' + id + '_STEP, HIGH); delayMicroseconds(1000); digitalWrite(' + id + '_STEP, LOW); delayMicroseconds(1000); }\n  delay(500);\n';
         } else if (c.k === 'motor') {
-            const i1 = P(rowFor('IN1') || 'N/A'), i2 = P(rowFor('IN2') || 'N/A'), en = P(rowFor(c.p.find(p => /^EN|PWM/i.test(p))) || 'N/A');
-            defines += '#define ' + id + '_IN1 ' + (i1 === 'N/A' ? P(w.fam.dig[0]) : i1) + '\n#define ' + id + '_IN2 ' + (i2 === 'N/A' ? P(w.fam.dig[1]) : i2) + '\n#define ' + id + '_EN ' + (en === 'N/A' ? P(w.fam.dig[2]) : en) + '\n';
-            setup += '  pinMode(' + id + '_IN1, OUTPUT); pinMode(' + id + '_IN2, OUTPUT); pinMode(' + id + '_EN, OUTPUT);\n';
-            loop += '  digitalWrite(' + id + '_IN1, HIGH); digitalWrite(' + id + '_IN2, LOW); analogWrite(' + id + '_EN, 200); delay(2000);\n  digitalWrite(' + id + '_IN1, LOW); digitalWrite(' + id + '_IN2, LOW); delay(500);\n';
+            // Handle simple 2-pin motors (like fans) vs complex motor drivers
+            if (c.p.length === 2 && (c.p[0] === '+' && c.p[1] === '-')) {
+                // Simple motor (fan, etc.) - single pin control
+                const pin = P(rowFor('+') || 'N/A');
+                defines += '#define ' + id + '_PIN ' + (pin === 'N/A' ? P(w.fam.dig[0]) : pin) + '\n';
+                setup += '  pinMode(' + id + '_PIN, OUTPUT);\n';
+                if (c.output === 'fan') {
+                    loop += '  // Fan simulation - runs for 3 seconds, stops for 2 seconds\n  analogWrite(' + id + '_PIN, 200); delay(3000);\n  analogWrite(' + id + '_PIN, 0); delay(2000);\n';
+                } else {
+                    loop += '  // Motor simulation - runs for 2 seconds, stops for 1 second\n  analogWrite(' + id + '_PIN, 200); delay(2000);\n  analogWrite(' + id + '_PIN, 0); delay(1000);\n';
+                }
+            } else {
+                // Complex motor driver (L298N, etc.)
+                const i1 = P(rowFor('IN1') || 'N/A'), i2 = P(rowFor('IN2') || 'N/A'), en = P(rowFor(c.p.find(p => /^EN|PWM/i.test(p))) || 'N/A');
+                defines += '#define ' + id + '_IN1 ' + (i1 === 'N/A' ? P(w.fam.dig[0]) : i1) + '\n#define ' + id + '_IN2 ' + (i2 === 'N/A' ? P(w.fam.dig[1]) : i2) + '\n#define ' + id + '_EN ' + (en === 'N/A' ? P(w.fam.dig[2]) : en) + '\n';
+                setup += '  pinMode(' + id + '_IN1, OUTPUT); pinMode(' + id + '_IN2, OUTPUT); pinMode(' + id + '_EN, OUTPUT);\n';
+                loop += '  // Motor driver simulation - runs forward for 2 seconds\n  digitalWrite(' + id + '_IN1, HIGH); digitalWrite(' + id + '_IN2, LOW); analogWrite(' + id + '_EN, 200); delay(2000);\n  digitalWrite(' + id + '_IN1, LOW); digitalWrite(' + id + '_IN2, LOW); delay(500);\n';
+            }
+        } else if (c.k === 'multi2') {
+            const in1 = P(rowFor('IN1')), in2 = P(rowFor('IN2'));
+            defines += '#define ' + id + '_IN1 ' + in1 + '\n#define ' + id + '_IN2 ' + in2 + '\n';
+            setup += '  pinMode(' + id + '_IN1, OUTPUT); pinMode(' + id + '_IN2, OUTPUT);\n';
+            if (c.output === 'relay') {
+                loop += '  // Relay simulation - switches channels alternately\n  digitalWrite(' + id + '_IN1, HIGH); digitalWrite(' + id + '_IN2, LOW); delay(2000);\n  digitalWrite(' + id + '_IN1, LOW); digitalWrite(' + id + '_IN2, HIGH); delay(2000);\n  digitalWrite(' + id + '_IN1, LOW); digitalWrite(' + id + '_IN2, LOW); delay(1000);\n';
+            } else {
+                loop += '  digitalWrite(' + id + '_IN1, HIGH); delay(1000);\n  digitalWrite(' + id + '_IN1, LOW); delay(1000);\n';
+            }
         } else if (c.k === 'rgb') {
             const r = P(rowFor('R')), g = P(rowFor('G')), b = P(rowFor('B'));
             defines += '#define ' + id + '_R ' + r + '\n#define ' + id + '_G ' + g + '\n#define ' + id + '_B ' + b + '\n';
             setup += '  pinMode(' + id + '_R, OUTPUT); pinMode(' + id + '_G, OUTPUT); pinMode(' + id + '_B, OUTPUT);\n';
-            loop += '  analogWrite(' + id + '_R, 255); delay(500); analogWrite(' + id + '_R, 0);\n  analogWrite(' + id + '_G, 255); delay(500); analogWrite(' + id + '_G, 0);\n  analogWrite(' + id + '_B, 255); delay(500); analogWrite(' + id + '_B, 0);\n';
+            if (c.output === 'led') {
+                loop += '  // RGB LED simulation - cycles through colors\n  analogWrite(' + id + '_R, 255); delay(500); analogWrite(' + id + '_R, 0);\n  analogWrite(' + id + '_G, 255); delay(500); analogWrite(' + id + '_G, 0);\n  analogWrite(' + id + '_B, 255); delay(500); analogWrite(' + id + '_B, 0);\n';
+            } else {
+                loop += '  analogWrite(' + id + '_R, 255); delay(500); analogWrite(' + id + '_R, 0);\n  analogWrite(' + id + '_G, 255); delay(500); analogWrite(' + id + '_G, 0);\n  analogWrite(' + id + '_B, 255); delay(500); analogWrite(' + id + '_B, 0);\n';
+            }
         } else if (c.k === 'i2c') {
             defines += '// ' + name + ' on I2C: SDA=' + fam.i2c[0] + ', SCL=' + fam.i2c[1] + '\n';
             includes += '#include <Wire.h>\n';
@@ -2240,10 +2512,29 @@ function generateCode() {
 
     let code = '// Generated by Pieware 2 — MCU: ' + helperMcu + '\n';
     if (helperBreadboard) code += '// Breadboard mode: power rails used for VCC/GND distribution\n';
+    
+    // Add output simulation comments
+    const outputComps = helperComps.filter(n => COMP_INDEX[n] && COMP_INDEX[n].output);
+    if (outputComps.length) {
+        code += '// === OUTPUT SIMULATION ===\n';
+        outputComps.forEach(n => {
+            const comp = COMP_INDEX[n];
+            if (comp && comp.output) {
+                const outputType = comp.output.toUpperCase();
+                code += '// OUTPUT: ' + n + ' - ' + outputType + ' simulation active\n';
+            }
+        });
+        code += '// Use Helper\'s "Start Simulation" button to visualize output behavior\n\n';
+    }
+    
     code += (includes ? includes + '\n' : '') + defines + '\nvoid setup() {\n  Serial.begin(115200);\n' + setup + '}\n\nvoid loop() {\n' + loop + '}\n';
     if (notes.length) code += '\n/* NOTES:\n' + notes.map(n => '   - ' + n).join('\n') + '\n*/';
 
-    document.getElementById('code-explanation').textContent = 'Generated for ' + helperMcu + ' with ' + count + ' active component(s)' + (helperBreadboard ? ' using a breadboard' : '') + '. Pin assignments follow the wiring table in the Helper tab.';
+    let explanation = 'Generated for ' + helperMcu + ' with ' + count + ' active component(s)' + (helperBreadboard ? ' using a breadboard' : '') + '. Pin assignments follow the wiring table in the Helper tab.';
+    if (outputComps.length) {
+        explanation += ' Output simulation comments included for ' + outputComps.length + ' component(s). Use Helper\'s "Start Simulation" button to visualize output behavior.';
+    }
+    document.getElementById('code-explanation').textContent = explanation;
     document.getElementById('code-block').textContent = code;
     document.getElementById('code-output').classList.remove('hidden');
     document.getElementById('code-empty').classList.add('hidden');

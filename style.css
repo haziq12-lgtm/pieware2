@@ -1009,6 +1009,130 @@ main {
 *::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.6); }
 
 /* ===================================================================
+           OUTPUT SIMULATION ANIMATIONS
+           =================================================================== */
+
+/* LED Animation */
+@keyframes ledPulse {
+    0%, 100% { 
+        opacity: 1; 
+        box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7; 
+        box-shadow: 0 0 15px currentColor, 0 0 30px currentColor;
+        transform: scale(1.05);
+    }
+}
+
+/* Buzzer Animation */
+@keyframes buzzerWave {
+    0%, 100% { 
+        transform: scale(1) translateX(0);
+    }
+    25% { 
+        transform: scale(1.1) translateX(-2px);
+    }
+    75% { 
+        transform: scale(1.1) translateX(2px);
+    }
+}
+
+/* Servo Animation */
+@keyframes servoSweep {
+    0%, 100% { 
+        transform: rotate(-45deg);
+    }
+    50% { 
+        transform: rotate(45deg);
+    }
+}
+
+/* Motor Animation */
+@keyframes motorSpin {
+    from { 
+        transform: rotate(0deg);
+    }
+    to { 
+        transform: rotate(360deg);
+    }
+}
+
+/* Fan Animation */
+@keyframes fanSpin {
+    from { 
+        transform: rotate(0deg);
+    }
+    to { 
+        transform: rotate(360deg);
+    }
+}
+
+/* Output Indicator Styles */
+.output-indicator {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-glass);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.3s ease;
+    color: var(--text-muted);
+}
+
+.output-indicator.simulating {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: var(--secondary);
+}
+
+.output-indicator.relay-on {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: var(--secondary);
+    color: var(--secondary);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+/* LED Glow Effect */
+.led-glow {
+    color: #FFD700;
+    text-shadow: 0 0 10px #FFD700, 0 0 20px #FFA500;
+}
+
+/* Buzzer Active State */
+.buzzer-active {
+    color: #FF6B6B;
+    animation: buzzerWave 0.3s infinite;
+}
+
+/* Servo Moving State */
+.servo-moving {
+    transition: transform 0.5s ease-in-out;
+    display: inline-block;
+}
+
+/* Motor Spinning State */
+.motor-spinning {
+    display: inline-block;
+    animation: motorSpin 0.8s linear infinite;
+}
+
+/* Fan Spinning State */
+.fan-spinning {
+    display: inline-block;
+    animation: fanSpin 0.6s linear infinite;
+}
+
+/* Simulation active state for component cards */
+.board-visual.simulating {
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+/* ===================================================================
    RESPONSIVE REFINEMENTS — desktop sederhana & mobile
    =================================================================== */
 /* Skrin sederhana (900-1249px): nav pill lebih padat supaya tak wrap */

@@ -184,7 +184,7 @@
     <!-- ==================== MINI PROJECT IDEAS ==================== -->
     <div class="card" style="margin-top: var(--space-2xl);">
         <h3 style="margin-bottom: 0.4rem;">🚀 Mini Project Ideas</h3>
-        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">35 beginner-friendly projects — each mapped to components in our database. Press <strong>Load in Helper</strong> to get wiring + code instantly.</p>
+        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">69 beginner-friendly projects — each mapped to components in our database. Press <strong>Load in Helper</strong> to get wiring + code instantly.</p>
         <input type="text" id="mini-search" class="form-control" placeholder="Search projects... (e.g. rain, RFID, smart)" oninput="renderMiniProjects(this.value)" style="margin-bottom: var(--space-md);">
         <div id="mini-level-chips" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);">
             <button data-level="all" onclick="setProjectLevel('all')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--gold); background:rgba(212,175,55,0.15); color:var(--gold-light);">All</button>
@@ -270,6 +270,7 @@
                 <div id="wiring-warning" class="alert alert-warning hidden" style="margin-bottom:0;"></div>
                 <div style="display:flex; gap:0.5rem; margin-top: var(--space-md); flex-wrap:wrap;">
                     <button class="btn btn-secondary" style="flex:1;" onclick="navToCodeFromHelper()">Generate Source Code</button>
+                    <button class="btn btn-gold btn-sm" style="flex:1;" onclick="toggleSimulation()" id="sim-btn">▶️ Start Simulation</button>
                     <button class="btn btn-outline btn-sm" onclick="copyWiring()" title="Copy wiring instructions as text">📋 Copy Wiring</button>
                     <button class="btn btn-outline btn-sm" onclick="shareProject()" title="Copy shareable project link">📤 Share</button>
                     <button class="btn btn-outline btn-sm" onclick="exportBOM()" title="Download Bill of Materials as CSV">📦 BOM</button>
