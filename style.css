@@ -1182,3 +1182,13 @@ main {
 /* Teks panjang (nama komponen) tak melimpah */
 .pin-node, .search-result-item span, #active-comps span, select.form-control option { overflow-wrap: anywhere; }
 .wiring-table td:last-child { white-space: nowrap; }
+/* Pin override dropdown (wiring table) */
+.pin-select {
+    background: var(--bg-surface); color: var(--text-main);
+    border: 1px solid var(--border-glass); border-radius: 5px;
+    font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600;
+    padding: 0.15rem 0.3rem; cursor: pointer; max-width: 110px;
+    transition: border-color 0.2s;
+}
+.pin-select:hover { border-color: var(--gold); }
+.pin-select.pin-ov { border-color: var(--gold); color: var(--gold-light); background: rgba(212, 175, 55, 0.08); }

@@ -1265,6 +1265,7 @@ let helperMcu = '';
 let helperComps = [];   // max 5
 let helperBreadboard = false;
 let helperWifiOnly = false;
+let pinOverrides = {};  // key 'comp::pin' → pin pilihan pengguna (auto-alloc dipulih bila dibuang)
 
 // --- Output Simulation State ---
 let simulationActive = false;
@@ -1484,6 +1485,7 @@ function onMcuChange() {
     compSel.disabled = !helperMcu;
     document.getElementById('btn-add-comp').disabled = !helperMcu;
     helperComps = [];
+    pinOverrides = {}; // pin family berbeza — override tidak lagi sah
     renderHelper();
 }
 
@@ -1743,6 +1745,14 @@ function closeGuide() {
     document.getElementById('guide-modal').classList.remove('active');
 }
 
+function setPinOverride(sel) {
+    const comp = sel.dataset.comp, pin = sel.dataset.pin, val = sel.value;
+    const key = comp + '::' + pin;
+    if (val === '__auto__') delete pinOverrides[key];
+    else pinOverrides[key] = val;
+    renderHelper();
+}
+
 function toggleWhy(i) {
     const el = document.getElementById('why-' + i);
     if (el) el.classList.toggle('hidden');
@@ -1777,6 +1787,7 @@ function addComponent() {
 
 function removeHelperComp(name) {
     helperComps = helperComps.filter(c => c !== name);
+    Object.keys(pinOverrides).forEach(k => { if (k.split('::')[0] === name) delete pinOverrides[k]; });
     renderHelper();
 }
 
@@ -1894,6 +1905,23 @@ function buildWiring() {
     const rows = [], steps = [], warnings = [];
     let spiCsUsed = false; // CS pertama guna pin default family, berikutnya alloc baru
 
+    // Bus & UART pins direserve dahulu — override tidak boleh ambil pin ini
+    [fam.spi.MOSI, fam.spi.MISO, fam.spi.SCK].forEach(p => used.add(p));
+    fam.i2c.forEach(p => used.add(p));
+    fam.uart.forEach(p => used.add(p));
+
+    // Pin override pengguna direserve awal supaya allocator tak beri pada orang lain
+    const applied = {};
+    Object.keys(pinOverrides).forEach(k => {
+        const [comp, pin] = k.split('::');
+        const want = pinOverrides[k];
+        if (!helperComps.includes(comp) || !COMP_INDEX[comp] || !COMP_INDEX[comp].p.includes(pin)) return; // komponen dah dibuang
+        if (!fam.dig.includes(want) && !fam.ana.includes(want)) return; // hanya pin GPIO/ADC sahaja
+        if (Object.values(applied).includes(want)) return; // pin sudah diambil override lain
+        applied[k] = want;
+    });
+    Object.values(applied).forEach(p => used.add(p));
+
     function alloc(list, needOutput) {
         for (const p of list) {
             if (used.has(p)) continue;
@@ -1934,6 +1962,7 @@ function buildWiring() {
             const isPureInput = /OUT|DO|AO|ECHO|IRQ|INT/i.test(pin) || c.k === 'din' || c.k === 'ana';
             const needOutput = !isPureInput;
             let target;
+            let allocd = false; // boleh override oleh pengguna?
             if (/^(VCC|5V|3V|3V3|VDD|VSS|VSYS|\+|IN \+)$/i.test(pin)) target = vccTarget();
             else if (/^(GND|VSS|−|-|IN -)$/i.test(pin)) target = gndTarget();
             else if (pin === 'SDA') target = helperBreadboard ? 'Breadboard SDA row → ' + fam.i2c[0] : fam.i2c[0];
@@ -1948,9 +1977,13 @@ function buildWiring() {
             }
             else if (/^(TX|TXD)$/i.test(pin)) target = fam.uart[1];
             else if (/^(RX|RXD)$/i.test(pin)) target = fam.uart[0];
-            else if (c.k === 'ana' && fam.ana.length) target = alloc(fam.ana, needOutput);
-            else target = alloc(fam.dig, needOutput);
-            rows.push({ comp: name, pin, mcu: target, why: explainPin(pin, target, c, fam, name) });
+            else if (c.k === 'ana' && fam.ana.length) { target = alloc(fam.ana, needOutput); allocd = true; }
+            else { target = alloc(fam.dig, needOutput); allocd = true; }
+            // Sapukan override pengguna (hanya untuk pin yang di-alloc)
+            const ovKey = name + '::' + pin;
+            const def = target;
+            if (allocd && applied[ovKey]) target = applied[ovKey];
+            rows.push({ comp: name, pin, mcu: target, def, elg: allocd, why: explainPin(pin, target, c, fam, name) });
             compSteps.push('Connect ' + name + ' **' + pin + '** → ' + target + (helperBreadboard ? ' (via breadboard)' : ''));
         });
         if (helperBreadboard) steps.push('Connect ' + name + ' to the breadboard (its own row group), then wire rows to the MCU as below.');
@@ -1959,7 +1992,7 @@ function buildWiring() {
         if (fam.v === '3.3V' && /5V/i.test(c.p.join(','))) warnings.push(name + ': this module is 5V-oriented — check level compatibility with your 3.3V ' + helperMcu + '.');
         if (c.v && c.v + 'V' !== fam.v) warnings.push('⚠️ VOLTAGE MISMATCH: ' + name + ' requires ' + c.v + 'V but ' + helperMcu + ' is a ' + fam.v + ' board. Use a level shifter / regulator — direct connection may damage it!');
     });
-    return { fam, rows, steps, warnings };
+    return { fam, rows, steps, warnings, applied };
 }
 
 // ===================================================================
@@ -2270,7 +2303,7 @@ function renderHelper() {
             '</div>';
     }).join('');
 
-    // Mapping table — dengan penjelasan "Why?" boleh expand
+    // Mapping table — override pin (dropdown) + Why? + Guide
     const seenComps = new Set();
     document.getElementById('wiring-tbody').innerHTML = w.rows.map((r, i) => {
         const whyBtn = r.why
@@ -2281,7 +2314,21 @@ function renderHelper() {
             seenComps.add(r.comp);
             guideBtn = ' <button class="why-btn" style="background:rgba(212,175,55,0.15); color:var(--gold-light); border-color:rgba(212,175,55,0.4);" onclick="openGuide(\'' + esc(r.comp).replace(/'/g, "\\'") + '\')">📖 Guide</button>';
         }
-        return '<tr><td style="font-size:0.8rem;">' + esc(r.comp) + '</td><td>' + esc(r.pin) + whyBtn + guideBtn + '</td><td style="color:var(--gold-light); font-weight:700;">' + esc(r.mcu) + '</td></tr>';
+        // Pin override dropdown — hanya untuk pin yang di-alloc (bukan power/bus/UART)
+        let pinCell = esc(r.pin);
+        if (r.elg) {
+            const usedNow = new Set(w.rows.map(x => String(x.mcu)));
+            const opts = [...new Set(w.fam.dig.concat(w.fam.ana))]
+                .filter(p => !usedNow.has(p) || p === r.mcu)
+                .sort((a, b) => (parseInt(a.replace(/\D/g, '')) || 0) - (parseInt(b.replace(/\D/g, '')) || 0) || a.localeCompare(b));
+            const ovKey = r.comp + '::' + r.pin;
+            const isOv = !!pinOverrides[ovKey];
+            pinCell = '<select class="pin-select' + (isOv ? ' pin-ov' : '') + '" onchange="setPinOverride(this)" data-comp="' + esc(r.comp).replace(/"/g, '&quot;') + '" data-pin="' + esc(r.pin).replace(/"/g, '&quot;') + '" title="Change pin assignment">' +
+                '<option value="__auto__"' + (!isOv ? ' selected' : '') + '>Auto' + (r.def !== r.mcu ? ' (' + esc(r.def) + ')' : '') + '</option>' +
+                opts.map(p => '<option value="' + esc(p) + '"' + (p === r.mcu ? ' selected' : '') + '>' + esc(p) + '</option>').join('') +
+                '</select>';
+        }
+        return '<tr><td style="font-size:0.8rem;">' + esc(r.comp) + '</td><td>' + pinCell + whyBtn + guideBtn + '</td><td style="color:var(--gold-light); font-weight:700;">' + esc(r.mcu) + '</td></tr>';
     }).join('');
 
     // Steps
