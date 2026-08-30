@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Pieware 2 | Premium Electronics Hub</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#D4AF37">
+    <meta name="theme-color" content="#38bdf8">
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
     <link rel="apple-touch-icon" href="icons/icon.svg">
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -62,48 +62,91 @@
 <!-- MAIN CONTENT -->
 <main>
 
-<!-- ==================== HOME — BLACK & GOLD WITH LIGHTNING ==================== -->
+<!-- ==================== HOME — SAAS LANDING (redesign-v3) ==================== -->
 <section id="home" class="active">
-    <canvas id="lightning-canvas"></canvas>
     <div class="gold-particles" id="gold-particles"></div>
-    <div class="home-premium-content">
-        <div class="home-pre-label">Welcome to</div>
-            <h1 class="home-pre-title">PIEWARE 2!</h1>
-        <p class="home-pre-sub">Learn, Build & Understand Electronics Easily</p>
-        <p style="font-style:italic; font-size:clamp(0.8rem,1.8vw,0.95rem); color:var(--gold); opacity:0.85; margin-bottom:var(--space-lg);">"From idea to circuit — in one place."</p>
-        <div class="home-pre-actions">
-            <button class="btn btn-gold" onclick="navTo('helper')">Launch Helper</button>
-            <button class="btn btn-outline home-outline-btn" onclick="navTo('shop')">Browse Store</button>
-        </div>
-        <div class="home-pre-features">
-            <div class="home-feat-item" onclick="navTo('helper')">
-                <div class="home-feat-icon">🔌</div>
-                <div class="home-feat-text">Pinout Visualizer</div>
-                <div style="font-size:0.68rem; color:var(--home-feat-text); opacity:0.8; margin-top:0.25rem;">Wiring & validation for 57 boards</div>
-                <div style="font-size:0.68rem; font-weight:800; color:var(--gold); margin-top:0.35rem;">Open →</div>
+    <div class="landing">
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-copy">
+                <div class="hero-badge"><span class="pulse-dot"></span> v2.2.0 · Now with offline mode &amp; 62 project ideas</div>
+                <h1 class="hero-title">From idea to circuit —<br><span class="grad-text">in one place.</span></h1>
+                <p class="hero-sub">Pieware 2 maps wiring for 57 MCU boards, validates your connections, generates ready-to-flash code, and points you to the right components — built for electronics students and makers.</p>
+                <div class="hero-ctas">
+                    <button class="btn btn-grad" onclick="navTo('helper')">🚀 Get Started</button>
+                    <button class="btn btn-ghost" onclick="navTo('shop')">📚 Browse Components</button>
+                </div>
+                <div class="hero-mini-stats">
+                    <span><strong>57</strong> boards</span><span class="dot-sep"></span>
+                    <span><strong>127</strong> components</span><span class="dot-sep"></span>
+                    <span><strong>62</strong> projects</span><span class="dot-sep"></span>
+                    <span><strong>19</strong> guides</span>
+                </div>
             </div>
-            <div class="home-feat-item" onclick="navTo('source')">
-                <div class="home-feat-icon">💻</div>
-                <div class="home-feat-text">Code Generator</div>
-                <div style="font-size:0.68rem; color:var(--home-feat-text); opacity:0.8; margin-top:0.25rem;">Auto-generated, ready to flash</div>
-                <div style="font-size:0.68rem; font-weight:800; color:var(--gold); margin-top:0.35rem;">Open →</div>
-            </div>
-            <div class="home-feat-item" onclick="navTo('shop')">
-                <div class="home-feat-icon">🛒</div>
-                <div class="home-feat-text">Hardware Store</div>
-                <div style="font-size:0.68rem; color:var(--home-feat-text); opacity:0.8; margin-top:0.25rem;">Full Cytron catalog + buy links</div>
-                <div style="font-size:0.68rem; font-weight:800; color:var(--gold); margin-top:0.35rem;">Shop Now →</div>
+            <div class="hero-code">
+                <div class="code-chrome"><span class="c-dot r"></span><span class="c-dot y"></span><span class="c-dot g"></span><span class="c-file">weather_station.ino</span></div>
+                <pre><code id="demo-code"></code></pre>
+                <div class="code-foot"><span>Generated output — 100% real</span><button class="btn btn-grad btn-sm" onclick="loadDemo()">Try in Helper →</button></div>
             </div>
         </div>
-        <div style="max-width:620px; width:100%; margin-top:var(--space-2xl); text-align:left; border:1px solid rgba(212,175,55,0.35); border-radius:var(--radius-lg); background:rgba(0,0,0,0.55); overflow:hidden;" class="home-demo-card">
-            <div style="padding:0.7rem 1rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25);">
-                <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:var(--gold-light);">⚡ LIVE DEMO — ESP32 + DHT11 Sensor</span>
-                <span style="font-size:0.65rem; color:rgba(255,255,255,0.5); font-family:var(--font-mono);">sketch.ino</span>
+
+        <!-- CORE TOOLS -->
+        <div class="tools-grid">
+            <div class="tool-card t-blue" onclick="navTo('helper')">
+                <div class="tool-icon">🔌</div>
+                <h3>Pinout Visualizer</h3>
+                <p>Pick a board, add up to 5 components, and get conflict-free wiring with honest validation and step-by-step explanations.</p>
+                <span class="tool-cta">Open Helper →</span>
             </div>
-            <pre style="margin:0; padding:0.9rem 1rem; font-size:0.68rem; max-height:170px; overflow-y:auto; background:transparent;"><code id="demo-code"></code></pre>
-            <div style="padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(212,175,55,0.25);">
-                <span style="font-size:0.68rem; color:rgba(255,255,255,0.55);">Wiring: VCC→3.3V · DATA→D4 · GND→GND</span>
-                <button class="btn btn-gold btn-sm" style="font-size:0.72rem;" onclick="loadDemo()">Try it in Helper →</button>
+            <div class="tool-card t-green" onclick="navTo('source')">
+                <div class="tool-icon">💻</div>
+                <h3>Code Generator</h3>
+                <p>Production-ready Arduino sketches with your pins, baud and WiFi credentials baked in. Non-blocking millis() by default.</p>
+                <span class="tool-cta">Generate →</span>
+            </div>
+            <div class="tool-card t-cyan" onclick="navTo('shop')">
+                <div class="tool-icon">🛒</div>
+                <h3>Hardware Store</h3>
+                <p>The full Cytron catalog — 127 components mapped to real buy links, with a BOM export for your shopping list.</p>
+                <span class="tool-cta">Shop Now →</span>
+            </div>
+        </div>
+
+        <!-- FEATURE GRID -->
+        <div class="section-head">
+            <h2>Everything a lab session needs</h2>
+            <p>Not just a pinout chart — a complete workflow from idea to flashed board.</p>
+        </div>
+        <div class="feat-grid">
+            <div class="feat-card"><span class="feat-emoji">🛡️</span><h4>Honest Validation</h4><p>Voltage mismatch, UART conflicts, input-only pins and power budgets — flagged 🟢🟡🔴⚪ before you damage hardware.</p></div>
+            <div class="feat-card"><span class="feat-emoji">🎛️</span><h4>Pin Override</h4><p>Don't like the auto-assigned pin? Swap it inline. Conflicts are impossible — free pins only.</p></div>
+            <div class="feat-card"><span class="feat-emoji">📖</span><h4>19 Component Guides</h4><p>Step-by-step installation, starter code, common issues and library names for every popular part.</p></div>
+            <div class="feat-card"><span class="feat-emoji">📐</span><h4>Schematic View</h4><p>Color-coded curved wires drawn from the actual wiring table — power, ground and signal at a glance.</p></div>
+            <div class="feat-card"><span class="feat-emoji">🧮</span><h4>6 Calculators</h4><p>Ohm's law, LED resistors, voltage dividers, RC time constant, filter cutoff, PCB trace width and BJT biasing.</p></div>
+            <div class="feat-card"><span class="feat-emoji">🤖</span><h4>AI-Ready Export</h4><p>Copy a structured prompt with your full project context — ChatGPT continues where Pieware stops.</p></div>
+        </div>
+
+        <!-- PROJECT HUB STRIP -->
+        <div class="section-head">
+            <h2>Learn from the best sources</h2>
+            <p>Curated reference hubs used by makers worldwide.</p>
+        </div>
+        <div class="hub-strip">
+            <a class="hub-card" href="https://projecthub.arduino.cc/" target="_blank" rel="noopener"><span class="hub-emoji">🧪</span><strong>Arduino Project Hub</strong><span class="hub-url">projecthub.arduino.cc</span></a>
+            <a class="hub-card" href="https://randomnerdtutorials.com/" target="_blank" rel="noopener"><span class="hub-emoji">📚</span><strong>Random Nerd Tutorials</strong><span class="hub-url">randomnerdtutorials.com</span></a>
+            <a class="hub-card" href="https://www.hackster.io/" target="_blank" rel="noopener"><span class="hub-emoji">🚀</span><strong>Hackster.io</strong><span class="hub-url">hackster.io</span></a>
+            <a class="hub-card" href="https://www.tinkercad.com/circuits" target="_blank" rel="noopener"><span class="hub-emoji">🖥️</span><strong>Tinkercad Circuits</strong><span class="hub-url">tinkercad.com</span></a>
+        </div>
+        <div class="center-cta"><button class="btn btn-ghost" onclick="navTo('hub')">📂 View all 9 resources</button></div>
+
+        <!-- CTA BAND -->
+        <div class="cta-band">
+            <h2>Ready to build something?</h2>
+            <p>Pick a board, add a sensor, press generate. Your next project is one session away.</p>
+            <div class="hero-ctas center">
+                <button class="btn btn-grad" onclick="navTo('helper')">🚀 Launch Helper</button>
+                <button class="btn btn-ghost" onclick="navTo('feedback')">💬 Give Feedback</button>
             </div>
         </div>
     </div>

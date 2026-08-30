@@ -466,8 +466,8 @@ function startLightning() {
 
         ctx.save();
         ctx.globalAlpha = bolt.alpha;
-        ctx.strokeStyle = '#F5D76E';
-        ctx.shadowColor = '#D4AF37';
+        ctx.strokeStyle = '#7dd3fc';
+        ctx.shadowColor = '#38bdf8';
         ctx.shadowBlur = 25 * bolt.alpha;
         ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
@@ -483,14 +483,14 @@ function startLightning() {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 1;
         ctx.shadowBlur = 40 * bolt.alpha;
-        ctx.shadowColor = '#F5D76E';
+        ctx.shadowColor = '#7dd3fc';
         ctx.beginPath();
         ctx.moveTo(bolt.segments[0].x, bolt.segments[0].y);
         bolt.segments.forEach(p => ctx.lineTo(p.x, p.y));
         ctx.stroke();
 
         // Branches
-        ctx.strokeStyle = '#D4AF37';
+        ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 1.5;
         ctx.shadowBlur = 15 * bolt.alpha;
         bolt.branches.forEach(branch => {
@@ -1905,7 +1905,7 @@ function wireColor(row) {
     const t = String(row.mcu);
     if (/Breadboard \+|VCC|3\.3V|5V|VIN|VDD|VSYS/i.test(t) && !/ECHO|OUT/i.test(row.pin)) return '#e74c3c'; // power merah
     if (/GND|− rail|Breadboard −/i.test(t)) return '#8a93a5'; // ground kelabu
-    return '#D4AF37'; // signal emas
+    return '#38bdf8'; // signal emas
 }
 
 function buildSchematicSVG(w) {
@@ -1959,11 +1959,11 @@ function buildSchematicSVG(w) {
     });
 
     // Blok MCU
-    s += '<rect x="' + mcuX + '" y="10" width="' + mcuW + '" height="' + mcuH + '" rx="10" fill="#111827" stroke="#D4AF37" stroke-width="1.5"/>';
-    s += '<text x="' + (mcuX + mcuW / 2) + '" y="30" fill="#F5D76E" font-size="11" font-weight="700" text-anchor="middle">' + esc(helperMcu).replace(/ \(.*\)/, '') + '</text>';
+    s += '<rect x="' + mcuX + '" y="10" width="' + mcuW + '" height="' + mcuH + '" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>';
+    s += '<text x="' + (mcuX + mcuW / 2) + '" y="30" fill="#7dd3fc" font-size="11" font-weight="700" text-anchor="middle">' + esc(helperMcu).replace(/ \(.*\)/, '') + '</text>';
     mcuTargets.forEach((t, i) => {
         const y = 35 + 25 + i * padH + padH / 2;
-        s += '<circle cx="' + (mcuX + mcuW) + '" cy="' + y + '" r="3" fill="#D4AF37"/>';
+        s += '<circle cx="' + (mcuX + mcuW) + '" cy="' + y + '" r="3" fill="#38bdf8"/>';
         s += '<text x="' + (mcuX + mcuW - 8) + '" y="' + (y + 3.5) + '" fill="#cfd8e3" font-size="10" text-anchor="end">' + esc(String(t)) + '</text>';
     });
 
@@ -1996,7 +1996,7 @@ function buildSchematicSVG(w) {
 
     // Legenda
     s += '<text x="20" y="' + (H - 10) + '" fill="#8a93a5" font-size="10">— power · ' +
-        '<tspan fill="#8a93a5">— ground · </tspan><tspan fill="#D4AF37">— signal</tspan> · generated from actual wiring</text>';
+        '<tspan fill="#8a93a5">— ground · </tspan><tspan fill="#38bdf8">— signal</tspan> · generated from actual wiring</text>';
     s += '</svg>';
     return s;
 }
@@ -3179,12 +3179,12 @@ function renderAdminCharts() {
             datasets: [{
                 label: 'Revenue (RM)',
                 data: salesByDay,
-                borderColor: '#D4AF37',
+                borderColor: '#38bdf8',
                 backgroundColor: 'rgba(212,175,55,0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
-                pointBackgroundColor: '#D4AF37',
+                pointBackgroundColor: '#38bdf8',
                 pointBorderColor: '#000',
                 pointBorderWidth: 2,
                 pointRadius: 5,
@@ -3216,7 +3216,7 @@ function renderAdminCharts() {
     const sortedItems = Object.entries(itemSales).sort((a, b) => b[1] - a[1]).slice(0, 8);
     const pieLabels = sortedItems.map(i => i[0]);
     const pieData = sortedItems.map(i => i[1]);
-    const pieColors = ['#D4AF37', '#F5D76E', '#6366f1', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4'];
+    const pieColors = ['#38bdf8', '#7dd3fc', '#6366f1', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4'];
 
     const ctxPie = document.getElementById('pie-chart').getContext('2d');
     if (pieChart) pieChart.destroy();
