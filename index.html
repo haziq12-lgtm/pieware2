@@ -62,92 +62,83 @@
 <!-- MAIN CONTENT -->
 <main>
 
-<!-- ==================== HOME — SAAS LANDING (redesign-v3) ==================== -->
+<!-- ==================== HOME — NOMU-STYLE LANDING (redesign-v3) ==================== -->
 <section id="home" class="active">
     <div class="gold-particles" id="gold-particles"></div>
-    <div class="landing">
+    <div class="nomu">
 
         <!-- HERO -->
-        <div class="hero">
-            <div class="hero-copy">
-                <div class="hero-badge"><span class="pulse-dot"></span> v2.2.0 · Now with offline mode &amp; 62 project ideas</div>
-                <h1 class="hero-title">From idea to circuit —<br><span class="grad-text">in one place.</span></h1>
-                <p class="hero-sub">Pieware 2 maps wiring for 57 MCU boards, validates your connections, generates ready-to-flash code, and points you to the right components — built for electronics students and makers.</p>
-                <div class="hero-ctas">
-                    <button class="btn btn-grad" onclick="navTo('helper')">🚀 Get Started</button>
-                    <button class="btn btn-ghost" onclick="navTo('shop')">📚 Browse Components</button>
-                </div>
-                <div class="hero-mini-stats">
-                    <span><strong>57</strong> boards</span><span class="dot-sep"></span>
-                    <span><strong>127</strong> components</span><span class="dot-sep"></span>
-                    <span><strong>62</strong> projects</span><span class="dot-sep"></span>
-                    <span><strong>19</strong> guides</span>
+        <div class="n-hero">
+            <div class="n-hero-copy">
+                <div class="n-kicker">PIEWARE 2 — THE ELECTRONICS OS</div>
+                <h1 class="n-title">Your circuit,<br>on autopilot.</h1>
+                <p class="n-sub">Describe the board. Add the sensors. Pieware allocates conflict-free pins, validates every connection and writes the firmware — before you've unpacked your breadboard.</p>
+                <div class="n-ctas">
+                    <button class="btn btn-nomu" onclick="navTo('helper')">START BUILDING →</button>
+                    <button class="btn btn-nomu-ghost" onclick="navTo('shop')">BROWSE COMPONENTS</button>
                 </div>
             </div>
-            <div class="hero-code">
-                <div class="code-chrome"><span class="c-dot r"></span><span class="c-dot y"></span><span class="c-dot g"></span><span class="c-file">weather_station.ino</span></div>
-                <pre><code id="demo-code"></code></pre>
-                <div class="code-foot"><span>Generated output — 100% real</span><button class="btn btn-grad btn-sm" onclick="loadDemo()">Try in Helper →</button></div>
+            <div class="n-agent">
+                <div class="n-agent-head"><span class="n-agent-dot"></span> PIEWARE AGENT — LIVE RUN</div>
+                <ul class="agent-steps">
+                    <li style="animation-delay:0.4s"><span class="ok">✓</span> Board locked: <strong>ESP32 DevKit V1</strong></li>
+                    <li style="animation-delay:1.0s"><span class="ok">✓</span> Components added: <strong>DHT11 + OLED</strong></li>
+                    <li style="animation-delay:1.6s"><span class="ok">✓</span> Validation: <strong>0 errors, 0 warnings</strong></li>
+                    <li style="animation-delay:2.2s"><span class="ok">✓</span> Pins allocated — <strong>zero conflicts</strong></li>
+                    <li style="animation-delay:2.8s"><span class="ok">✓</span> Firmware written: <strong>weather_station.ino</strong></li>
+                    <li class="agent-done" style="animation-delay:3.4s">→ Ready to flash. Elapsed: 3.8s</li>
+                </ul>
+                <div class="n-agent-foot"><span class="cursor-blink">▊</span> autonomous · 127 components indexed</div>
             </div>
         </div>
 
-        <!-- CORE TOOLS -->
-        <div class="tools-grid">
-            <div class="tool-card t-blue" onclick="navTo('helper')">
-                <div class="tool-icon">🔌</div>
-                <h3>Pinout Visualizer</h3>
-                <p>Pick a board, add up to 5 components, and get conflict-free wiring with honest validation and step-by-step explanations.</p>
-                <span class="tool-cta">Open Helper →</span>
-            </div>
-            <div class="tool-card t-green" onclick="navTo('source')">
-                <div class="tool-icon">💻</div>
-                <h3>Code Generator</h3>
-                <p>Production-ready Arduino sketches with your pins, baud and WiFi credentials baked in. Non-blocking millis() by default.</p>
-                <span class="tool-cta">Generate →</span>
-            </div>
-            <div class="tool-card t-cyan" onclick="navTo('shop')">
-                <div class="tool-icon">🛒</div>
-                <h3>Hardware Store</h3>
-                <p>The full Cytron catalog — 127 components mapped to real buy links, with a BOM export for your shopping list.</p>
-                <span class="tool-cta">Shop Now →</span>
+        <!-- TICKER -->
+        <div class="n-ticker">
+            <div class="ticker-label">SOURCES &amp; ECOSYSTEM</div>
+            <div class="ticker-wrap">
+                <div class="ticker-track">
+                    <span>ARDUINO PROJECT HUB</span><i>✦</i><span>HACKSTER.IO</span><i>✦</i><span>RANDOM NERD TUTORIALS</span><i>✦</i><span>ADAFRUIT LEARN</span><i>✦</i><span>SPARKFUN</span><i>✦</i><span>TINKERCAD CIRCUITS</span><i>✦</i><span>INSTRUCTABLES</span><i>✦</i><span>GITHUB</span><i>✦</i><span>CYTRON MALAYSIA</span><i>✦</i>
+                    <span>ARDUINO PROJECT HUB</span><i>✦</i><span>HACKSTER.IO</span><i>✦</i><span>RANDOM NERD TUTORIALS</span><i>✦</i><span>ADAFRUIT LEARN</span><i>✦</i><span>SPARKFUN</span><i>✦</i><span>TINKERCAD CIRCUITS</span><i>✦</i><span>INSTRUCTABLES</span><i>✦</i><span>GITHUB</span><i>✦</i><span>CYTRON MALAYSIA</span><i>✦</i>
+                </div>
             </div>
         </div>
 
-        <!-- FEATURE GRID -->
-        <div class="section-head">
-            <h2>Everything a lab session needs</h2>
-            <p>Not just a pinout chart — a complete workflow from idea to flashed board.</p>
+        <!-- RUN ON PIEWARE -->
+        <div class="n-section-head">
+            <div class="n-kicker">RUN ON PIEWARE</div>
+            <h2>Automation, applied<br>to hardware.</h2>
         </div>
-        <div class="feat-grid">
-            <div class="feat-card"><span class="feat-emoji">🛡️</span><h4>Honest Validation</h4><p>Voltage mismatch, UART conflicts, input-only pins and power budgets — flagged 🟢🟡🔴⚪ before you damage hardware.</p></div>
-            <div class="feat-card"><span class="feat-emoji">🎛️</span><h4>Pin Override</h4><p>Don't like the auto-assigned pin? Swap it inline. Conflicts are impossible — free pins only.</p></div>
-            <div class="feat-card"><span class="feat-emoji">📖</span><h4>19 Component Guides</h4><p>Step-by-step installation, starter code, common issues and library names for every popular part.</p></div>
-            <div class="feat-card"><span class="feat-emoji">📐</span><h4>Schematic View</h4><p>Color-coded curved wires drawn from the actual wiring table — power, ground and signal at a glance.</p></div>
-            <div class="feat-card"><span class="feat-emoji">🧮</span><h4>6 Calculators</h4><p>Ohm's law, LED resistors, voltage dividers, RC time constant, filter cutoff, PCB trace width and BJT biasing.</p></div>
-            <div class="feat-card"><span class="feat-emoji">🤖</span><h4>AI-Ready Export</h4><p>Copy a structured prompt with your full project context — ChatGPT continues where Pieware stops.</p></div>
+        <div class="n-grid4">
+            <div class="n-card"><span class="n-num">01</span><h4>Catalog Intelligence</h4><p>127 components and 57 boards indexed with pin maps, voltage data and verified compatibility rules.</p></div>
+            <div class="n-card"><span class="n-num">02</span><h4>Safety Engine</h4><p>Voltage mismatches, UART collisions, input-only pins and power budgets flagged before anything burns.</p></div>
+            <div class="n-card"><span class="n-num">03</span><h4>Supply On Tap</h4><p>Every part links straight to Cytron. One click exports a BOM your shopping list dreams of.</p></div>
+            <div class="n-card"><span class="n-num">04</span><h4>Zero Install</h4><p>A PWA that lives in your browser and survives dead lab WiFi. Install it like a native app.</p></div>
         </div>
 
-        <!-- PROJECT HUB STRIP -->
-        <div class="section-head">
-            <h2>Learn from the best sources</h2>
-            <p>Curated reference hubs used by makers worldwide.</p>
+        <!-- CAPABILITIES -->
+        <div class="n-section-head">
+            <div class="n-kicker">CAPABILITIES</div>
+            <h2>Built like a tool,<br>not a toy.</h2>
         </div>
-        <div class="hub-strip">
-            <a class="hub-card" href="https://projecthub.arduino.cc/" target="_blank" rel="noopener"><span class="hub-emoji">🧪</span><strong>Arduino Project Hub</strong><span class="hub-url">projecthub.arduino.cc</span></a>
-            <a class="hub-card" href="https://randomnerdtutorials.com/" target="_blank" rel="noopener"><span class="hub-emoji">📚</span><strong>Random Nerd Tutorials</strong><span class="hub-url">randomnerdtutorials.com</span></a>
-            <a class="hub-card" href="https://www.hackster.io/" target="_blank" rel="noopener"><span class="hub-emoji">🚀</span><strong>Hackster.io</strong><span class="hub-url">hackster.io</span></a>
-            <a class="hub-card" href="https://www.tinkercad.com/circuits" target="_blank" rel="noopener"><span class="hub-emoji">🖥️</span><strong>Tinkercad Circuits</strong><span class="hub-url">tinkercad.com</span></a>
+        <div class="n-caps">
+            <div class="n-cap"><div class="n-cap-head">🎛️ Pin Override</div><p>Swap any auto-assigned pin inline. Free pins only — conflicts are impossible by construction.</p></div>
+            <div class="n-cap"><div class="n-cap-head">🤖 AI Handoff</div><p>One click copies a structured prompt — board, pins, validation, code — straight into ChatGPT.</p></div>
+            <div class="n-cap"><div class="n-cap-head">🧩 PlatformIO Export</div><p>Download a ready zip: platformio.ini, src/main.cpp and the exact libraries your build needs.</p></div>
+            <div class="n-cap"><div class="n-cap-head">🔌 Serial Monitor</div><p>Flash your board, then read its output right here in the browser. No IDE required.</p></div>
         </div>
-        <div class="center-cta"><button class="btn btn-ghost" onclick="navTo('hub')">📂 View all 9 resources</button></div>
 
-        <!-- CTA BAND -->
-        <div class="cta-band">
-            <h2>Ready to build something?</h2>
-            <p>Pick a board, add a sensor, press generate. Your next project is one session away.</p>
-            <div class="hero-ctas center">
-                <button class="btn btn-grad" onclick="navTo('helper')">🚀 Launch Helper</button>
-                <button class="btn btn-ghost" onclick="navTo('feedback')">💬 Give Feedback</button>
-            </div>
+        <!-- STATS -->
+        <div class="n-stats">
+            <div><strong>57</strong><span>MCU BOARDS</span></div>
+            <div><strong>127</strong><span>COMPONENTS</span></div>
+            <div><strong>62</strong><span>PROJECT IDEAS</span></div>
+            <div><strong>100%</strong><span>OFFLINE-CAPABLE</span></div>
+        </div>
+
+        <!-- CTA -->
+        <div class="n-cta">
+            <h2>Start your next build.</h2>
+            <button class="btn btn-nomu" onclick="navTo('helper')">OPEN THE HELPER →</button>
         </div>
     </div>
 </section>
