@@ -13,6 +13,7 @@
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script defer src="guides.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
@@ -349,6 +350,7 @@
             <div style="position:absolute; top:0.5rem; right:0.5rem; display:flex; gap:0.35rem; z-index:2;">
                 <button class="copy-btn" style="position:static;" onclick="copyCode()">Copy</button>
                 <button class="copy-btn" style="position:static;" onclick="downloadCode()">Download .ino</button>
+                <button class="copy-btn" style="position:static;" onclick="exportPlatformIO()">🧩 PlatformIO</button>
             </div>
             <pre><code id="code-block"></code></pre>
         </div>
