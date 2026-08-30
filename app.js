@@ -2092,7 +2092,9 @@ void loop() {
 
 function initDemo() {
     const el = document.getElementById('demo-code');
-    if (el) el.textContent = DEMO_SNIPPET;
+    if (!el) return;
+    if (window.hljs) { try { el.innerHTML = hljs.highlight(DEMO_SNIPPET, { language: 'cpp' }).value; return; } catch (e) {} }
+    el.textContent = DEMO_SNIPPET;
 }
 
 function loadDemo() {
@@ -2951,7 +2953,9 @@ function generateCode() {
         explanation += ' Output simulation comments included for ' + outputComps.length + ' component(s). Use Helper\'s "Start Simulation" button to visualize output behavior.';
     }
     document.getElementById('code-explanation').textContent = explanation;
-    document.getElementById('code-block').textContent = code;
+    const cb = document.getElementById('code-block');
+    if (window.hljs) { try { cb.innerHTML = hljs.highlight(code, { language: 'cpp' }).value; } catch (e) { cb.textContent = code; } }
+    else cb.textContent = code;
     document.getElementById('code-output').classList.remove('hidden');
     document.getElementById('code-empty').classList.add('hidden');
 }

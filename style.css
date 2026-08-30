@@ -1384,3 +1384,42 @@ main {
 [data-theme="light"] .n-agent { background: #ffffff; }
 [data-theme="light"] .n-stats div { background: #ffffff; }
 [data-theme="light"] .n-title, [data-theme="light"] .n-section-head h2, [data-theme="light"] .n-cta h2 { color: #0f172a; }
+
+/* ===================================================================
+   PIEWARE 2 BRIEF — split helper, onv marquee, bento, polish
+   =================================================================== */
+/* Helper split-pane */
+.helper-split { display: grid; grid-template-columns: 1fr; gap: var(--space-lg); }
+@media (min-width: 1100px) {
+    .helper-split { grid-template-columns: 390px 1fr; align-items: start; }
+    .helper-left { position: sticky; top: 84px; display: flex; flex-direction: column; }
+    .helper-left .card { margin-bottom: var(--space-md); }
+}
+/* Old vs New marquee */
+.onv { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: var(--space-3xl); }
+.onv-old .ticker-track { animation-duration: 32s; animation-direction: reverse; }
+.onv-old span { text-decoration: line-through; text-decoration-color: rgba(244, 63, 94, 0.7); text-decoration-thickness: 2px; color: var(--text-muted); opacity: 0.65; }
+.onv-new span { color: var(--gold-light); }
+/* Hero code glow grid */
+.hero-code, .n-agent { position: relative; }
+.n-agent::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: 1rem;
+    background-image: linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+}
+/* Calculators bento */
+#calculator .grid-2 { display: grid; grid-template-columns: 1fr; gap: var(--space-lg); }
+@media (min-width: 800px) {
+    #calculator .grid-2 { grid-template-columns: repeat(3, 1fr); }
+    #calculator .grid-2 > .card:first-child { grid-column: 1 / -1; }
+    #calculator .grid-2 > .card:nth-child(4) { grid-column: span 1; }
+}
+#calculator .alert:not(.hidden) { border-color: var(--gold); box-shadow: 0 0 22px rgba(212, 175, 55, 0.14); }
+/* Store drop pricing */
+#shop .product-price { font-size: 1.35rem; letter-spacing: -0.5px; }
+#shop .stock-badge { font-weight: 800; letter-spacing: 0.5px; }
+/* Wiring table pristine */
+.wiring-table td { font-size: 0.8rem; }
+.wiring-table th { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 1px; }

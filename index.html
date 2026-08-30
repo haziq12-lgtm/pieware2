@@ -14,6 +14,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script defer src="guides.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="style.css">
@@ -71,8 +73,8 @@
         <div class="n-hero">
             <div class="n-hero-copy">
                 <div class="n-kicker">PIEWARE 2 — THE ELECTRONICS OS</div>
-                <h1 class="n-title">Your circuit,<br>on autopilot.</h1>
-                <p class="n-sub">Describe the board. Add the sensors. Pieware allocates conflict-free pins, validates every connection and writes the firmware — before you've unpacked your breadboard.</p>
+                <h1 class="n-title">From idea to circuit.<br>On autopilot.</h1>
+                <p class="n-sub">Ditch the datasheet maze and broken wiring. Go from component selection to flash-ready code in seconds.</p>
                 <div class="n-ctas">
                     <button class="btn btn-nomu" onclick="navTo('helper')">START BUILDING →</button>
                     <button class="btn btn-nomu-ghost" onclick="navTo('shop')">BROWSE COMPONENTS</button>
@@ -92,7 +94,25 @@
             </div>
         </div>
 
-        <!-- TICKER -->
+        
+        <!-- OLD WAY vs NEW WAY -->
+        <div class="onv">
+            <div class="ticker-wrap"><div class="ticker-track onv-old">
+                <span><s>✗ Frying boards with 5V-on-3.3V mistakes</s></span><i>/</i>
+                <span><s>✗ Digging through 50-page datasheets</s></span><i>/</i>
+                <span><s>✗ Debugging syntax errors at 2AM</s></span><i>/</i>
+                <span><s>✗ Guessing pin assignments</s></span><i>/</i>
+                <span><s>✗ Losing work to a cleared cache</s></span><i>/</i>
+            </div></div>
+            <div class="ticker-wrap"><div class="ticker-track onv-new">
+                <span>✓ Auto-validated wiring in seconds</span><i>·</i>
+                <span>✓ One-click PlatformIO export</span><i>·</i>
+                <span>✓ AI handoff with full context</span><i>·</i>
+                <span>✓ Pin overrides with zero conflicts</span><i>·</i>
+                <span>✓ Works offline as an installed app</span><i>·</i>
+            </div></div>
+        </div>
+<!-- TICKER -->
         <div class="n-ticker">
             <div class="ticker-label">SOURCES &amp; ECOSYSTEM</div>
             <div class="ticker-wrap">
@@ -240,7 +260,9 @@
     <h2>Hardware Pinout Visualizer</h2>
     <p style="margin-bottom: var(--space-md);">Select your MCU board, add components (up to 5), and get wiring + source code with validation checks.</p>
     <div id="helper-steps" style="display:flex; align-items:center; justify-content:center; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-xl); font-size:0.78rem; font-weight:700;"></div>
-    <div class="card grid-2" style="margin-bottom: var(--space-md);">
+    <div class="helper-split">
+    <div class="helper-left">
+    <div class="card" style="margin-bottom: var(--space-md);">
         <div class="form-group" style="margin-bottom: 0;">
             <label for="mcu-select">1. Select MCU Board</label>
             <select id="mcu-select" class="form-control" onchange="onMcuChange()">
@@ -252,14 +274,14 @@
             </label>
             <div id="mcu-info-chips" style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-top:0.5rem;"></div>
         </div>
-        <div class="form-group" style="margin-bottom: 0;">
+        <div class="form-group" style="margin-bottom: 0; margin-top: var(--space-md);">
             <label for="comp-select">2. Select Component</label>
             <select id="comp-select" class="form-control" onchange="onCompChange()" disabled>
                 <option value="" disabled selected>-- Select MCU First --</option>
             </select>
         </div>
     </div>
-    <div class="card" style="margin-bottom: var(--space-xl); display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap;">
+    <div class="card" style="margin-bottom: var(--space-md); display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap;">
         <button class="btn btn-gold btn-sm" id="btn-add-comp" onclick="addComponent()" disabled>+ Add More Component</button>
         <button class="btn btn-outline btn-sm" onclick="clearAllComps()" id="btn-clear-comps" disabled>🔄 Clear All</button>
         <span id="comp-count" style="font-size:0.78rem; color: var(--text-muted); font-weight:600;">0 / 10 components</span>
@@ -269,7 +291,8 @@
         </label>
     </div>
     <div id="active-comps" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: var(--space-lg);"></div>
-
+    </div>
+    <div class="helper-right">
     <!-- VALIDATION CARD -->
     <div class="card hidden" id="validation-card" style="margin-bottom: var(--space-xl); padding: var(--space-lg);"></div>
     <div id="visualizer-area" class="hidden">
@@ -320,6 +343,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <!-- ==================== MY PROJECTS ==================== -->
