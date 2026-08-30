@@ -161,6 +161,8 @@ function navTo(target) {
     // Admin: load data bila masuk
     if (target === 'admin') loadAdminData();
 
+    // Performance: hentikan simulation bila keluar dari Helper
+    if (target !== 'helper' && typeof stopOutputSimulation === 'function') stopOutputSimulation();
     // Lightning: hanya aktif di home
     if (target === 'home') { startLightning(); } else { stopLightning(); }
 }
@@ -3215,7 +3217,10 @@ function calculateRC() {
 // ===================================================================
 // ADMIN PANEL
 // ===================================================================
+let adminListenerAttached = false;
 function loadAdminData() {
+    if (adminListenerAttached) { renderAdminProducts(); return; } // cegah listener berlipat kali
+    adminListenerAttached = true;
     db.ref('orders').on('value', snap => {
         allOrders = snap.val() || {};
         renderAdminStats();

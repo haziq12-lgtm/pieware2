@@ -1719,8 +1719,7 @@ html, body { overflow-x: hidden !important; }
 }
 @keyframes goldshine { from { background-position: 200% 0; } to { background-position: -100% 0; } }
 /* Glow pulse lembut pada tajuk */
-.is-title { text-shadow: 0 0 40px rgba(212, 175, 55, 0.25); animation: titleGlow 4s ease-in-out 1s infinite; }
-@keyframes titleGlow { 0%, 100% { text-shadow: 0 0 40px rgba(212, 175, 55, 0.2); } 50% { text-shadow: 0 0 60px rgba(212, 175, 55, 0.4); } }
+.is-title { text-shadow: 0 0 40px rgba(212, 175, 55, 0.25); } /* glow statik — animasi text-shadow mahal dibuang */
 /* Typewriter caret */
 #hero-sub.typing::after { content: '▊'; color: var(--secondary); animation: blinkC 1s steps(1) infinite; margin-left: 3px; }
 #hero-sub.typed::after { content: ''; }
