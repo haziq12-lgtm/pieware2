@@ -107,6 +107,7 @@ window.addEventListener('load', () => {
     renderMyProjects();
     renderTemplates();
     renderMiniProjects('');
+    restoreCodeParams();
     // URL params (share link) diutamakan; jika tiada, pulihkan auto-save
     if (!loadFromURL()) restoreHelperState();
     initDemo();
@@ -2420,6 +2421,37 @@ function navToCodeFromHelper() {
     navTo('source');
 }
 
+// ===================================================================
+// CODE PARAMETERS — baud / interval / WiFi credentials
+// ===================================================================
+function getCodeParams() {
+    const p = {
+        baud: parseInt(document.getElementById('cp-baud') ? document.getElementById('cp-baud').value : 115200) || 115200,
+        interval: parseInt(document.getElementById('cp-interval') ? document.getElementById('cp-interval').value : 1000) || 1000,
+        ssid: (document.getElementById('cp-ssid') ? document.getElementById('cp-ssid').value : '').trim(),
+        pass: (document.getElementById('cp-pass') ? document.getElementById('cp-pass').value : '').trim()
+    };
+    if (p.interval < 100) p.interval = 100;
+    if (p.interval > 60000) p.interval = 60000;
+    return p;
+}
+function onParamChange() {
+    const p = getCodeParams();
+    try { localStorage.setItem('pieware_codeparams', JSON.stringify(p)); } catch (e) {}
+    // Jika kod sudah dijana, jana semula dengan parameter baharu
+    if (!document.getElementById('code-output').classList.contains('hidden')) generateCode();
+}
+function restoreCodeParams() {
+    try {
+        const p = JSON.parse(localStorage.getItem('pieware_codeparams') || 'null');
+        if (!p) return;
+        if (p.baud) document.getElementById('cp-baud').value = p.baud;
+        if (p.interval) document.getElementById('cp-interval').value = p.interval;
+        if (p.ssid) document.getElementById('cp-ssid').value = p.ssid;
+        if (p.pass) document.getElementById('cp-pass').value = p.pass;
+    } catch (e) {}
+}
+
 function generateCode() {
     const w = buildWiring();
     if (!w) return showToast(t('Please select an MCU and component first'));
@@ -2620,6 +2652,21 @@ function generateCode() {
     }
     
     code += (includes ? includes + '\n' : '') + defines + '\nvoid setup() {\n  Serial.begin(115200);\n' + setup + '}\n\nvoid loop() {\n' + loop + '}\n';
+
+    // === Code parameters (Prioriti 1.2) — terap dari panel ===
+    const cp = getCodeParams();
+    code = code.replace(/Serial\.begin\(115200\)/g, 'Serial.begin(' + cp.baud + ')');
+    if (cp.interval >= 100) {
+        // Ganti delay kadar-baca biasa dengan READ_INTERVAL (delayMicroseconds & WiFi poll 10s dikecualikan)
+        const before = code;
+        code = code.replace(/delay\((1000|2000|500|300)\);/g, 'delay(READ_INTERVAL);');
+        if (code !== before) {
+            code = code.replace('void setup() {', '#define READ_INTERVAL ' + cp.interval + '  // ms between sensor reads (set in Pieware 2)\n\nvoid setup() {');
+        }
+    }
+    if (cp.ssid) code = code.replace(/YOUR_WIFI_NAME/g, cp.ssid.replace(/"/g, '\\"'));
+    if (cp.pass) code = code.replace(/YOUR_WIFI_PASSWORD/g, cp.pass.replace(/"/g, '\\"'));
+
     if (notes.length) code += '\n/* NOTES:\n' + notes.map(n => '   - ' + n).join('\n') + '\n*/';
 
     let explanation = 'Generated for ' + helperMcu + ' with ' + count + ' active component(s)' + (helperBreadboard ? ' using a breadboard' : '') + '. Pin assignments follow the wiring table in the Helper tab.';

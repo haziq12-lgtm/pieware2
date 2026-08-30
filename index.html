@@ -315,6 +315,34 @@
     <h2>Source Code</h2>
     <p style="margin-bottom: var(--space-xl);">Source code generated from your Helper selections — pick an MCU and components in the Helper tab, then press "Generate Source Code".</p>
     <button class="btn btn-outline btn-sm" style="margin-bottom: var(--space-xl);" onclick="navTo('helper')">⬅ Back to Helper</button>
+    <div class="card" id="code-params" style="margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom: 0.4rem;">⚙️ Code Parameters</h3>
+        <p style="font-size:0.78rem; margin-bottom: var(--space-md);">Tweak these before generating — your values are injected straight into the code (saved in this browser).</p>
+        <div class="grid-4">
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Serial Baud</label>
+                <select id="cp-baud" class="form-control" onchange="onParamChange()">
+                    <option>9600</option>
+                    <option>19200</option>
+                    <option>38400</option>
+                    <option>57600</option>
+                    <option selected>115200</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Read Interval (ms)</label>
+                <input type="number" id="cp-interval" class="form-control" value="1000" min="100" max="60000" step="100" onchange="onParamChange()">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>WiFi SSID (optional)</label>
+                <input type="text" id="cp-ssid" class="form-control" placeholder="MyHomeWiFi" onchange="onParamChange()">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>WiFi Password</label>
+                <input type="password" id="cp-pass" class="form-control" placeholder="••••••••" onchange="onParamChange()">
+            </div>
+        </div>
+    </div>
     <div id="code-output" class="hidden">
         <div class="alert alert-info" id="code-explanation"></div>
         <div class="code-container">
