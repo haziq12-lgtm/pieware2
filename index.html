@@ -240,6 +240,7 @@
     <div class="card hidden" id="validation-card" style="margin-bottom: var(--space-xl); padding: var(--space-lg);"></div>
     <div id="visualizer-area" class="hidden">
         <div class="alert alert-info" id="helper-msg"></div>
+        <div id="schematic-area" class="hidden" style="margin-bottom: var(--space-xl); border:1px solid var(--border-glass); border-radius:var(--radius-lg); background:var(--bg-base); padding:var(--space-md); overflow-x:auto;"></div>
         <div id="power-estimate" class="hidden" style="padding:0.7rem 0.9rem; margin-bottom: var(--space-lg); background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.35); border-radius:var(--radius-md); font-size:0.82rem; font-family:var(--font-mono);"></div>
         <div id="buy-suggest" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; padding:0.7rem 0.9rem; margin-bottom: var(--space-lg); background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:var(--radius-md); font-size:0.82rem;"></div>
         <div class="visualizer-workspace">
@@ -276,6 +277,7 @@
                 <div id="wiring-warning" class="alert alert-warning hidden" style="margin-bottom:0;"></div>
                 <div style="display:flex; gap:0.5rem; margin-top: var(--space-md); flex-wrap:wrap;">
                     <button class="btn btn-secondary" style="flex:1;" onclick="navToCodeFromHelper()">Generate Source Code</button>
+                    <button class="btn btn-outline btn-sm" onclick="toggleSchematic()" id="sch-btn">📐 Schematic</button>
                     <button class="btn btn-gold btn-sm" style="flex:1;" onclick="toggleSimulation()" id="sim-btn">▶️ Start Simulation</button>
                     <button class="btn btn-outline btn-sm" onclick="copyWiring()" title="Copy wiring instructions as text">📋 Copy Wiring</button>
                     <button class="btn btn-outline btn-sm" onclick="shareProject()" title="Copy shareable project link">📤 Share</button>
