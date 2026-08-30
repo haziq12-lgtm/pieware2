@@ -25,10 +25,10 @@ db.ref('.info/connected').on('value', snap => {
     const txt = document.getElementById('fb-status-text');
     if (fbOnline) {
         dot.className = 'fb-dot online';
-        txt.textContent = 'Connected';
+        txt.textContent = 'SIGNAL ACTIVE';
     } else {
         dot.className = 'fb-dot';
-        txt.textContent = 'Offline';
+        txt.textContent = 'SIGNAL LOST';
     }
 });
 
@@ -2592,7 +2592,10 @@ function renderHelper() {
                 opts.map(p => '<option value="' + esc(p) + '"' + (p === r.mcu ? ' selected' : '') + '>' + esc(p) + '</option>').join('') +
                 '</select>';
         }
-        return '<tr><td style="font-size:0.8rem;">' + esc(r.comp) + '</td><td>' + pinCell + whyBtn + guideBtn + '</td><td style="color:var(--gold-light); font-weight:700;">' + esc(r.mcu) + '</td></tr>';
+        const tgt = String(r.mcu);
+        const sigCls = /GND|− rail/i.test(tgt) ? 'sig-gnd' : (/Breadboard \+|VCC|3V|5V|VIN/i.test(tgt) && !/ECHO|OUT|DATA/i.test(r.pin) ? 'sig-pwr' : 'sig-data');
+        const pathCell = '<td class="col-path' + (r.elg ? ' active-path' : '') + '">' + (r.elg ? '====>' : '------>') + '</td>';
+        return '<tr><td style="font-size:0.8rem;">' + esc(r.comp) + '</td><td>' + pinCell + whyBtn + guideBtn + '</td>' + pathCell + '<td class="' + sigCls + '">' + esc(r.mcu) + '</td></tr>';
     }).join('');
 
     // Steps

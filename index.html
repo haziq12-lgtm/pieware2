@@ -36,7 +36,7 @@
     <div class="nav-container">
         <a href="#" class="brand" onclick="navTo('home'); return false;">
             <div class="brand-icon">⚡</div>
-            <span>Pieware 2</span>
+            <span>Pieware 2 <span style="color:var(--text-muted); font-family:var(--font-mono); font-size:0.7em; font-weight:600;">:: COMMAND</span></span>
         </a>
         <button class="hamburger" aria-label="Toggle Menu" onclick="toggleMenu()" id="hamburger-btn">☰</button>
         <ul class="nav-links" id="nav-links">
@@ -72,8 +72,8 @@
         <!-- HERO -->
         <div class="n-hero">
             <div class="n-hero-copy">
-                <div class="n-kicker">PIEWARE 2 — THE ELECTRONICS OS</div>
-                <h1 class="n-title">From idea to circuit.<br>On autopilot.</h1>
+                <div class="n-kicker">PIEWARE 2 :: COMMAND CENTER</div>
+                <h1 class="n-title">Hardware Engineering.<br>Driven by Signal.</h1>
                 <p class="n-sub">Ditch the datasheet maze and broken wiring. Go from component selection to flash-ready code in seconds.</p>
                 <div class="n-ctas">
                     <button class="btn btn-nomu" onclick="navTo('helper')">START BUILDING →</button>
@@ -257,8 +257,10 @@
 
 <!-- ==================== HELPER ==================== -->
 <section id="helper">
-    <h2>Hardware Pinout Visualizer</h2>
-    <p style="margin-bottom: var(--space-md);">Select your MCU board, add components (up to 5), and get wiring + source code with validation checks.</p>
+    <div class="signal-header">
+        <h2><span class="neon-dot"></span> HARDWARE HELPER :: <span class="dim">SIGNAL MATRIX</span></h2>
+        <p class="sys-status">SYS_READY // AWAITING COMPONENT INPUT</p>
+    </div>
     <div id="helper-steps" style="display:flex; align-items:center; justify-content:center; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-xl); font-size:0.78rem; font-weight:700;"></div>
     <div class="helper-split">
     <div class="helper-left">
@@ -323,7 +325,7 @@
                 <h3>Connection Mapping Table</h3>
                 <div class="table-scroll-wrap">
                     <table class="wiring-table">
-                        <thead><tr><th>Component</th><th>Component Pin</th><th>MCU Pin / Breadboard</th></tr></thead>
+                        <thead><tr><th>PERIPHERAL</th><th>PIN</th><th>PATH</th><th>MCU TARGET</th></tr></thead>
                         <tbody id="wiring-tbody"></tbody>
                     </table>
                 </div>
