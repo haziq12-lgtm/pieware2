@@ -2068,6 +2068,161 @@ function populateCommSelects() {
     }
     renderCommChips();
 }
+function openGuide(name) {
+    const g = (typeof COMPONENT_GUIDES !== 'undefined') && COMPONENT_GUIDES[name];
+    if (!g) return showToast('No guide available for this component yet');
+    const box = document.getElementById('guide-box');
+    const sec = (title, body) => '<div style="margin-bottom: var(--space-md);"><div style="font-weight:800; font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:0.4rem;">' + title + '</div>' + body + '</div>';
+    const wiringHtml = '<ol style="padding-left:1.2rem; color:var(--text-muted); font-size:0.85rem; display:flex; flex-direction:column; gap:0.25rem;">' + g.wiring.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol>';
+    const tipsHtml = g.tips ? '<ul style="padding-left:1.2rem; color:var(--text-muted); font-size:0.82rem; display:flex; flex-direction:column; gap:0.25rem;">' + g.tips.map(s => '<li>💡 ' + esc(s) + '</li>').join('') + '</ul>' : '';
+    const codeHtml = '<div class="code-container" style="max-height:220px; overflow-y:auto;"><pre style="padding:0.8rem; font-size:0.68rem;"><code>' + esc(g.code) + '</code></pre></div>';
+    const issuesHtml = sec('🐛 Common issues', '<div style="display:flex; flex-direction:column; gap:0.4rem;">' + g.issues.map(i =>
+        '<div style="padding:0.5rem 0.7rem; border:1px solid var(--border-glass); border-left:3px solid var(--accent); border-radius:var(--radius-md); font-size:0.8rem;"><div style="font-weight:700;">' + esc(i[0]) + '</div><div style="color:var(--text-muted); font-size:0.75rem; margin-top:0.15rem;">' + esc(i[1]) + '</div></div>'
+    ).join('') + '</div>');
+    box.innerHTML =
+        '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:var(--space-md);">' +
+        '<h3 style="font-size:1.05rem;">📖 ' + esc(name) + '</h3>' +
+        '<button class="icon-btn" onclick="closeGuide()" style="width:34px;height:34px;font-size:0.9rem;flex-shrink:0;">✕</button></div>' +
+        sec('📋 What is it?', '<p style="font-size:0.85rem; color:var(--text-muted);">' + esc(g.what) + '</p>') +
+        sec('🔌 Wiring (step by step)', wiringHtml) +
+        (tipsHtml ? sec('💡 Tips', tipsHtml) : '') +
+        sec('💾 Starter code', codeHtml) +
+        issuesHtml +
+        sec('📚 Library', '<p style="font-size:0.82rem; color:var(--text-muted);">' + esc(g.lib) + '</p>');
+    document.getElementById('guide-modal').classList.add('active');
+}
+function closeGuide() {
+    document.getElementById('guide-modal').classList.remove('active');
+}
+
+function setPinOverride(sel) {
+    const comp = sel.dataset.comp, pin = sel.dataset.pin, val = sel.value;
+    const key = comp + '::' + pin;
+    if (val === '__auto__') delete pinOverrides[key];
+    else pinOverrides[key] = val;
+    renderHelper();
+}
+
+// ===================================================================
+// SCHEMATIC VIEW — lukis wayar SVG dari mapping sebenar
+// ===================================================================
+let schematicOn = false;
+
+function toggleSchematic() {
+    schematicOn = !schematicOn;
+    document.getElementById('sch-btn').textContent = schematicOn ? '📋 2D View' : '📐 Schematic';
+    renderHelper();
+}
+
+function wireColor(row) {
+    const t = String(row.mcu);
+    if (/Breadboard \+|VCC|3\.3V|5V|VIN|VDD|VSYS/i.test(t) && !/ECHO|OUT/i.test(row.pin)) return '#e74c3c'; // power merah
+    if (/GND|− rail|Breadboard −/i.test(t)) return '#8a93a5'; // ground kelabu
+    return '#D4AF37'; // signal emas
+}
+
+function buildSchematicSVG(w) {
+    // Susun row ikut komponen (linear dengan helperComps)
+    const rows = w.rows.filter(r => r.pin !== '—' && r.pin !== '📶');
+    if (!rows.length) return '<p style="color:var(--text-muted);text-align:center;">Nothing to draw — add components.</p>';
+
+    // MCU-side pads: target unik mengikut turutan
+    const mcuTargets = [];
+    const mcuIdx = {};
+    rows.forEach(r => {
+        const t = String(r.mcu);
+        if (!(t in mcuIdx)) { mcuIdx[t] = mcuTargets.length; mcuTargets.push(t); }
+    });
+
+    // Komponen blok kanan
+    const comps = [];
+    helperComps.forEach(n => {
+        const c = COMP_INDEX[n];
+        if (!c || c.k === 'passive' || c.k === 'wifi') return;
+        const cRows = rows.filter(r => r.comp === n);
+        if (cRows.length) comps.push({ name: n, rows: cRows });
+    });
+
+    const padH = 20;
+    const mcuH = mcuTargets.length * padH + 50;
+    const compHs = comps.map(c => c.rows.length * padH + 34);
+    const H = Math.max(mcuH, compHs.reduce((a, b) => a + b + 16, 0)) + 40;
+    const W = 920;
+    const mcuX = 20, mcuW = 190;
+    const compX = 660, compW = 240;
+    const bbX = 370, bbW = 180;
+
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="min-width:680px; width:100%; height:auto; font-family:var(--font-mono);">';
+    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="rgba(0,0,0,0.25)" rx="12"/>';
+
+    // Wayar (lukis dahulu supaya di bawah blok)
+    let mcuY0 = 35;
+    let compY = 35;
+    const compPadY = {}; // comp name -> next pad y
+    comps.forEach(c => { compPadY[c.name] = compY + 30; compY += c.rows.length * padH + 34 + 16; });
+    rows.forEach(r => {
+        const y1 = mcuY0 + 25 + mcuIdx[String(r.mcu)] * padH + padH / 2;
+        const y2 = compPadY[r.comp];
+        compPadY[r.comp] += padH;
+        const col = wireColor(r);
+        const mx = mcuX + mcuW, cx = compX;
+        s += '<path d="M ' + mx + ' ' + y1 + ' C ' + (mx + 120) + ' ' + y1 + ', ' + (cx - 120) + ' ' + y2 + ', ' + cx + ' ' + y2 + '" fill="none" stroke="' + col + '" stroke-width="1.6" opacity="0.85"/>';
+        s += '<circle cx="' + mx + '" cy="' + y1 + '" r="2.5" fill="' + col + '"/>';
+        s += '<circle cx="' + cx + '" cy="' + y2 + '" r="2.5" fill="' + col + '"/>';
+    });
+
+    // Blok MCU
+    s += '<rect x="' + mcuX + '" y="10" width="' + mcuW + '" height="' + mcuH + '" rx="10" fill="#111827" stroke="#D4AF37" stroke-width="1.5"/>';
+    s += '<text x="' + (mcuX + mcuW / 2) + '" y="30" fill="#F5D76E" font-size="11" font-weight="700" text-anchor="middle">' + esc(helperMcu).replace(/ \(.*\)/, '') + '</text>';
+    mcuTargets.forEach((t, i) => {
+        const y = 35 + 25 + i * padH + padH / 2;
+        s += '<circle cx="' + (mcuX + mcuW) + '" cy="' + y + '" r="3" fill="#D4AF37"/>';
+        s += '<text x="' + (mcuX + mcuW - 8) + '" y="' + (y + 3.5) + '" fill="#cfd8e3" font-size="10" text-anchor="end">' + esc(String(t)) + '</text>';
+    });
+
+    // Breadboard tengah (jika aktif)
+    if (helperBreadboard) {
+        const bbH = H - 60;
+        s += '<rect x="' + bbX + '" y="30" width="' + bbW + '" height="' + bbH + '" rx="8" fill="#ece5d3" stroke="#c9b98f" stroke-width="2"/>';
+        s += '<text x="' + (bbX + bbW / 2) + '" y="52" fill="#6b5d33" font-size="11" font-weight="800" text-anchor="middle">🍞 BREADBOARD</text>';
+        s += '<rect x="' + (bbX + 15) + '" y="64" width="' + (bbW - 30) + '" height="9" rx="3" fill="repeating-linear-gradient" stroke="#d64545"/>';
+        s += '<rect x="' + (bbX + 15) + '" y="' + (30 + bbH - 24) + '" width="' + (bbW - 30) + '" height="9" rx="3" stroke="#4567d6"/>';
+        s += '<text x="' + (bbX + bbW / 2) + '" y="' + (H / 2) + '" fill="#8a7d55" font-size="10" text-anchor="middle">+/− rails &amp; rows</text>';
+    } else {
+        s += '<text x="' + (bbX + bbW / 2) + '" y="' + (H / 2) + '" fill="#5d6b80" font-size="11" text-anchor="middle">direct wiring</text>';
+    }
+
+    // Blok komponen
+    let cy = 35;
+    comps.forEach(c => {
+        const h = c.rows.length * padH + 34;
+        s += '<rect x="' + compX + '" y="' + cy + '" width="' + compW + '" height="' + (h - 16) + '" rx="10" fill="#111827" stroke="#6366f1" stroke-width="1.2"/>';
+        s += '<text x="' + (compX + 10) + '" y="' + (cy + 18) + '" fill="#a5b4fc" font-size="10.5" font-weight="700">' + esc(c.name.length > 30 ? c.name.slice(0, 29) + '…' : c.name) + '</text>';
+        c.rows.forEach(r => {
+            const y = compPadY[c.name] + padH / 2; // guna kedudukan wayar
+            compPadY[c.name] += padH;
+            s += '<circle cx="' + compX + '" cy="' + y + '" r="3" fill="' + wireColor(r) + '"/>';
+            s += '<text x="' + (compX + 10) + '" y="' + (y + 3.5) + '" fill="#cfd8e3" font-size="10">' + esc(r.pin) + '</text>';
+        });
+        cy += h + 16;
+    });
+
+    // Legenda
+    s += '<text x="20" y="' + (H - 10) + '" fill="#8a93a5" font-size="10">— power · ' +
+        '<tspan fill="#8a93a5">— ground · </tspan><tspan fill="#D4AF37">— signal</tspan> · generated from actual wiring</text>';
+    s += '</svg>';
+    return s;
+}
+
+function renderSchematic(w) {
+    const area = document.getElementById('schematic-area');
+    if (!area) return;
+    if (!schematicOn || !w) { area.classList.add('hidden'); return; }
+    area.classList.remove('hidden');
+    area.innerHTML = buildSchematicSVG(w) +
+        '<p style="font-size:0.72rem; color:var(--text-muted); margin:0.5rem 0 0;">📐 Schematic regenerated from the wiring table — scroll horizontally on small screens.</p>';
+}
+
 function toggleWhy(i) {
     const el = document.getElementById('why-' + i);
     if (el) el.classList.toggle('hidden');
