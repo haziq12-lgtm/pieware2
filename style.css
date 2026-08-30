@@ -1347,7 +1347,6 @@ main {
 .ticker-track { display: flex; align-items: center; gap: 2.2rem; white-space: nowrap; width: max-content; animation: tick 28s linear infinite; }
 .ticker-track span { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; color: var(--text-muted); }
 .ticker-track i { color: var(--gold); font-style: normal; font-size: 0.6rem; }
-.ticker-track:hover { animation-play-state: paused; }
 @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* Grid 4 — Run on Pieware */
@@ -1618,3 +1617,15 @@ header {
 .is-gh-path { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); opacity: 0.7; margin-bottom: var(--space-xl); }
 [data-theme="light"] .is-card, [data-theme="light"] .is-gauge-card, [data-theme="light"] .is-gh { background: #ffffff; }
 [data-theme="light"] .is-title, [data-theme="light"] .is-h2, [data-theme="light"] .is-gh-title { color: #0f172a; }
+
+/* Centre section headings (fix) */
+.is-sec { text-align: center; margin-left: auto; margin-right: auto; }
+.is-sec .n-kicker { display: block; }
+.is-secsub { margin-left: auto; margin-right: auto; }
+/* Gauge ring lebih kecil */
+.g-ring { width: 92px; height: 92px; }
+.g-ring strong { font-size: 1.7rem; }
+.g-ring span { font-size: 0.52rem; }
+.is-gauge-card { padding: var(--space-md); }
+.is-gauge { margin-bottom: var(--space-sm); }
+.is-gauge-head { margin-bottom: var(--space-sm); }

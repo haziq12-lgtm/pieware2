@@ -25,10 +25,10 @@ db.ref('.info/connected').on('value', snap => {
     const txt = document.getElementById('fb-status-text');
     if (fbOnline) {
         dot.className = 'fb-dot online';
-        txt.textContent = 'SIGNAL ACTIVE';
+        txt.textContent = 'Online';
     } else {
         dot.className = 'fb-dot';
-        txt.textContent = 'SIGNAL LOST';
+        txt.textContent = 'Offline';
     }
 });
 
@@ -151,7 +151,7 @@ function navTo(target) {
     });
 
     currentSection = target;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
 
     // Admin: load data bila masuk
     if (target === 'admin') loadAdminData();
