@@ -300,6 +300,11 @@
             <input type="text" id="proj-name" class="form-control" placeholder="Project name (e.g. Weather Station)" style="flex:1; min-width:180px;" maxlength="40">
             <button class="btn btn-gold btn-sm" onclick="saveMyProject()">💾 Save Current</button>
         </div>
+        <div style="display:flex; gap:0.5rem; margin-bottom: var(--space-md); flex-wrap:wrap; align-items:center;">
+            <span style="font-size:0.72rem; color:var(--text-muted);">☁️ Cloud sync (same browser account):</span>
+            <button class="btn btn-outline btn-sm" style="font-size:0.72rem;" onclick="cloudSaveProjects()">☁️ Save to Cloud</button>
+            <button class="btn btn-outline btn-sm" style="font-size:0.72rem;" onclick="cloudLoadProjects()">⬇️ Load from Cloud</button>
+        </div>
         <div id="my-projects-list"></div>
     </div>
 
@@ -368,6 +373,19 @@
         <div class="empty-state-icon">💻</div>
         <div class="empty-state-title">No code generated yet</div>
         <div class="empty-state-sub">Select an MCU & components in the Helper tab, then press "Generate Source Code".</div>
+    </div>
+
+    <!-- SERIAL MONITOR (Web Serial API - Chrome/Edge desktop) -->
+    <div class="card" style="margin-top: var(--space-2xl);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom: var(--space-md);">
+            <h3 style="margin-bottom:0;">🔌 Serial Monitor</h3>
+            <div style="display:flex; gap:0.5rem;">
+                <button class="btn btn-gold btn-sm" id="serial-btn" onclick="serialToggle()">🔌 Connect Board</button>
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('serial-pane').textContent=''">Clear</button>
+            </div>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom: var(--space-md);">Flash your board first (Arduino IDE / PlatformIO), then connect via USB here. Chrome or Edge on desktop only — baud follows Code Parameters.</p>
+        <pre id="serial-pane" style="max-height:220px; overflow-y:auto; padding:0.8rem; font-size:0.72rem; background:var(--bg-base); border:1px solid var(--border-glass); border-radius:var(--radius-md); margin:0; white-space:pre-wrap;">Waiting for connection…</pre>
     </div>
 </section>
 

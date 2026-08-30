@@ -613,6 +613,35 @@ function deleteMyProject(idx) {
     renderMyProjects();
 }
 
+// --- Cloud sync (Prioriti 4.1): anonymous auth + userProjects/{uid} ---
+function cloudSaveProjects() {
+    const projects = getMyProjects();
+    if (!projects.length) return showToast('No projects to sync — save one first');
+    const user = auth.currentUser;
+    const doSave = u => db.ref('userProjects/' + u.uid).set({ projects: projects, ts: Date.now() }, function(err) {
+        if (err) { showToast('Cloud save failed — check database rules'); console.error(err); return; }
+        showToast('☁️ ' + projects.length + ' project(s) synced to cloud');
+    });
+    if (user) doSave(user);
+    else auth.signInAnonymously().then(res => doSave(res.user)).catch(function(err) {
+        showToast('Cloud sign-in failed — enable Anonymous auth in Firebase');
+        console.error(err);
+    });
+}
+function cloudLoadProjects() {
+    const apply = snap => {
+        const v = snap.val();
+        if (!v || !v.projects || !v.projects.length) return showToast('No cloud projects found');
+        try { localStorage.setItem('pieware_projects', JSON.stringify(v.projects)); } catch (e) {}
+        renderMyProjects();
+        showToast('☁️ ' + v.projects.length + ' project(s) loaded from cloud');
+    };
+    const fail = err => { showToast('Cloud load failed — check rules/auth'); console.error(err); };
+    const user = auth.currentUser;
+    if (user) db.ref('userProjects/' + user.uid).once('value').then(apply).catch(fail);
+    else auth.signInAnonymously().then(res => db.ref('userProjects/' + res.user.uid).once('value').then(apply).catch(fail)).catch(fail);
+}
+
 function renderMyProjects() {
     const list = document.getElementById('my-projects-list');
     if (!list) return;
@@ -946,6 +975,48 @@ function exportPlatformIO() {
         URL.revokeObjectURL(url);
         showToast('🧩 PlatformIO project downloaded — open in VS Code!');
     }).catch(() => showToast('Zip failed — try again'));
+}
+
+// --- Serial Monitor (Prioriti 4.2): Web Serial API ---
+let serialPort = null, serialReader = null, serialKeepReading = false;
+
+async function serialToggle() {
+    if (serialPort) {
+        serialKeepReading = false;
+        try { await serialReader.cancel(); } catch (e) {}
+        try { await serialPort.close(); } catch (e) {}
+        serialPort = null;
+        document.getElementById('serial-btn').textContent = '🔌 Connect Board';
+        return;
+    }
+    if (!('serial' in navigator)) return showToast('Web Serial needs Chrome or Edge on desktop');
+    try {
+        serialPort = await navigator.serial.requestPort();
+        await serialPort.open({ baudRate: getCodeParams().baud });
+        document.getElementById('serial-pane').textContent = '';
+        document.getElementById('serial-btn').textContent = '⏹ Disconnect';
+        serialKeepReading = true;
+        serialReadLoop();
+    } catch (err) {
+        showToast('Serial: ' + (err.message || 'connection cancelled'));
+    }
+}
+async function serialReadLoop() {
+    const decoder = new TextDecoderStream();
+    serialPort.readable.pipeTo(decoder.writable).catch(() => {});
+    serialReader = decoder.readable.getReader();
+    const pane = document.getElementById('serial-pane');
+    try {
+        while (serialKeepReading) {
+            const res = await serialReader.read();
+            if (res.done) break;
+            if (res.value) {
+                pane.textContent += res.value;
+                pane.scrollTop = pane.scrollHeight;
+            }
+        }
+    } catch (e) { /* port closed */ }
+    if (!serialKeepReading) pane.textContent += '\n[disconnected]';
 }
 
 function downloadCode() {
