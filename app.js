@@ -111,6 +111,8 @@ window.addEventListener('load', () => {
     populateCommSelects();
     restoreCodeParams();
     renderLiveStats();
+    heroRandomFont();
+    typeHeroSub();
     // URL params (share link) diutamakan; jika tiada, pulihkan auto-save
     if (!loadFromURL()) restoreHelperState();
     initDemo();
@@ -2150,6 +2152,29 @@ function renderLiveStats() {
     set('stat-comps', Object.keys(COMP_INDEX).length);
     set('stat-projects', MINI_PROJECTS.length);
     set('stat-guides', (typeof COMPONENT_GUIDES !== 'undefined') ? Object.keys(COMPONENT_GUIDES).length : 0);
+}
+
+
+// --- Hero: random font (3 pilihan) + typewriter subline ---
+function heroRandomFont() {
+    const t = document.querySelector('.is-title');
+    if (!t) return;
+    const fonts = ['f-blackops', 'f-alfaslab', 'f-betania'];
+    t.classList.add(fonts[Math.floor(Math.random() * fonts.length)]);
+}
+function typeHeroSub() {
+    const el = document.getElementById('hero-sub');
+    if (!el) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const text = el.getAttribute('data-text') || el.textContent;
+    el.textContent = '';
+    el.classList.add('typing');
+    let i = 0;
+    const iv = setInterval(function() {
+        i++;
+        el.textContent = text.slice(0, i);
+        if (i >= text.length) { clearInterval(iv); el.classList.add('typed'); }
+    }, 26);
 }
 
 function initDemo() {

@@ -1693,3 +1693,37 @@ html, body { overflow-x: hidden !important; }
 .ver-list { display: flex; flex-direction: column; gap: 0.5rem; }
 .ver-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; color: var(--text-muted); padding: 0.45rem 0.6rem; border: 1px solid var(--border-glass); border-radius: var(--radius-md); }
 .ver-tag { font-family: var(--font-mono); font-weight: 700; font-size: 0.72rem; color: var(--gold-light); background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25); padding: 0.15rem 0.5rem; border-radius: var(--radius-full); flex-shrink: 0; }
+
+/* ===================================================================
+   HERO ANIMATIONS + RANDOM FONTS (3 pilihan per visit)
+   =================================================================== */
+.f-blackops { font-family: 'Black Ops One', var(--font-main) !important; font-weight: 400 !important; letter-spacing: 1px; }
+.f-alfaslab { font-family: 'Alfa Slab One', var(--font-main) !important; font-weight: 400 !important; letter-spacing: 0; }
+.f-betania { font-family: 'Betania Patmos', cursive !important; font-weight: 400 !important; letter-spacing: 1px; }
+/* Entrance staggered */
+.is-hero > * { animation: heroUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.is-hero > *:nth-child(1) { animation-delay: 0.05s; }
+.is-hero > *:nth-child(2) { animation-delay: 0.2s; }
+.is-hero > *:nth-child(3) { animation-delay: 0.35s; }
+.is-hero > *:nth-child(4) { animation-delay: 0.5s; }
+.is-hero > *:nth-child(5) { animation-delay: 0.65s; }
+.is-hero > *:nth-child(6) { animation-delay: 0.8s; }
+@keyframes heroUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+/* Shimmer emas pada "2" */
+.is-title .is-grad {
+    background: linear-gradient(90deg, #B8960C, #F5D76E, #fff3c4, #D4AF37, #B8960C);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: goldshine 3.2s linear infinite;
+    display: inline-block;
+}
+@keyframes goldshine { from { background-position: 200% 0; } to { background-position: -100% 0; } }
+/* Glow pulse lembut pada tajuk */
+.is-title { text-shadow: 0 0 40px rgba(212, 175, 55, 0.25); animation: titleGlow 4s ease-in-out 1s infinite; }
+@keyframes titleGlow { 0%, 100% { text-shadow: 0 0 40px rgba(212, 175, 55, 0.2); } 50% { text-shadow: 0 0 60px rgba(212, 175, 55, 0.4); } }
+/* Typewriter caret */
+#hero-sub.typing::after { content: '▊'; color: var(--secondary); animation: blinkC 1s steps(1) infinite; margin-left: 3px; }
+#hero-sub.typed::after { content: ''; }
+@media (prefers-reduced-motion: reduce) {
+    .is-hero > *, .is-title .is-grad, .is-title { animation: none !important; }
+}
