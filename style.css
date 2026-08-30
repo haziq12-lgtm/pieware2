@@ -591,9 +591,11 @@ section { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) fo
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             padding: var(--space-2xl) clamp(1.25rem, 4vw, 3.5rem) var(--space-lg);
         }
-        .footer-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: var(--space-xl); }
-        @media (min-width: 640px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
+        .footer-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+        @media (min-width: 640px) { .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; } }
         .footer-grid span[onclick]:hover { color: var(--gold-light); cursor: pointer; }
+        .footer-grid a { text-decoration: none; }
+        .footer-grid a:hover { color: var(--gold-light); }
 
 /* Why? button (wiring table) */
         .why-btn {
