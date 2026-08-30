@@ -1182,15 +1182,15 @@ const COMPONENT_CATEGORIES = {
     'Sensors': [
         { n: 'DHT11 Temperature & Humidity Sensor', k: 'dht', p: ['VCC', 'DATA', 'GND'], warn: 'Add a 10K pull-up resistor between DATA and VCC for stable readings.' },
         { n: 'DHT22 Temperature & Humidity Sensor', k: 'dht', p: ['VCC', 'DATA', 'GND'], warn: 'Add a 10K pull-up resistor between DATA and VCC.' },
-        { n: 'HC-SR04 Ultrasonic Sensor', k: 'us', p: ['VCC', 'TRIG', 'ECHO', 'GND'], warn: 'On 3.3V MCUs, use a voltage divider (1K/2K) on ECHO.' },
-        { n: 'JSN-SR04T Ultrasonic (Waterproof)', k: 'us', p: ['VCC', 'TRIG', 'ECHO', 'GND'], warn: 'Blind zone ~25cm. Use divider on ECHO for 3.3V MCUs.' },
-        { n: 'HC-SR501 PIR Motion Sensor', k: 'din', p: ['VCC', 'OUT', 'GND'] },
+        { n: 'HC-SR04 Ultrasonic Sensor', k: 'us', p: ['VCC', 'TRIG', 'ECHO', 'GND'], v: '5', warn: 'On 3.3V MCUs, use a voltage divider (1K/2K) on ECHO.' },
+        { n: 'JSN-SR04T Ultrasonic (Waterproof)', k: 'us', p: ['VCC', 'TRIG', 'ECHO', 'GND'], v: '5', warn: 'Blind zone ~25cm. Use divider on ECHO for 3.3V MCUs.' },
+        { n: 'HC-SR501 PIR Motion Sensor', k: 'din', p: ['VCC', 'OUT', 'GND'], v: '5' },
         { n: 'IR Sensor Module (TCRT5000)', k: 'din', p: ['VCC', 'OUT', 'GND'] },
         { n: 'LDR Light Sensor Module', k: 'ana', p: ['VCC', 'AO', 'GND'] },
-        { n: 'MQ-2 Gas Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], warn: 'Allow 24-48h burn-in before trusting readings.' },
-        { n: 'MQ-3 Alcohol Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'] },
-        { n: 'MQ-7 Carbon Monoxide Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'] },
-        { n: 'MQ-135 Air Quality Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'] },
+        { n: 'MQ-2 Gas Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5', warn: 'Allow 24-48h burn-in before trusting readings.' },
+        { n: 'MQ-3 Alcohol Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5' },
+        { n: 'MQ-7 Carbon Monoxide Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5' },
+        { n: 'MQ-135 Air Quality Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5' },
         { n: 'MPU-6050 Gyro + Accelerometer', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'MPU-9250 9-axis Sensor', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'BMP280 Barometric Pressure Sensor', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
@@ -1278,7 +1278,7 @@ const COMPONENT_CATEGORIES = {
         { n: 'CAN Bus MCP2515', k: 'spi', p: ['VCC', 'GND', 'MOSI', 'MISO', 'SCK', 'CS', 'INT'] },
         { n: 'RS485 Module', k: 'uart', p: ['VCC', 'GND', 'DI', 'RO', 'DE', 'RE'] },
         { n: 'SD Card Module', k: 'spi', p: ['VCC', 'GND', 'MOSI', 'MISO', 'SCK', 'CS'], warn: 'Most modules are 5V-tolerant on VCC but logic-level check the signals for 3.3V MCUs.' },
-        { n: 'RTC DS3231', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
+        { n: 'RTC DS3231', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'], v: '3.3' },
         { n: 'RTC DS1307', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] }
     ],
     'Power & Basics': [
@@ -2114,6 +2114,9 @@ function validateProject() {
     if (i2cComps.length > 1) {
         issues.push({ s: 'green', t: i2cComps.length + ' I2C devices share SDA (' + fam.i2c[0] + ') / SCL (' + fam.i2c[1] + ')', d: 'Sharing the I2C bus is correct — devices are distinguished by address. Fix (only if address clash): use an I2C multiplexer or change a module jumper.' });
     }
+    if (i2cComps.length) {
+        issues.push({ s: 'grey', t: 'I2C pull-up reminder', d: 'I2C needs pull-up resistors (~4.7K on SDA & SCL). Most breakout modules include them onboard — bare chips do not. If communication fails, add external 4.7K pull-ups to 3.3V.' });
+    }
 
     // 4c. Safety net: pin input-only terpakai untuk output
     const inOnlySet = new Set(INPUT_ONLY_PINS[mcu.family] || []);
@@ -2834,6 +2837,75 @@ function calculateDivider() {
         <strong>Power:</strong> ${((vin * vin) / (r1 + r2) * 1000).toFixed(2)} mW total
     `;
     if (vout > 3.3) res.innerHTML += '<br>⚠️ Vout exceeds 3.3V — not safe for 3.3V MCU pins!';
+}
+
+function fmtFreq(hz) {
+    if (hz >= 1e6) return (hz / 1e6).toFixed(3) + ' MHz';
+    if (hz >= 1000) return (hz / 1000).toFixed(3) + ' kHz';
+    return hz.toFixed(2) + ' Hz';
+}
+
+function calculateFilter() {
+    const r = parseFloat(document.getElementById('flt-r').value);
+    const cUf = parseFloat(document.getElementById('flt-c').value);
+    const res = document.getElementById('flt-result');
+    res.classList.remove('hidden');
+    if (isNaN(r) || isNaN(cUf) || r <= 0 || cUf <= 0) { res.className = 'alert alert-danger'; res.innerHTML = 'Please enter positive values.'; return; }
+    const fc = 1 / (2 * Math.PI * r * (cUf / 1e6));
+    res.className = 'alert alert-info';
+    res.innerHTML = `
+        <strong>Cutoff frequency (fc):</strong> ${fmtFreq(fc)}<br>
+        Below fc → signal passes (low-pass at -3dB point).<br>
+        Above fc → attenuated at -20 dB/decade (1st order).
+    `;
+}
+
+function calculateTrace() {
+    const i = parseFloat(document.getElementById('pcb-i').value);
+    const dt = parseFloat(document.getElementById('pcb-dt').value);
+    const oz = parseFloat(document.getElementById('pcb-oz').value);
+    const res = document.getElementById('pcb-result');
+    res.classList.remove('hidden');
+    if (isNaN(i) || isNaN(dt) || isNaN(oz) || i <= 0 || dt <= 0) { res.className = 'alert alert-danger'; res.innerHTML = 'Please enter valid values.'; return; }
+    const k = 0.048; // external layer, IPC-2221
+    const areaMil2 = Math.pow(i / (k * Math.pow(dt, 0.44)), 1 / 0.725);
+    const widthMil = areaMil2 / (oz * 1.378);
+    const widthMm = widthMil * 0.0254;
+    res.className = 'alert alert-info';
+    res.innerHTML = `
+        <strong>Min trace width:</strong> ${widthMil.toFixed(1)} mil (${widthMm.toFixed(2)} mm)<br>
+        <strong>Assumptions:</strong> external layer, ${oz} oz copper, ${dt}°C rise (IPC-2221).<br>
+        <span style="font-size:0.75rem;">Add margin for safety — manufacturers recommend ≥1.5× for production.</span>
+    `;
+}
+
+function calculateBJT() {
+    const vcc = parseFloat(document.getElementById('bjt-vcc').value);
+    const beta = parseFloat(document.getElementById('bjt-beta').value) || 100;
+    const r1 = parseFloat(document.getElementById('bjt-r1').value);
+    const r2 = parseFloat(document.getElementById('bjt-r2').value);
+    const rc = parseFloat(document.getElementById('bjt-rc').value);
+    const re = parseFloat(document.getElementById('bjt-re').value);
+    const res = document.getElementById('bjt-result');
+    res.classList.remove('hidden');
+    if ([vcc, beta, r1, r2, rc, re].some(v => isNaN(v) || v <= 0)) { res.className = 'alert alert-danger'; res.innerHTML = 'Please fill all fields with positive values.'; return; }
+    const vb = vcc * r2 / (r1 + r2);
+    const ve = Math.max(0, vb - 0.7);
+    const ie = ve / re;
+    const ic = ie * (beta / (beta + 1)); // ≈ IE
+    const vc = vcc - ic * rc;
+    const vce = vc - ve;
+    res.className = 'alert alert-info';
+    let html = `
+        <strong>VB (base):</strong> ${vb.toFixed(2)} V &nbsp;·&nbsp; <strong>VE (emitter):</strong> ${ve.toFixed(2)} V<br>
+        <strong>IE ≈ IC:</strong> ${(ie * 1000).toFixed(2)} mA<br>
+        <strong>VC (collector):</strong> ${vc.toFixed(2)} V<br>
+        <strong>VCE:</strong> ${vce.toFixed(2)} V<br>
+        <strong>Region:</strong> `;
+    if (vce < 0.2) html += '<span style="color:var(--danger);font-weight:700;">SATURATION</span> — increase Vcc or lower RC/RE.';
+    else if (vce < 1) html += '<span style="color:var(--accent);font-weight:700;">Near saturation</span> — for amplifier use, target VCE ≈ Vcc/2.';
+    else html += '<span style="color:var(--secondary);font-weight:700;">Active region</span>' + (Math.abs(vce - vcc / 2) < vcc * 0.15 ? ' — well-centred Q-point ✅' : ' — for amplifier use, aim VCE ≈ Vcc/2 (adjust RC).');
+    res.innerHTML = html;
 }
 
 function calculateRC() {

@@ -409,6 +409,43 @@
             <button class="btn btn-primary btn-block" onclick="calculateRC()">Calculate</button>
             <div id="rc-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
         </div>
+        <div class="card">
+            <h3>RC Filter Cutoff</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">fc = 1 / (2&pi;RC) &mdash; signals above fc are attenuated (low-pass)</p>
+            <div class="form-group"><label>Resistor R (Ω)</label><input type="number" id="flt-r" class="form-control" value="10000" step="any" inputmode="decimal"></div>
+            <div class="form-group"><label>Capacitor C (µF)</label><input type="number" id="flt-c" class="form-control" value="1" step="any" inputmode="decimal"></div>
+            <button class="btn btn-primary btn-block" onclick="calculateFilter()">Calculate</button>
+            <div id="flt-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
+        <div class="card">
+            <h3>PCB Trace Width</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">IPC-2221 external layer formula</p>
+            <div class="form-group"><label>Current (A)</label><input type="number" id="pcb-i" class="form-control" value="1" step="0.1" inputmode="decimal"></div>
+            <div class="form-group"><label>Temp Rise (&deg;C)</label><input type="number" id="pcb-dt" class="form-control" value="10" step="1" inputmode="numeric"></div>
+            <div class="form-group"><label>Copper Thickness (oz)</label>
+                <select id="pcb-oz" class="form-control">
+                    <option value="1" selected>1 oz (35µm)</option>
+                    <option value="2">2 oz (70µm)</option>
+                    <option value="0.5">0.5 oz (17µm)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="calculateTrace()">Calculate</button>
+            <div id="pcb-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
+        <div class="card">
+            <h3>BJT Voltage-Divider Bias</h3>
+            <p style="font-size: 0.82rem; margin-bottom: var(--space-md);">Fixed bias with emitter resistor &mdash; silicon VBE = 0.7V</p>
+            <div class="grid-2" style="gap: var(--space-sm);">
+                <div class="form-group"><label>Vcc (V)</label><input type="number" id="bjt-vcc" class="form-control" value="12" step="any" inputmode="decimal"></div>
+                <div class="form-group"><label>&beta; (hFE)</label><input type="number" id="bjt-beta" class="form-control" value="100" step="1" inputmode="numeric"></div>
+                <div class="form-group"><label>R1 (Ω)</label><input type="number" id="bjt-r1" class="form-control" value="47000" step="any" inputmode="decimal"></div>
+                <div class="form-group"><label>R2 (Ω)</label><input type="number" id="bjt-r2" class="form-control" value="10000" step="any" inputmode="decimal"></div>
+                <div class="form-group"><label>RC (Ω)</label><input type="number" id="bjt-rc" class="form-control" value="1000" step="any" inputmode="decimal"></div>
+                <div class="form-group"><label>RE (Ω)</label><input type="number" id="bjt-re" class="form-control" value="1000" step="any" inputmode="decimal"></div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="calculateBJT()">Calculate</button>
+            <div id="bjt-result" class="alert alert-info hidden" style="margin-top: var(--space-md); margin-bottom:0;"></div>
+        </div>
     </div>
 </section>
 
