@@ -107,6 +107,8 @@ window.addEventListener('load', () => {
     renderMyProjects();
     renderTemplates();
     renderMiniProjects('');
+    loadCommunity();
+    populateCommSelects();
     restoreCodeParams();
     renderLiveStats();
     // URL params (share link) diutamakan; jika tiada, pulihkan auto-save
@@ -329,6 +331,7 @@ function openSettings() {
 }
 function closeSettings() {
     document.getElementById('settings-modal').classList.remove('active');
+        document.getElementById('view-modal').classList.remove('active');
 }
 function syncSettingsUI() {
     const theme = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -1815,213 +1818,252 @@ const MINI_PROJECTS = [
     ['Smart Doorbell System', 'Medium', UNO, ['RFID RC522 Module', 'Buzzer (Active)', 'LED 5mm (Red/Green/Blue/Yellow/White)', 'OLED 0.96" SSD1306 (I2C)']]
 ];
 let projectLevelFilter = 'all';
+let showAllFlag = false;
+let communityProjects = {};
+let currentProjects = [];
+let commComps = [];
+
+function guessEmoji(name) {
+    const l = (name || '').toLowerCase();
+    const map = [['rain', '🌧️'], ['gate', '🚗'], ['car', '🚗'], ['dustbin', '🗑️'], ['trash', '🗑️'],
+        ['home', '🏠'], ['light', '💡'], ['lamp', '💡'], ['night', '🌙'], ['temp', '🌡️'], ['weather', '🌡️'],
+        ['robot', '🤖'], ['plant', '🌱'], ['water', '💧'], ['irrigation', '🌱'], ['door', '🚪'], ['lock', '🔐'],
+        ['gas', '💨'], ['smoke', '💨'], ['fire', '🔥'], ['mail', '📬'], ['parking', '🅿️'], ['blind', '🦯'],
+        ['dice', '🎲'], ['feed', '🍽️'], ['fan', '🌀'], ['noise', '🎤'], ['sound', '🎤'], ['sanitizer', '🧴'],
+        ['backpack', '🎒'], ['library', '📚'], ['medicine', '💊'], ['candy', '🍬'], ['street', '🏙️'],
+        ['tank', '🛢️'], ['usb', '🔌'], ['camera', '📷'], ['classroom', '🏫'], ['hourglass', '⏳'],
+        ['tcas', '✈️'], ['collision', '✈️'], ['air', '🌫️'], ['security', '🔐'], ['rfid', '💳'],
+        ['iot', '📡'], ['monitor', '📊'], ['tracker', '📍'], ['pet', '🐾'], ['curtain', '🪟'],
+        ['education', '🎓'], ['stem', '🎓'], ['clock', '🕐'], ['timer', '⏱️'], ['counter', '🔢'], ['queue', '🔢']];
+    for (const [k, v] of map) { if (l.includes(k)) return v; }
+    return '🔧';
+}
+
+function getAllProjects() {
+    const builtin = MINI_PROJECTS.map((p, i) => ({ name: p[0], level: p[1], mcu: p[2], comps: p[3], builtin: true, idx: i }));
+    const comm = Object.entries(communityProjects).map(([k, v]) => ({
+        name: v.name, level: v.level || 'Easy', mcu: v.mcu, comps: v.components || [],
+        desc: v.desc || '', emoji: v.emoji || '', builtin: false, key: k
+    }));
+    return builtin.concat(comm);
+}
+
+function levelBadge(l) {
+    const cls = l === 'Easy' ? 'lv-easy' : l === 'Medium' ? 'lv-med' : 'lv-adv';
+    const dot = l === 'Easy' ? '🟢' : l === 'Medium' ? '🟡' : '🔴';
+    return '<span class="lv-badge ' + cls + '">' + dot + ' ' + esc(String(l).toUpperCase()) + '</span>';
+}
 
 function renderMiniProjects(q) {
     const area = document.getElementById('mini-projects-area');
     if (!area) return;
     q = (q || '').toLowerCase().trim();
-    const levelBadge = l => l === 'Easy'
-        ? '<span style="padding:0.15rem 0.5rem; border-radius:var(--radius-full); background:rgba(16,185,129,0.15); color:var(--secondary); font-size:0.65rem; font-weight:800;">EASY</span>'
-        : '<span style="padding:0.15rem 0.5rem; border-radius:var(--radius-full); background:rgba(245,158,11,0.15); color:var(--accent); font-size:0.65rem; font-weight:800;">MEDIUM</span>';
-    const list = MINI_PROJECTS
-        .map((p, i) => ({ p, i }))
-        .filter(({ p }) => (projectLevelFilter === 'all' || p[1] === projectLevelFilter) &&
-            (!q || (p[0] + ' ' + p[3].join(' ')).toLowerCase().includes(q)));
-    area.innerHTML = list.length ? list.map(({ p, i }) =>
-        '<div style="display:flex; align-items:center; gap:0.7rem; padding:0.65rem 0.85rem; border:1px solid var(--border-glass); border-radius:var(--radius-md); margin-bottom:0.5rem; flex-wrap:wrap;">' +
-        '<div style="flex:1; min-width:200px;">' +
-        '<div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; font-size:0.88rem;">' + esc(p[0]) + ' ' + levelBadge(p[1]) + '</div>' +
-        '<div style="font-size:0.72rem; color:var(--text-muted); margin-top:0.15rem;">🖥️ ' + esc(p[2]).replace(/ \(.*\)/, '') + ' · ' + p[3].length + ' component(s): ' + esc(p[3].join(', ')) + '</div>' +
-        '</div>' +
-        '<button class="btn btn-gold btn-sm" style="font-size:0.7rem;" onclick="loadMiniProject(' + i + ')">Load in Helper →</button>' +
-        '</div>'
-    ).join('') : '<p style="color:var(--text-muted); text-align:center; padding:1rem;">No projects match your search.</p>';
+    const all = getAllProjects();
+    currentProjects = all.filter(p =>
+        (projectLevelFilter === 'all' || (projectLevelFilter === 'community' ? !p.builtin : p.level === projectLevelFilter)) &&
+        (!q || ((p.name + ' ' + p.comps.join(' ') + ' ' + p.mcu).toLowerCase().includes(q)))
+    );
+    const shown = showAllFlag ? currentProjects : currentProjects.slice(0, 9);
+    const cnt = document.getElementById('mini-count');
+    if (cnt) cnt.textContent = currentProjects.length;
+    updateHubStats();
+    if (!shown.length) {
+        area.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:1.4rem;">No projects match — try another filter, or contribute yours below! 👇</p>';
+        return;
+    }
+    area.innerHTML = shown.map((p, i) => {
+        const idx = all.indexOf(p);
+        const emoji = p.emoji || guessEmoji(p.name);
+        const mcuShort = String(p.mcu).replace(/ \(.*\)/, '');
+        const compList = p.comps.slice(0, 3).join(', ') + (p.comps.length > 3 ? ' +' + (p.comps.length - 3) : '');
+        const commBadge = p.builtin ? '' : '<span class="lv-badge lv-comm">👥 COMMUNITY</span>';
+        const delBtn = (!p.builtin && isAdmin) ? ' <button class="why-btn" style="color:var(--danger); border-color:rgba(244,63,94,0.4);" onclick="deleteCommunity(\'' + p.key + '\')" title="Admin: remove">🗑</button>' : '';
+        return '<div class="proj-card">' +
+            '<div class="proj-head"><span class="proj-emoji">' + emoji + '</span><div class="proj-names"><strong>' + esc(p.name) + '</strong>' + commBadge + delBtn + '</div>' + levelBadge(p.level) + '</div>' +
+            '<div class="proj-meta">🖥️ ' + esc(mcuShort) + ' · 📦 ' + p.comps.length + ' components: ' + esc(compList) + '</div>' +
+            '<div class="proj-btns"><button class="btn btn-gold btn-sm" onclick="loadMiniProject(' + idx + ')">📋 Load in Helper</button>' +
+            '<button class="btn btn-outline btn-sm" onclick="viewProject(' + idx + ')">📖 View</button></div>' +
+            '</div>';
+    }).join('');
 }
 
 function setProjectLevel(l) {
     projectLevelFilter = l;
+    showAllFlag = false;
     document.querySelectorAll('#mini-level-chips button').forEach(b => {
         const on = b.dataset.level === l;
         b.style.borderColor = on ? 'var(--gold)' : 'var(--border-glass)';
-        b.style.background = on ? 'rgba(212,175,55,0.15)' : 'transparent';
+        b.style.background = on ? 'rgba(0, 240, 255, 0.12)' : 'transparent';
         b.style.color = on ? 'var(--gold-light)' : 'var(--text-muted)';
     });
-    renderMiniProjects(document.getElementById('mini-search').value);
+    renderMiniProjects(document.getElementById('mini-search') ? document.getElementById('mini-search').value : '');
 }
 
-function loadMiniProject(i) {
-    const p = MINI_PROJECTS[i];
-    if (!p) return;
-    const comps = p[3].filter(n => COMP_INDEX[n]).slice(0, MAX_COMPS);
-    document.getElementById('mcu-select').value = MCU_INDEX[p[2]] ? p[2] : '';
-    helperMcu = p[2];
-    helperComps = comps;
+function showAllProjects() {
+    showAllFlag = true;
+    renderMiniProjects(document.getElementById('mini-search').value);
+    const b = document.getElementById('mini-showall');
+    if (b) b.style.display = 'none';
+}
+
+function loadProjectFromObj(p) {
+    if (!MCU_INDEX[p.mcu]) return showToast('MCU not in catalog: ' + p.mcu);
+    document.getElementById('mcu-select').value = p.mcu;
+    helperMcu = p.mcu;
+    helperComps = (p.comps || []).filter(n => COMP_INDEX[n]).slice(0, MAX_COMPS);
     document.getElementById('breadboard-toggle').checked = false;
     helperBreadboard = false;
     document.getElementById('btn-add-comp').disabled = false;
     document.getElementById('comp-select').disabled = false;
+    navTo('helper');
     renderHelper();
-    showToast('Mini project loaded: ' + p[0] + ' — press Generate Source Code!');
+    showToast('Loaded: ' + p.name + ' — press Generate Source Code!');
 }
 
-// ===================================================================
-// COMPONENT GUIDES — modal tutorial pemasangan
-// ===================================================================
-function openGuide(name) {
-    const g = (typeof COMPONENT_GUIDES !== 'undefined') && COMPONENT_GUIDES[name];
-    if (!g) return showToast('No guide available for this component yet');
-    const box = document.getElementById('guide-box');
-    const sec = (title, body) => '<div style="margin-bottom: var(--space-md);"><div style="font-weight:800; font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:0.4rem;">' + title + '</div>' + body + '</div>';
-    const wiringHtml = '<ol style="padding-left:1.2rem; color:var(--text-muted); font-size:0.85rem; display:flex; flex-direction:column; gap:0.25rem;">' + g.wiring.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol>';
-    const tipsHtml = g.tips ? '<ul style="padding-left:1.2rem; color:var(--text-muted); font-size:0.82rem; display:flex; flex-direction:column; gap:0.25rem;">' + g.tips.map(s => '<li>💡 ' + esc(s) + '</li>').join('') + '</ul>' : '';
-    const codeHtml = '<div class="code-container" style="max-height:220px; overflow-y:auto;"><pre style="padding:0.8rem; font-size:0.68rem;"><code>' + esc(g.code) + '</code></pre></div>';
-    const issuesHtml = sec('🐛 Common issues', '<div style="display:flex; flex-direction:column; gap:0.4rem;">' + g.issues.map(i =>
-        '<div style="padding:0.5rem 0.7rem; border:1px solid var(--border-glass); border-left:3px solid var(--accent); border-radius:var(--radius-md); font-size:0.8rem;"><div style="font-weight:700;">' + esc(i[0]) + '</div><div style="color:var(--text-muted); font-size:0.75rem; margin-top:0.15rem;">' + esc(i[1]) + '</div></div>'
-    ).join('') + '</div>');
-    box.innerHTML =
-        '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:var(--space-md);">' +
-        '<h3 style="font-size:1.05rem;">📖 ' + esc(name) + '</h3>' +
-        '<button class="icon-btn" onclick="closeGuide()" style="width:34px;height:34px;font-size:0.9rem;flex-shrink:0;">✕</button></div>' +
-        sec('📋 What is it?', '<p style="font-size:0.85rem; color:var(--text-muted);">' + esc(g.what) + '</p>') +
-        sec('🔌 Wiring (step by step)', wiringHtml) +
-        (tipsHtml ? sec('💡 Tips', tipsHtml) : '') +
-        sec('💾 Starter code', codeHtml) +
-        issuesHtml +
-        sec('📚 Library', '<p style="font-size:0.82rem; color:var(--text-muted);">' + esc(g.lib) + '</p>');
-    document.getElementById('guide-modal').classList.add('active');
-}
-function closeGuide() {
-    document.getElementById('guide-modal').classList.remove('active');
+function loadMiniProject(idx) {
+    const p = currentProjects[idx];
+    if (p) loadProjectFromObj(p);
 }
 
-function setPinOverride(sel) {
-    const comp = sel.dataset.comp, pin = sel.dataset.pin, val = sel.value;
-    const key = comp + '::' + pin;
-    if (val === '__auto__') delete pinOverrides[key];
-    else pinOverrides[key] = val;
-    renderHelper();
+function detailHtml(p, sample) {
+    const emoji = p.emoji || guessEmoji(p.name);
+    const mcuShort = String(p.mcu).replace(/ \(.*\)/, '');
+    const desc = p.desc || ('A ' + String(p.level).toLowerCase() + '-level build on ' + mcuShort + ' using ' + p.comps.length + ' components: ' + p.comps.join(', ') + '.');
+    const compRows = p.comps.map(c => {
+        const hasGuide = (typeof COMPONENT_GUIDES !== 'undefined') && COMPONENT_GUIDES[c];
+        const g = hasGuide ? ' <button class="why-btn" onclick="closeView(); openGuide(\'' + esc(c).replace(/'/g, "\\'") + '\')">📖 Guide</button>' : '';
+        return '<li>📡 ' + esc(c) + g + '</li>';
+    }).join('');
+    const sec = (t, b) => '<div style="margin-bottom: var(--space-md);"><div style="font-family:var(--font-mono); font-size:0.68rem; font-weight:700; letter-spacing:2px; color:var(--gold); margin-bottom:0.4rem;">' + t + '</div>' + b + '</div>';
+    return '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:var(--space-md);">' +
+        '<h3 style="margin:0; font-size:1.15rem;">' + emoji + ' ' + esc(p.name) + '</h3>' +
+        '<button class="icon-btn" onclick="closeView()" style="width:34px;height:34px;font-size:0.9rem;flex-shrink:0;">✕</button></div>' +
+        '<div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: var(--space-md);">' + levelBadge(p.level) +
+        '<span class="lv-badge lv-comm">🖥️ ' + esc(mcuShort) + '</span>' +
+        '<span class="lv-badge lv-comm">📦 ' + p.comps.length + ' components</span></div>' +
+        sec('📦 COMPONENTS', '<ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.4rem; font-size:0.85rem;">' + compRows + '</ul>') +
+        sec('📝 DESCRIPTION', '<p style="font-size:0.85rem; color:var(--text-muted); margin:0; line-height:1.7;">' + esc(desc) + '</p>') +
+        sec('📄 SAMPLE CODE', '<div class="code-container" style="max-height:240px; overflow-y:auto;"><pre style="padding:0.8rem; font-size:0.68rem; margin:0;"><code>' + esc(sample) + '</code></pre></div>') +
+        '<div style="display:flex; gap:0.5rem; margin-top: var(--space-md); flex-wrap:wrap;">' +
+        '<button class="btn btn-gold btn-sm" style="flex:1;" onclick="loadProjectFromObj(window.__viewProj); closeView(); navToCodeFromHelper();">⚡ Load &amp; Generate</button>' +
+        '<button class="btn btn-outline btn-sm" onclick="closeView()">Close</button></div>';
 }
 
-// ===================================================================
-// SCHEMATIC VIEW — lukis wayar SVG dari mapping sebenar
-// ===================================================================
-let schematicOn = false;
-
-function toggleSchematic() {
-    schematicOn = !schematicOn;
-    document.getElementById('sch-btn').textContent = schematicOn ? '📋 2D View' : '📐 Schematic';
-    renderHelper();
-}
-
-function wireColor(row) {
-    const t = String(row.mcu);
-    if (/Breadboard \+|VCC|3\.3V|5V|VIN|VDD|VSYS/i.test(t) && !/ECHO|OUT/i.test(row.pin)) return '#e74c3c'; // power merah
-    if (/GND|− rail|Breadboard −/i.test(t)) return '#8a93a5'; // ground kelabu
-    return '#D4AF37'; // signal emas
-}
-
-function buildSchematicSVG(w) {
-    // Susun row ikut komponen (linear dengan helperComps)
-    const rows = w.rows.filter(r => r.pin !== '—' && r.pin !== '📶');
-    if (!rows.length) return '<p style="color:var(--text-muted);text-align:center;">Nothing to draw — add components.</p>';
-
-    // MCU-side pads: target unik mengikut turutan
-    const mcuTargets = [];
-    const mcuIdx = {};
-    rows.forEach(r => {
-        const t = String(r.mcu);
-        if (!(t in mcuIdx)) { mcuIdx[t] = mcuTargets.length; mcuTargets.push(t); }
-    });
-
-    // Komponen blok kanan
-    const comps = [];
-    helperComps.forEach(n => {
-        const c = COMP_INDEX[n];
-        if (!c || c.k === 'passive' || c.k === 'wifi') return;
-        const cRows = rows.filter(r => r.comp === n);
-        if (cRows.length) comps.push({ name: n, rows: cRows });
-    });
-
-    const padH = 20;
-    const mcuH = mcuTargets.length * padH + 50;
-    const compHs = comps.map(c => c.rows.length * padH + 34);
-    const H = Math.max(mcuH, compHs.reduce((a, b) => a + b + 16, 0)) + 40;
-    const W = 920;
-    const mcuX = 20, mcuW = 190;
-    const compX = 660, compW = 240;
-    const bbX = 370, bbW = 180;
-
-    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="min-width:680px; width:100%; height:auto; font-family:var(--font-mono);">';
-    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="rgba(0,0,0,0.25)" rx="12"/>';
-
-    // Wayar (lukis dahulu supaya di bawah blok)
-    let mcuY0 = 35;
-    let compY = 35;
-    const compPadY = {}; // comp name -> next pad y
-    comps.forEach(c => { compPadY[c.name] = compY + 30; compY += c.rows.length * padH + 34 + 16; });
-    rows.forEach(r => {
-        const y1 = mcuY0 + 25 + mcuIdx[String(r.mcu)] * padH + padH / 2;
-        const y2 = compPadY[r.comp];
-        compPadY[r.comp] += padH;
-        const col = wireColor(r);
-        const mx = mcuX + mcuW, cx = compX;
-        s += '<path d="M ' + mx + ' ' + y1 + ' C ' + (mx + 120) + ' ' + y1 + ', ' + (cx - 120) + ' ' + y2 + ', ' + cx + ' ' + y2 + '" fill="none" stroke="' + col + '" stroke-width="1.6" opacity="0.85"/>';
-        s += '<circle cx="' + mx + '" cy="' + y1 + '" r="2.5" fill="' + col + '"/>';
-        s += '<circle cx="' + cx + '" cy="' + y2 + '" r="2.5" fill="' + col + '"/>';
-    });
-
-    // Blok MCU
-    s += '<rect x="' + mcuX + '" y="10" width="' + mcuW + '" height="' + mcuH + '" rx="10" fill="#111827" stroke="#D4AF37" stroke-width="1.5"/>';
-    s += '<text x="' + (mcuX + mcuW / 2) + '" y="30" fill="#F5D76E" font-size="11" font-weight="700" text-anchor="middle">' + esc(helperMcu).replace(/ \(.*\)/, '') + '</text>';
-    mcuTargets.forEach((t, i) => {
-        const y = 35 + 25 + i * padH + padH / 2;
-        s += '<circle cx="' + (mcuX + mcuW) + '" cy="' + y + '" r="3" fill="#D4AF37"/>';
-        s += '<text x="' + (mcuX + mcuW - 8) + '" y="' + (y + 3.5) + '" fill="#cfd8e3" font-size="10" text-anchor="end">' + esc(String(t)) + '</text>';
-    });
-
-    // Breadboard tengah (jika aktif)
-    if (helperBreadboard) {
-        const bbH = H - 60;
-        s += '<rect x="' + bbX + '" y="30" width="' + bbW + '" height="' + bbH + '" rx="8" fill="#ece5d3" stroke="#c9b98f" stroke-width="2"/>';
-        s += '<text x="' + (bbX + bbW / 2) + '" y="52" fill="#6b5d33" font-size="11" font-weight="800" text-anchor="middle">🍞 BREADBOARD</text>';
-        s += '<rect x="' + (bbX + 15) + '" y="64" width="' + (bbW - 30) + '" height="9" rx="3" fill="repeating-linear-gradient" stroke="#d64545"/>';
-        s += '<rect x="' + (bbX + 15) + '" y="' + (30 + bbH - 24) + '" width="' + (bbW - 30) + '" height="9" rx="3" stroke="#4567d6"/>';
-        s += '<text x="' + (bbX + bbW / 2) + '" y="' + (H / 2) + '" fill="#8a7d55" font-size="10" text-anchor="middle">+/− rails &amp; rows</text>';
-    } else {
-        s += '<text x="' + (bbX + bbW / 2) + '" y="' + (H / 2) + '" fill="#5d6b80" font-size="11" text-anchor="middle">direct wiring</text>';
+function viewProject(idx) {
+    const p = currentProjects[idx];
+    if (!p) return;
+    window.__viewProj = p;
+    let sample = '// Press "Load & Generate" to build the full firmware for this project.';
+    const saveM = helperMcu, saveC = helperComps.slice(), saveB = helperBreadboard;
+    const act = (p.comps || []).filter(n => COMP_INDEX[n] && COMP_INDEX[n].k !== 'passive').slice(0, MAX_COMPS);
+    if (act.length && MCU_INDEX[p.mcu]) {
+        helperMcu = p.mcu; helperComps = act; helperBreadboard = false;
+        generateCode();
+        sample = document.getElementById('code-block').textContent;
+        helperMcu = saveM; helperComps = saveC; helperBreadboard = saveB;
+        generateCode();
     }
+    const html = detailHtml(p, sample);
+    const pane = document.getElementById('proj-detail');
+    if (window.innerWidth >= 1100) {
+        pane.innerHTML = html;
+        pane.classList.remove('hidden');
+        pane.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        document.getElementById('view-box').innerHTML = html;
+        document.getElementById('view-modal').classList.add('active');
+    }
+}
+function closeView() {
+    const m = document.getElementById('view-modal');
+    if (m) m.classList.remove('active');
+    const pane = document.getElementById('proj-detail');
+    if (pane) { pane.classList.add('hidden'); pane.innerHTML = ''; }
+}
 
-    // Blok komponen
-    let cy = 35;
-    comps.forEach(c => {
-        const h = c.rows.length * padH + 34;
-        s += '<rect x="' + compX + '" y="' + cy + '" width="' + compW + '" height="' + (h - 16) + '" rx="10" fill="#111827" stroke="#6366f1" stroke-width="1.2"/>';
-        s += '<text x="' + (compX + 10) + '" y="' + (cy + 18) + '" fill="#a5b4fc" font-size="10.5" font-weight="700">' + esc(c.name.length > 30 ? c.name.slice(0, 29) + '…' : c.name) + '</text>';
-        c.rows.forEach(r => {
-            const y = compPadY[c.name] + padH / 2; // guna kedudukan wayar
-            compPadY[c.name] += padH;
-            s += '<circle cx="' + compX + '" cy="' + y + '" r="3" fill="' + wireColor(r) + '"/>';
-            s += '<text x="' + (compX + 10) + '" y="' + (y + 3.5) + '" fill="#cfd8e3" font-size="10">' + esc(r.pin) + '</text>';
-        });
-        cy += h + 16;
+function loadCommunity() {
+    db.ref('communityProjects').on('value', snap => {
+        communityProjects = snap.val() || {};
+        renderMiniProjects(document.getElementById('mini-search') ? document.getElementById('mini-search').value : '');
     });
-
-    // Legenda
-    s += '<text x="20" y="' + (H - 10) + '" fill="#8a93a5" font-size="10">— power · ' +
-        '<tspan fill="#8a93a5">— ground · </tspan><tspan fill="#D4AF37">— signal</tspan> · generated from actual wiring</text>';
-    s += '</svg>';
-    return s;
 }
-
-function renderSchematic(w) {
-    const area = document.getElementById('schematic-area');
-    if (!area) return;
-    if (!schematicOn || !w) { area.classList.add('hidden'); return; }
-    area.classList.remove('hidden');
-    area.innerHTML = buildSchematicSVG(w) +
-        '<p style="font-size:0.72rem; color:var(--text-muted); margin:0.5rem 0 0;">📐 Schematic regenerated from the wiring table — scroll horizontally on small screens.</p>';
+function updateHubStats() {
+    const total = MINI_PROJECTS.length + Object.keys(communityProjects).length;
+    const c = document.getElementById('mini-count');
+    if (c) c.textContent = total;
+    const st = document.getElementById('hub-stats');
+    if (st) st.textContent = total + ' PROJECTS · 8 RESOURCES · BUILT FOR MAKERS';
 }
-
+function deleteCommunity(key) {
+    if (!isAdmin) return;
+    if (!confirm('Remove this community project?')) return;
+    db.ref('communityProjects/' + key).remove(function(err) {
+        if (err) showToast('Failed to remove'); else showToast('Community project removed');
+    });
+}
+function commAddComp() {
+    const sel = document.getElementById('comm-comp-sel');
+    const v = sel.value;
+    if (!v) return;
+    if (commComps.includes(v)) return showToast('Already added');
+    if (commComps.length >= MAX_COMPS) return showToast('Max ' + MAX_COMPS + ' components');
+    commComps.push(v);
+    renderCommChips();
+}
+function commRemoveComp(i) { commComps.splice(i, 1); renderCommChips(); }
+function renderCommChips() {
+    const el = document.getElementById('comm-chips');
+    if (!el) return;
+    el.innerHTML = commComps.map((c, i) =>
+        '<span style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.25rem 0.6rem; border-radius:var(--radius-full); background:rgba(0,240,255,0.08); border:1px solid rgba(0,240,255,0.25); font-size:0.72rem; font-weight:600;">' + esc(c) +
+        ' <button onclick="commRemoveComp(' + i + ')" style="background:none; color:var(--danger); font-weight:800; cursor:pointer; border:none;">✕</button></span>'
+    ).join('') || '<span style="font-size:0.72rem; color:var(--text-muted);">No components yet — pick from the catalog.</span>';
+}
+function submitCommunityProject() {
+    const name = (document.getElementById('comm-name').value || '').trim();
+    const emoji = (document.getElementById('comm-emoji').value || '').trim();
+    const level = document.getElementById('comm-level').value;
+    const mcu = document.getElementById('comm-mcu').value;
+    const desc = (document.getElementById('comm-desc').value || '').trim();
+    if (!name) return showToast('Project name required');
+    if (!mcu || !MCU_INDEX[mcu]) return showToast('Select a valid MCU board');
+    if (!commComps.length) return showToast('Add at least 1 component');
+    const entry = { name: name, emoji: emoji || guessEmoji(name), level: level, mcu: mcu, components: commComps.slice(), desc: desc, author: 'community', ts: Date.now() };
+    db.ref('communityProjects').push(entry, function(err) {
+        if (err) { showToast('Failed to publish — check connection'); console.error(err); return; }
+        document.getElementById('comm-name').value = '';
+        document.getElementById('comm-emoji').value = '';
+        document.getElementById('comm-desc').value = '';
+        commComps = [];
+        renderCommChips();
+        showToast('🚀 Published! Your project is live in Mini Projects');
+    });
+}
+function populateCommSelects() {
+    const mcuSel = document.getElementById('comm-mcu');
+    if (mcuSel) {
+        Object.keys(MCU_INDEX).forEach(n => {
+            const o = document.createElement('option');
+            o.value = n; o.textContent = n;
+            mcuSel.appendChild(o);
+        });
+    }
+    const compSel = document.getElementById('comm-comp-sel');
+    if (compSel) {
+        Object.keys(COMPONENT_CATEGORIES).forEach(cat => {
+            const og = document.createElement('optgroup');
+            og.label = cat;
+            COMPONENT_CATEGORIES[cat].forEach(c => {
+                if (c.k === 'passive') return;
+                const o = document.createElement('option');
+                o.value = c.n; o.textContent = c.n;
+                og.appendChild(o);
+            });
+            compSel.appendChild(og);
+        });
+    }
+    renderCommChips();
+}
 function toggleWhy(i) {
     const el = document.getElementById('why-' + i);
     if (el) el.classList.toggle('hidden');

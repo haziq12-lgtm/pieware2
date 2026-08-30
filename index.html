@@ -178,80 +178,93 @@
 
 <!-- ==================== HUB — PROJECT REFERENCES ==================== -->
 <section id="hub">
-    <div class="announcement-banner">
-        <span>📢</span> <span id="announcement-text">Welcome to Semester 1! High-performance MCU kits now restocked.</span>
-    </div>
-    <h2>Project Hub</h2>
-    <p style="margin-bottom: var(--space-xl);">Popular open-source project sources &mdash; reference sites that makers commonly use for Arduino, ESP32 and electronics projects.</p>
-    <div class="grid-3">
-        `<a class="card" href="https://projecthub.arduino.cc/" target="_blank" rel="noopener">
-            <div class="product-image-ph">🧪</div>
-            <h3 style="font-size:0.98rem;">Arduino Project Hub</h3>
-            <p style="font-size:0.8rem;">Official Arduino community — thousands of guided projects with code, wiring diagrams and tutorials.</p>
-            <div class="product-price" style="font-size:0.85rem;">projecthub.arduino.cc</div><a class="hub-buy-chip" data-query="arduino starter kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://github.com/topics/arduino-projects" target="_blank" rel="noopener">
-            <div class="product-image-ph">🐙</div>
-            <h3 style="font-size:0.98rem;">GitHub: Arduino Projects</h3>
-            <p style="font-size:0.8rem;">Open-source repositories for Arduino projects — full source code, libraries and community contributions.</p>
-            <div class="product-price" style="font-size:0.85rem;">github.com/topics</div><a class="hub-buy-chip" data-query="arduino project kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://www.instructables.com/circuits/" target="_blank" rel="noopener">
-            <div class="product-image-ph">💡</div>
-            <h3 style="font-size:0.98rem;">Instructables Circuits</h3>
-            <p style="font-size:0.8rem;">Step-by-step electronics &amp; Arduino builds with photos, videos and downloadable resources.</p>
-            <div class="product-price" style="font-size:0.85rem;">instructables.com</div><a class="hub-buy-chip" data-query="electronics starter kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://randomnerdtutorials.com/" target="_blank" rel="noopener">
-            <div class="product-image-ph">📚</div>
-            <h3 style="font-size:0.98rem;">Random Nerd Tutorials</h3>
-            <p style="font-size:0.8rem;">Deep-dive tutorials for ESP32, ESP8266 and Arduino — complete with schematics and code.</p>
-            <div class="product-price" style="font-size:0.85rem;">randomnerdtutorials.com</div><a class="hub-buy-chip" data-query="esp32 kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://learn.adafruit.com/" target="_blank" rel="noopener">
-            <div class="product-image-ph">🦄</div>
-            <h3 style="font-size:0.98rem;">Adafruit Learn System</h3>
-            <p style="font-size:0.8rem;">Beginner-friendly guides for sensors, displays, wearables and IoT projects.</p>
-            <div class="product-price" style="font-size:0.85rem;">learn.adafruit.com</div><a class="hub-buy-chip" data-query="adafruit sensor kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://forum.arduino.cc/" target="_blank" rel="noopener">
-            <div class="product-image-ph">💬</div>
-            <h3 style="font-size:0.98rem;">Arduino Forum</h3>
-            <p style="font-size:0.8rem;">Ask questions, troubleshoot circuits and learn from the global Arduino community.</p>
-            <div class="product-price" style="font-size:0.85rem;">forum.arduino.cc</div><a class="hub-buy-chip" data-query="arduino" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://www.tinkercad.com/circuits" target="_blank" rel="noopener">
-            <div class="product-image-ph">🖥️</div>
-            <h3 style="font-size:0.98rem;">Tinkercad Circuits</h3>
-            <p style="font-size:0.8rem;">Simulate Arduino circuits in the browser for free — build &amp; test before wiring real hardware.</p>
-            <div class="product-price" style="font-size:0.85rem;">tinkercad.com</div><a class="hub-buy-chip" data-query="breadboard jumper wires" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://learn.sparkfun.com/" target="_blank" rel="noopener">
-            <div class="product-image-ph">⚡</div>
-            <h3 style="font-size:0.98rem;">SparkFun Learn</h3>
-            <p style="font-size:0.8rem;">Concept tutorials from basics to advanced — electronics fundamentals, sensors and robotics.</p>
-            <div class="product-price" style="font-size:0.85rem;">learn.sparkfun.com</div><a class="hub-buy-chip" data-query="sparkfun kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
-        `<a class="card" href="https://www.hackster.io/" target="_blank" rel="noopener">
-            <div class="product-image-ph">🚀</div>
-            <h3 style="font-size:0.98rem;">Hackster.io</h3>
-            <p style="font-size:0.8rem;">IoT &amp; hardware project platform with contests, dev boards showcases and full build guides.</p>
-            <div class="product-price" style="font-size:0.85rem;">hackster.io</div><a class="hub-buy-chip" data-query="iot starter kit" target="_blank" rel="noopener nofollow">Buy parts for this</a>
-        </a>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; margin-bottom: var(--space-xl);">
+        <div>
+            <h2 style="margin-bottom:0.3rem;">📂 Project Hub</h2>
+            <p style="color:var(--text-muted); margin:0;">Find inspiration, load projects, and start building — all in one place.</p>
+        </div>
+        <input type="text" id="mini-search" class="form-control" placeholder="🔍 Search projects..." oninput="renderMiniProjects(this.value)" style="max-width:300px;">
     </div>
 
-    <!-- ==================== MINI PROJECT IDEAS ==================== -->
-    <div class="card" style="margin-top: var(--space-2xl);">
-        <h3 style="margin-bottom: 0.4rem;">🚀 Mini Project Ideas</h3>
-        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">69 beginner-friendly projects — each mapped to components in our database. Press <strong>Load in Helper</strong> to get wiring + code instantly.</p>
-        <input type="text" id="mini-search" class="form-control" placeholder="Search projects... (e.g. rain, RFID, smart)" oninput="renderMiniProjects(this.value)" style="margin-bottom: var(--space-md);">
-        <div id="mini-level-chips" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);">
-            <button data-level="all" onclick="setProjectLevel('all')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--gold); background:rgba(212,175,55,0.15); color:var(--gold-light);">All</button>
-            <button data-level="Easy" onclick="setProjectLevel('Easy')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🟢 Easy</button>
-            <button data-level="Medium" onclick="setProjectLevel('Medium')" style="padding:0.3rem 0.7rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🟡 Medium</button>
+    <!-- MINI PROJECTS -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom: var(--space-md);">
+            <h3 style="margin:0;">🚀 Mini Projects — <span id="mini-count">—</span> Ready-to-Build Projects</h3>
         </div>
-        <div id="mini-projects-area" style="max-height: 480px; overflow-y: auto;"></div>
+        <div id="mini-level-chips" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);">
+            <button data-level="all" onclick="setProjectLevel('all')" style="padding:0.3rem 0.8rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--gold); background:rgba(0,240,255,0.12); color:var(--gold-light);">🔥 All</button>
+            <button data-level="Easy" onclick="setProjectLevel('Easy')" style="padding:0.3rem 0.8rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🟢 Easy</button>
+            <button data-level="Medium" onclick="setProjectLevel('Medium')" style="padding:0.3rem 0.8rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🟡 Medium</button>
+            <button data-level="Advanced" onclick="setProjectLevel('Advanced')" style="padding:0.3rem 0.8rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">🔴 Advanced</button>
+            <button data-level="community" onclick="setProjectLevel('community')" style="padding:0.3rem 0.8rem; border-radius:var(--radius-full); font-size:0.72rem; font-weight:700; cursor:pointer; border:1px solid var(--border-glass); background:transparent; color:var(--text-muted);">👥 Community</button>
+        </div>
+        <div class="hub-split">
+            <div id="mini-projects-area" class="proj-list"></div>
+            <div id="proj-detail" class="proj-detail hidden"></div>
+        </div>
+        <div style="text-align:center; margin-top: var(--space-md);">
+            <button class="btn btn-outline btn-sm" id="mini-showall" onclick="showAllProjects()">📂 Show All Projects →</button>
+        </div>
     </div>
+
+    <!-- REFERENCE HUB -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom:0.3rem;">📖 Reference Hub — Curated Resources for Makers</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom: var(--space-md);">8 hand-picked sources the community actually learns from.</p>
+        <div class="ref-grid">
+            <a class="ref-card" href="https://projecthub.arduino.cc/" target="_blank" rel="noopener"><span class="ref-emoji">🧪</span><strong>Arduino Project Hub</strong><span class="ref-tag">Official projects</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://www.hackster.io/" target="_blank" rel="noopener"><span class="ref-emoji">🚀</span><strong>Hackster.io</strong><span class="ref-tag">Community projects</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://www.instructables.com/circuits/" target="_blank" rel="noopener"><span class="ref-emoji">💡</span><strong>Instructables</strong><span class="ref-tag">Step-by-step DIY</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://github.com/topics/arduino" target="_blank" rel="noopener"><span class="ref-emoji">🐙</span><strong>GitHub</strong><span class="ref-tag">Open source repos</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://www.youtube.com/results?search_query=arduino+projects+for+beginners" target="_blank" rel="noopener"><span class="ref-emoji">📺</span><strong>YouTube</strong><span class="ref-tag">Tutorial videos</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://my.cytron.io/" target="_blank" rel="noopener"><span class="ref-emoji">🛒</span><strong>Cytron</strong><span class="ref-tag">Maker resources</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://randomnerdtutorials.com/" target="_blank" rel="noopener"><span class="ref-emoji">📡</span><strong>ESP32 Tutorials</strong><span class="ref-tag">Deep-dive guides</span><span class="ref-visit">🔗 Visit</span></a>
+            <a class="ref-card" href="https://pimylifeup.com/" target="_blank" rel="noopener"><span class="ref-emoji">🍓</span><strong>Raspberry Pi</strong><span class="ref-tag">Pi projects</span><span class="ref-visit">🔗 Visit</span></a>
+        </div>
+    </div>
+
+    <!-- COMMUNITY CONTRIBUTE -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom:0.3rem;">💡 Contribute Your Project</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom: var(--space-md);">Built something cool? Share it — your project appears publicly in Mini Projects above with a 👥 Community badge.</p>
+        <div class="grid-2" style="gap: var(--space-md);">
+            <div class="form-group">
+                <label>Project Name *</label>
+                <input type="text" id="comm-name" class="form-control" placeholder="e.g. Smart Plant Watering" maxlength="60">
+            </div>
+            <div class="form-group">
+                <label>Emoji (optional)</label>
+                <input type="text" id="comm-emoji" class="form-control" placeholder="🌱 (auto if empty)" maxlength="4">
+            </div>
+            <div class="form-group">
+                <label>Difficulty *</label>
+                <select id="comm-level" class="form-control">
+                    <option value="Easy">🟢 Easy</option>
+                    <option value="Medium">🟡 Medium</option>
+                    <option value="Advanced">🔴 Advanced</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>MCU Board *</label>
+                <select id="comm-mcu" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Components * (max 5 — pick from catalog)</label>
+            <div style="display:flex; gap:0.5rem;">
+                <select id="comm-comp-sel" class="form-control" style="flex:1;"></select>
+                <button class="btn btn-outline btn-sm" onclick="commAddComp()">+ Add</button>
+            </div>
+            <div id="comm-chips" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.5rem;"></div>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="comm-desc" class="form-control" rows="2" placeholder="What does it do?" maxlength="200" style="min-height:60px; resize:vertical;"></textarea>
+        </div>
+        <button class="btn btn-gold" onclick="submitCommunityProject()">🚀 Publish to Community</button>
+    </div>
+
+    <div id="hub-stats" style="text-align:center; color:var(--text-muted); font-family:var(--font-mono); font-size:0.75rem; letter-spacing:1px;">— PROJECTS · 8 RESOURCES · BUILT FOR MAKERS</div>
 </section>
 
 <!-- ==================== HELPER ==================== -->
@@ -836,6 +849,11 @@
 <!-- ==================== COMPONENT GUIDE MODAL ==================== -->
 <div class="modal-overlay" id="guide-modal">
     <div class="modal-box" style="max-width:640px;" id="guide-box"></div>
+</div>
+
+<!-- ==================== PROJECT VIEW MODAL ==================== -->
+<div class="modal-overlay" id="view-modal">
+    <div class="modal-box" style="max-width:680px;" id="view-box"></div>
 </div>
 
 <!-- TOAST NOTIFICATION -->

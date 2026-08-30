@@ -1650,3 +1650,35 @@ html, body { overflow-x: hidden !important; }
     color: var(--text-muted); letter-spacing: 1px;
 }
 .is-liverating strong { color: var(--secondary); font-size: 0.95rem; }
+
+/* ===================================================================
+   HUB REDESIGN — project cards, badges, ref-grid, split detail
+   =================================================================== */
+.hub-split { display: grid; grid-template-columns: 1fr; gap: var(--space-lg); }
+@media (min-width: 1100px) { .hub-split { grid-template-columns: 1fr 1fr; align-items: start; } }
+.proj-list { display: flex; flex-direction: column; gap: var(--space-md); max-height: 640px; overflow-y: auto; padding-right: 0.3rem; }
+.proj-card { border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: var(--space-md); background: var(--bg-base); transition: var(--transition); }
+.proj-card:hover { border-color: rgba(0, 240, 255, 0.35); transform: translateY(-2px); }
+.proj-head { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.35rem; }
+.proj-emoji { font-size: 1.2rem; }
+.proj-names { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.9rem; flex: 1; }
+.proj-meta { font-size: 0.74rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 0.6rem; }
+.proj-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.lv-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: var(--radius-full); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; }
+.lv-easy { background: rgba(52, 211, 153, 0.15); color: var(--secondary); }
+.lv-med { background: rgba(245, 158, 11, 0.15); color: var(--accent); }
+.lv-adv { background: rgba(244, 63, 94, 0.15); color: var(--danger); }
+.lv-comm { background: rgba(0, 240, 255, 0.12); color: var(--gold-light); }
+.proj-detail { position: sticky; top: 90px; border: 1px solid rgba(0, 240, 255, 0.25); border-radius: var(--radius-lg); padding: var(--space-lg); background: var(--bg-base); max-height: 720px; overflow-y: auto; }
+.proj-detail.hidden { display: none; }
+/* Reference grid */
+.ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+@media (min-width: 900px) { .ref-grid { grid-template-columns: repeat(4, 1fr); } }
+.ref-card { display: flex; flex-direction: column; gap: 0.25rem; padding: var(--space-md); border: 1px solid var(--border-glass); border-radius: var(--radius-md); text-decoration: none; transition: var(--transition); }
+.ref-card:hover { border-color: rgba(0, 240, 255, 0.4); transform: translateY(-3px); }
+.ref-emoji { font-size: 1.2rem; margin-bottom: 0.2rem; }
+.ref-card strong { font-size: 0.85rem; }
+.ref-tag { font-size: 0.68rem; color: var(--text-muted); }
+.ref-visit { font-size: 0.7rem; font-weight: 700; color: var(--gold-light); margin-top: 0.4rem; }
+/* Contribute form chips */
+#comm-chips span { transition: var(--transition); }
