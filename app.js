@@ -108,6 +108,7 @@ window.addEventListener('load', () => {
     renderTemplates();
     renderMiniProjects('');
     restoreCodeParams();
+    renderLiveStats();
     // URL params (share link) diutamakan; jika tiada, pulihkan auto-save
     if (!loadFromURL()) restoreHelperState();
     initDemo();
@@ -860,6 +861,17 @@ function loadFeedback() {
 }
 
 function renderFeedback(data) {
+    const entriesAll = Object.entries(data);
+    const chip = document.getElementById('live-rating');
+    if (chip) {
+        if (!entriesAll.length) { chip.style.visibility = 'hidden'; }
+        else {
+            const rs = entriesAll.map(e => parseInt(e[1].rating) || 0).filter(r => r > 0);
+            const avg = rs.length ? (rs.reduce((x, y) => x + y, 0) / rs.length) : 0;
+            chip.innerHTML = '<strong>★ ' + avg.toFixed(1) + '</strong> from ' + entriesAll.length + ' live reviews';
+            chip.style.visibility = 'visible';
+        }
+    }
     const list = document.getElementById('feedback-list');
     if (!list) return;
     const entries = Object.entries(data).sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
@@ -2089,6 +2101,14 @@ void loop() {
   Serial.println(" %");
   delay(2000);
 }`;
+
+function renderLiveStats() {
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('stat-boards', Object.keys(MCU_INDEX).length);
+    set('stat-comps', Object.keys(COMP_INDEX).length);
+    set('stat-projects', MINI_PROJECTS.length);
+    set('stat-guides', (typeof COMPONENT_GUIDES !== 'undefined') ? Object.keys(COMPONENT_GUIDES).length : 0);
+}
 
 function initDemo() {
     const el = document.getElementById('demo-code');

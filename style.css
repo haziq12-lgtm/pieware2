@@ -1643,3 +1643,10 @@ html, body { overflow-x: hidden !important; }
 .nomu, .nomu * { min-width: 0; }
 .is-steps, .is-cards, .is-gauges, .is-ovals, .is-ctas, .n-grid4, .n-caps, .n-stats, .is-ticker, .onv, .n-ticker { max-width: 100%; }
 .is-step, .is-card, .n-card, .n-cap { overflow-wrap: break-word; }
+
+/* Live rating chip (hero) */
+.is-liverating {
+    margin-top: var(--space-md); font-family: var(--font-mono); font-size: 0.75rem;
+    color: var(--text-muted); letter-spacing: 1px;
+}
+.is-liverating strong { color: var(--secondary); font-size: 0.95rem; }
