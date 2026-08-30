@@ -784,7 +784,7 @@ function loadAnnouncement() {
 // ===================================================================
 // ABOUT — boleh diubah admin, dipaparkan kepada pengguna
 // ===================================================================
-const ABOUT_DEFAULT = 'Pieware 2 ialah pusat elektronik premium untuk pelajar dan pembina.\n\nBelajar, bina dan fahami elektronik dengan mudah — daripada visualizer pinout MCU, penjana kod sumber, kalkulator kejuruteraan, sehinggalah kedai perkakasan dan maklum balas pengguna.';
+const ABOUT_DEFAULT = 'Pieware 2 is the newest and latest version of Pieware. We started this project as part of an entrepreneurship program, with a simple goal: to make electronics learning easier, more interactive, and accessible to everyone — especially students in Malaysia and beyond.\n\nWhat began as a simple pinout reference has grown into a full platform with Visualizer, Code Generator, Hardware Store, Calculators, and more. We\'re not perfect yet — but we\'re committed to improving every day.\n\nOur slogan says it all:\n"Learn, Build & Understand Electronics Easily"';
 
 function loadAbout() {
     db.ref('about').on('value', snap => {

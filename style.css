@@ -1682,3 +1682,14 @@ html, body { overflow-x: hidden !important; }
 .ref-visit { font-size: 0.7rem; font-weight: 700; color: var(--gold-light); margin-top: 0.4rem; }
 /* Contribute form chips */
 #comm-chips span { transition: var(--transition); }
+
+/* About — roadmap & version history */
+.roadmap-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-md); }
+@media (min-width: 800px) { .roadmap-grid { grid-template-columns: repeat(3, 1fr); } }
+.road-card { border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: var(--space-md); background: var(--bg-base); }
+.road-head { font-weight: 800; font-size: 0.85rem; margin-bottom: 0.5rem; }
+.road-card ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.8rem; color: var(--text-muted); }
+.road-card li::before { content: '› '; color: var(--gold); font-weight: 800; }
+.ver-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.ver-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; color: var(--text-muted); padding: 0.45rem 0.6rem; border: 1px solid var(--border-glass); border-radius: var(--radius-md); }
+.ver-tag { font-family: var(--font-mono); font-weight: 700; font-size: 0.72rem; color: var(--gold-light); background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25); padding: 0.15rem 0.5rem; border-radius: var(--radius-full); flex-shrink: 0; }

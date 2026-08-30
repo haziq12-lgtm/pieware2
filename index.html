@@ -165,14 +165,80 @@
 <!-- ==================== ABOUT ==================== -->
 <section id="about">
     <h2>About Pieware 2</h2>
-    <p style="margin-bottom: var(--space-xl);">Ketahui lebih lanjut tentang kami.</p>
-    <div class="card">
+    <p style="margin-bottom: var(--space-xl);">The story, the roadmap, and how to reach us.</p>
+
+    <!-- OUR STORY (editable via Admin > About Editor) -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom:0.4rem;">📖 Our Story</h3>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom: var(--space-md);">✏️ This section is maintained by the team and updated regularly.</p>
         <div id="about-content" style="font-size:0.92rem; color:var(--text-muted); white-space:pre-wrap; line-height:1.8;">
             <div class="skeleton-line w60"></div>
             <div class="skeleton-line w80"></div>
             <div class="skeleton-line w80"></div>
             <div class="skeleton-line w40"></div>
         </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom:0.4rem;">🗺️ Roadmap — What's Coming Next</h3>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom: var(--space-md);">Where Pieware 2 is heading.</p>
+        <div class="roadmap-grid">
+            <div class="road-card">
+                <div class="road-head">🟢 In Progress</div>
+                <ul>
+                    <li>Split-pane interactive UI for Helper</li>
+                    <li>New Home tab presentation</li>
+                    <li>Balanced design overhaul</li>
+                </ul>
+            </div>
+            <div class="road-card">
+                <div class="road-head">🟡 Planned</div>
+                <ul>
+                    <li>User accounts &amp; project cloud sync upgrades</li>
+                    <li>More components and MCUs</li>
+                    <li>Community project sharing</li>
+                    <li>Affiliate integration with Cytron</li>
+                </ul>
+            </div>
+            <div class="road-card">
+                <div class="road-head">🔮 Future Ideas</div>
+                <ul>
+                    <li>Mobile app (Android/iOS)</li>
+                    <li>AI-powered circuit suggestions</li>
+                    <li>Deeper Arduino IDE / PlatformIO integration</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPPORT & FEEDBACK -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom:0.4rem;">📢 Support &amp; Feedback</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom: var(--space-md);">We're always open to suggestions! If you have ideas, questions, or want to report any issues, please use the Feedback tab or reach out to us directly.</p>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-gold btn-sm" onclick="navTo('feedback')">💬 Write a Review</button>
+            <button class="btn btn-outline btn-sm" onclick="navTo('feedback')">🐛 Report an Issue</button>
+            <a class="btn btn-outline btn-sm" href="mailto:sales@pieware2.com?subject=Pieware%202%20Enquiry" style="text-decoration:none;">📧 Contact Us</a>
+        </div>
+    </div>
+
+    <!-- VERSION HISTORY -->
+    <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-xl);">
+        <h3 style="margin-bottom:0.4rem;">📋 Version History</h3>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom: var(--space-md);">Recent releases.</p>
+        <div class="ver-list">
+            <div class="ver-row"><span class="ver-tag">v2.2.0</span> Live on GitHub Pages · PWA · Mini Projects · Validation engine · Code Studio</div>
+            <div class="ver-row"><span class="ver-tag">v2.1.1</span> CSS moved to external stylesheet — faster loads</div>
+            <div class="ver-row"><span class="ver-tag">v2.1.0</span> Search &amp; filter, auto-save, dark mode &amp; more</div>
+            <div class="ver-row"><span class="ver-tag">v2.0.5</span> Mobile responsive &amp; bug fixes</div>
+            <div class="ver-row"><span class="ver-tag">v2.0.0</span> Pieware 2 Launch! 🎉</div>
+        </div>
+        <a class="btn btn-outline btn-sm" href="https://github.com/haziq12-lgtm/pieware2/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="margin-top: var(--space-md); text-decoration:none;">📋 View Full Changelog →</a>
+    </div>
+
+    <div style="text-align:center; padding: var(--space-lg) 0 var(--space-sm); font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);">
+        Made with ❤️ for STEM · Built by <strong style="color:var(--gold-light);">x2_Hzq</strong> · v2.2.0-unrelease
     </div>
 </section>
 
