@@ -335,6 +335,13 @@
                 <input type="number" id="cp-interval" class="form-control" value="1000" min="100" max="60000" step="100" onchange="onParamChange()">
             </div>
             <div class="form-group" style="margin-bottom:0;">
+                <label>Loop Style</label>
+                <select id="cp-style" class="form-control" onchange="onParamChange()">
+                    <option value="millis" selected>Non-blocking (millis) ✨</option>
+                    <option value="blocking">Blocking (delay) — classic</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
                 <label>WiFi SSID (optional)</label>
                 <input type="text" id="cp-ssid" class="form-control" placeholder="MyHomeWiFi" onchange="onParamChange()">
             </div>

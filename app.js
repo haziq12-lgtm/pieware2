@@ -2490,9 +2490,11 @@ function navToCodeFromHelper() {
 // CODE PARAMETERS — baud / interval / WiFi credentials
 // ===================================================================
 function getCodeParams() {
+    const styleEl = document.getElementById('cp-style');
     const p = {
         baud: parseInt(document.getElementById('cp-baud') ? document.getElementById('cp-baud').value : 115200) || 115200,
         interval: parseInt(document.getElementById('cp-interval') ? document.getElementById('cp-interval').value : 1000) || 1000,
+        style: styleEl ? styleEl.value : 'millis',
         ssid: (document.getElementById('cp-ssid') ? document.getElementById('cp-ssid').value : '').trim(),
         pass: (document.getElementById('cp-pass') ? document.getElementById('cp-pass').value : '').trim()
     };
@@ -2512,6 +2514,7 @@ function restoreCodeParams() {
         if (!p) return;
         if (p.baud) document.getElementById('cp-baud').value = p.baud;
         if (p.interval) document.getElementById('cp-interval').value = p.interval;
+        if (p.style) document.getElementById('cp-style').value = p.style;
         if (p.ssid) document.getElementById('cp-ssid').value = p.ssid;
         if (p.pass) document.getElementById('cp-pass').value = p.pass;
     } catch (e) {}
@@ -2732,9 +2735,22 @@ function generateCode() {
     if (cp.ssid) code = code.replace(/YOUR_WIFI_NAME/g, cp.ssid.replace(/"/g, '\\"'));
     if (cp.pass) code = code.replace(/YOUR_WIFI_PASSWORD/g, cp.pass.replace(/"/g, '\\"'));
 
+    // Non-blocking mode: bungkus badan loop dalam guard millis() — ajar amalan terbaik
+    if (cp.style === 'millis') {
+        code = code.replace(/void loop\(\) \{\n([\s\S]*?)\n\}/, function(m, body) {
+            const cleaned = body
+                .replace(/[ \t]*delay\(READ_INTERVAL\);\n?/g, '\n')
+                .replace(/\n{3,}/g, '\n\n')
+                .replace(/\s+$/, '');
+            if (!cleaned.trim()) return 'void loop() {\n  // nothing to poll — add your logic here\n}';
+            const indented = cleaned.split('\n').map(l => l ? '  ' + l : l).join('\n');
+            return 'unsigned long lastRead = 0;\n\nvoid loop() {\n  if (millis() - lastRead >= READ_INTERVAL) {\n    lastRead = millis();\n' + indented + '\n  }\n}';
+        });
+    }
+
     if (notes.length) code += '\n/* NOTES:\n' + notes.map(n => '   - ' + n).join('\n') + '\n*/';
 
-    let explanation = 'Generated for ' + helperMcu + ' with ' + count + ' active component(s)' + (helperBreadboard ? ' using a breadboard' : '') + '. Pin assignments follow the wiring table in the Helper tab.';
+    let explanation = 'Generated for ' + helperMcu + ' with ' + count + ' active component(s)' + (helperBreadboard ? ' using a breadboard' : '') + '. Pin assignments follow the wiring table in the Helper tab.' + (cp.style === 'millis' ? ' Non-blocking millis() loop — your loop style selection applies.' : '');
     if (outputComps.length) {
         explanation += ' Output simulation comments included for ' + outputComps.length + ' component(s). Use Helper\'s "Start Simulation" button to visualize output behavior.';
     }
