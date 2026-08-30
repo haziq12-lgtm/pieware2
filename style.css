@@ -1637,3 +1637,9 @@ html, body { overflow-x: hidden !important; }
 .hero-code pre { white-space: pre-wrap !important; word-break: break-word; }
 * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
 *::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
+
+/* Force-shrink: elak mana-mana anak tolak .nomu melebihi viewport */
+.nomu { width: 100%; max-width: 1240px; overflow-x: clip; }
+.nomu, .nomu * { min-width: 0; }
+.is-steps, .is-cards, .is-gauges, .is-ovals, .is-ctas, .n-grid4, .n-caps, .n-stats, .is-ticker, .onv, .n-ticker { max-width: 100%; }
+.is-step, .is-card, .n-card, .n-cap { overflow-wrap: break-word; }
