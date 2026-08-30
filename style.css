@@ -1629,3 +1629,11 @@ header {
 .is-gauge-card { padding: var(--space-md); }
 .is-gauge { margin-bottom: var(--space-sm); }
 .is-gauge-head { margin-bottom: var(--space-sm); }
+
+/* Kill horizontal scrollbar + hide scrollbars (Infinity aesthetic) */
+html, body { overflow-x: hidden !important; }
+#home, #home.active, main { overflow-x: hidden !important; }
+.nomu, .hero, .hero-code { min-width: 0 !important; }
+.hero-code pre { white-space: pre-wrap !important; word-break: break-word; }
+* { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+*::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
