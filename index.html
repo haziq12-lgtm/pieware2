@@ -64,101 +64,114 @@
 <!-- MAIN CONTENT -->
 <main>
 
-<!-- ==================== HOME — NOMU-STYLE LANDING (redesign-v3) ==================== -->
+<!-- ==================== HOME — INFINITY SIGNAL STYLE (redesign-v3) ==================== -->
 <section id="home" class="active">
     <div class="gold-particles" id="gold-particles"></div>
     <div class="nomu">
 
         <!-- HERO -->
-        <div class="n-hero">
-            <div class="n-hero-copy">
-                <div class="n-kicker">PIEWARE 2 :: COMMAND CENTER</div>
-                <h1 class="n-title">Hardware Engineering.<br>Driven by Signal.</h1>
-                <p class="n-sub">Ditch the datasheet maze and broken wiring. Go from component selection to flash-ready code in seconds.</p>
-                <div class="n-ctas">
-                    <button class="btn btn-nomu" onclick="navTo('helper')">START BUILDING →</button>
-                    <button class="btn btn-nomu-ghost" onclick="navTo('shop')">BROWSE COMPONENTS</button>
-                </div>
+        <div class="is-hero">
+            <h1 class="is-title">Pieware <span class="is-grad">Signal</span></h1>
+            <div class="is-subline">Wiring Engine · Validation · Code Gen · 57 Boards · 62 Projects</div>
+            <p class="is-copy">Structural pin validation, conflict-free allocation, honest compatibility checks.<br>Completely free. Runs in your browser. Works offline.</p>
+            <div class="is-ovals">
+                <div class="is-oval c-green"><strong>57</strong><span>BOARDS</span></div>
+                <div class="is-oval c-cyan"><strong>127</strong><span>COMPONENTS</span></div>
+                <div class="is-oval c-purple"><strong>62</strong><span>PROJECTS</span></div>
+                <div class="is-oval c-orange"><strong>19</strong><span>GUIDES</span></div>
             </div>
-            <div class="n-agent">
-                <div class="n-agent-head"><span class="n-agent-dot"></span> PIEWARE AGENT — LIVE RUN</div>
-                <ul class="agent-steps">
-                    <li style="animation-delay:0.4s"><span class="ok">✓</span> Board locked: <strong>ESP32 DevKit V1</strong></li>
-                    <li style="animation-delay:1.0s"><span class="ok">✓</span> Components added: <strong>DHT11 + OLED</strong></li>
-                    <li style="animation-delay:1.6s"><span class="ok">✓</span> Validation: <strong>0 errors, 0 warnings</strong></li>
-                    <li style="animation-delay:2.2s"><span class="ok">✓</span> Pins allocated — <strong>zero conflicts</strong></li>
-                    <li style="animation-delay:2.8s"><span class="ok">✓</span> Firmware written: <strong>weather_station.ino</strong></li>
-                    <li class="agent-done" style="animation-delay:3.4s">→ Ready to flash. Elapsed: 3.8s</li>
-                </ul>
-                <div class="n-agent-foot"><span class="cursor-blink">▊</span> autonomous · 127 components indexed</div>
+            <div class="is-ctas">
+                <button class="btn-is-green" onclick="navTo('helper')">◎ START BUILDING</button>
+                <button class="btn-is-ghost" onclick="navTo('shop')">Browse Components ↓</button>
             </div>
         </div>
 
-        
-        <!-- OLD WAY vs NEW WAY -->
-        <div class="onv">
-            <div class="ticker-wrap"><div class="ticker-track onv-old">
-                <span><s>✗ Frying boards with 5V-on-3.3V mistakes</s></span><i>/</i>
-                <span><s>✗ Digging through 50-page datasheets</s></span><i>/</i>
-                <span><s>✗ Debugging syntax errors at 2AM</s></span><i>/</i>
-                <span><s>✗ Guessing pin assignments</s></span><i>/</i>
-                <span><s>✗ Losing work to a cleared cache</s></span><i>/</i>
-            </div></div>
-            <div class="ticker-wrap"><div class="ticker-track onv-new">
-                <span>✓ Auto-validated wiring in seconds</span><i>·</i>
-                <span>✓ One-click PlatformIO export</span><i>·</i>
-                <span>✓ AI handoff with full context</span><i>·</i>
-                <span>✓ Pin overrides with zero conflicts</span><i>·</i>
-                <span>✓ Works offline as an installed app</span><i>·</i>
+        <!-- PRICE-TICKER STYLE STRIP -->
+        <div class="is-ticker">
+            <div class="ticker-wrap"><div class="ticker-track is-tick">
+                <span>HELPER <em class="up">▲ 57</em></span><span>COMPONENTS <em class="up">▲ 127</em></span><span>GUIDES <em class="up">▲ 19</em></span><span>VALIDATION <em class="grn">READY</em></span><span>PWA <em class="up">▲ ON</em></span><span>CLOUD <em class="dim2">SYNC</em></span><span>SERIAL <em class="dim2">READY</em></span><span>PROJECTS <em class="up">▲ 62</em></span>
+                <span>HELPER <em class="up">▲ 57</em></span><span>COMPONENTS <em class="up">▲ 127</em></span><span>GUIDES <em class="up">▲ 19</em></span><span>VALIDATION <em class="grn">READY</em></span><span>PWA <em class="up">▲ ON</em></span><span>CLOUD <em class="dim2">SYNC</em></span><span>SERIAL <em class="dim2">READY</em></span><span>PROJECTS <em class="up">▲ 62</em></span>
             </div></div>
         </div>
-<!-- TICKER -->
-        <div class="n-ticker">
-            <div class="ticker-label">SOURCES &amp; ECOSYSTEM</div>
-            <div class="ticker-wrap">
-                <div class="ticker-track">
-                    <span>ARDUINO PROJECT HUB</span><i>✦</i><span>HACKSTER.IO</span><i>✦</i><span>RANDOM NERD TUTORIALS</span><i>✦</i><span>ADAFRUIT LEARN</span><i>✦</i><span>SPARKFUN</span><i>✦</i><span>TINKERCAD CIRCUITS</span><i>✦</i><span>INSTRUCTABLES</span><i>✦</i><span>GITHUB</span><i>✦</i><span>CYTRON MALAYSIA</span><i>✦</i>
-                    <span>ARDUINO PROJECT HUB</span><i>✦</i><span>HACKSTER.IO</span><i>✦</i><span>RANDOM NERD TUTORIALS</span><i>✦</i><span>ADAFRUIT LEARN</span><i>✦</i><span>SPARKFUN</span><i>✦</i><span>TINKERCAD CIRCUITS</span><i>✦</i><span>INSTRUCTABLES</span><i>✦</i><span>GITHUB</span><i>✦</i><span>CYTRON MALAYSIA</span><i>✦</i>
-                </div>
+
+        <!-- WHAT YOU ACTUALLY GET -->
+        <div class="is-sec">
+            <div class="n-kicker">WHAT IT DOES</div>
+            <h2 class="is-h2">What you actually get.</h2>
+            <p class="is-secsub">A proper electronics workflow — not a toy. No account needed.</p>
+        </div>
+        <div class="is-cards">
+            <div class="is-card b-green"><div class="is-icon i-green">◈</div><h4>57 MCU Boards</h4><p>Uno to ESP32-S3, Pico, STM32, micro:bit, Cytron Maker line — family-mapped pinouts with real voltage data.</p></div>
+            <div class="is-card b-cyan"><div class="is-icon i-cyan">◉</div><h4>127 Components</h4><p>Sensors, displays, motors, relays, comms — every one mapped to pins, power draw and a Cytron buy link.</p></div>
+            <div class="is-card b-purple"><div class="is-icon i-purple">◐</div><h4>Honest Validation</h4><p>Voltage mismatch, UART conflicts, input-only pins, power budgets — flagged 🟢🟡🔴⚪ with fixes.</p></div>
+            <div class="is-card b-orange"><div class="is-icon i-orange">▲</div><h4>62 Mini Projects</h4><p>Beginner-friendly builds mapped to real components. One click loads the whole wiring into Helper.</p></div>
+            <div class="is-card b-cyan"><div class="is-icon i-cyan">◎</div><h4>Code Generator</h4><p>Your pins, your baud, your WiFi — injected into a clean sketch. Non-blocking millis() by default.</p></div>
+            <div class="is-card b-green"><div class="is-icon i-green">▤</div><h4>PlatformIO Export</h4><p>One click downloads platformio.ini, src/main.cpp and the exact libraries your build needs.</p></div>
+        </div>
+
+        <!-- WHAT A WIRING LOOKS LIKE -->
+        <div class="is-sec">
+            <div class="n-kicker">SIGNAL OUTPUT</div>
+            <h2 class="is-h2">What a wiring looks like</h2>
+            <p class="is-secsub">You get a validated pin map, a color-coded schematic, and generated firmware — for the board and parts you pick.</p>
+        </div>
+        <div class="is-gauges">
+            <div class="is-gauge-card">
+                <div class="is-gauge-head">ESP32 / DHT11 + OLED — VALIDATED</div>
+                <div class="is-gauge g-good"><div class="g-ring g-ring-green"><strong>0</strong><span>ERRORS</span></div></div>
+                <div class="is-bar"><span>Voltage levels</span><em class="ok">MATCH ✓</em></div>
+                <div class="is-bar"><span>Pin conflicts</span><em class="ok">NONE ✓</em></div>
+                <div class="is-bar"><span>Power budget</span><em class="ok">86mA ✓</em></div>
+            </div>
+            <div class="is-gauge-card">
+                <div class="is-gauge-head">UNO / RELAY + SERVO — CHECKED</div>
+                <div class="is-gauge g-warn"><div class="g-ring g-ring-amber"><strong>2</strong><span>NOTES</span></div></div>
+                <div class="is-bar"><span>Voltage levels</span><em class="ok">MATCH ✓</em></div>
+                <div class="is-bar"><span>Power budget</span><em class="wr">245mA ⚠</em></div>
+                <div class="is-bar"><span>External supply</span><em class="wr">SUGGESTED ⚠</em></div>
             </div>
         </div>
 
-        <!-- RUN ON PIEWARE -->
-        <div class="n-section-head">
-            <div class="n-kicker">RUN ON PIEWARE</div>
-            <h2>Automation, applied<br>to hardware.</h2>
+        <!-- 6 STEPS -->
+        <div class="is-sec">
+            <div class="n-kicker">HOW IT WORKS</div>
+            <h2 class="is-h2">From idea to flash in 6 steps</h2>
+            <p class="is-secsub">Every step runs in your browser. Nothing hidden, nothing proprietary.</p>
         </div>
-        <div class="n-grid4">
-            <div class="n-card"><span class="n-num">01</span><h4>Catalog Intelligence</h4><p>127 components and 57 boards indexed with pin maps, voltage data and verified compatibility rules.</p></div>
-            <div class="n-card"><span class="n-num">02</span><h4>Safety Engine</h4><p>Voltage mismatches, UART collisions, input-only pins and power budgets flagged before anything burns.</p></div>
-            <div class="n-card"><span class="n-num">03</span><h4>Supply On Tap</h4><p>Every part links straight to Cytron. One click exports a BOM your shopping list dreams of.</p></div>
-            <div class="n-card"><span class="n-num">04</span><h4>Zero Install</h4><p>A PWA that lives in your browser and survives dead lab WiFi. Install it like a native app.</p></div>
-        </div>
-
-        <!-- CAPABILITIES -->
-        <div class="n-section-head">
-            <div class="n-kicker">CAPABILITIES</div>
-            <h2>Built like a tool,<br>not a toy.</h2>
-        </div>
-        <div class="n-caps">
-            <div class="n-cap"><div class="n-cap-head">🎛️ Pin Override</div><p>Swap any auto-assigned pin inline. Free pins only — conflicts are impossible by construction.</p></div>
-            <div class="n-cap"><div class="n-cap-head">🤖 AI Handoff</div><p>One click copies a structured prompt — board, pins, validation, code — straight into ChatGPT.</p></div>
-            <div class="n-cap"><div class="n-cap-head">🧩 PlatformIO Export</div><p>Download a ready zip: platformio.ini, src/main.cpp and the exact libraries your build needs.</p></div>
-            <div class="n-cap"><div class="n-cap-head">🔌 Serial Monitor</div><p>Flash your board, then read its output right here in the browser. No IDE required.</p></div>
+        <div class="is-steps">
+            <div class="is-step"><span class="is-num">01</span><div><h4>Select Board</h4><p>57 boards across Arduino, ESP, Raspberry Pi, STM32, micro:bit and Cytron Maker lines — with WiFi filter.</p></div></div>
+            <div class="is-step"><span class="is-num">02</span><div><h4>Add Components</h4><p>Up to 5 from 127 indexed parts — sensors, displays, motors, relays, radios, all with real pin maps.</p></div></div>
+            <div class="is-step"><span class="is-num">03</span><div><h4>Validate</h4><p>Voltage, conflicts, capabilities and power — flagged green/yellow/red/grey with fixes, never fake claims.</p></div></div>
+            <div class="is-step"><span class="is-num">04</span><div><h4>Route Pins</h4><p>Conflict-free allocation with per-device SPI CS, input-only awareness — override any pin inline.</p></div></div>
+            <div class="is-step"><span class="is-num">05</span><div><h4>Generate Code</h4><p>Clean C++ with your parameters, non-blocking millis(), syntax highlighted, one-click .ino or PlatformIO zip.</p></div></div>
+            <div class="is-step"><span class="is-num">06</span><div><h4>Flash &amp; Monitor</h4><p>Upload via your IDE or PlatformIO — then watch the output in the built-in Web Serial monitor.</p></div></div>
         </div>
 
-        <!-- STATS -->
-        <div class="n-stats">
-            <div><strong>57</strong><span>MCU BOARDS</span></div>
-            <div><strong>127</strong><span>COMPONENTS</span></div>
-            <div><strong>62</strong><span>PROJECT IDEAS</span></div>
-            <div><strong>100%</strong><span>OFFLINE-CAPABLE</span></div>
+        <!-- FAQ -->
+        <div class="is-sec">
+            <div class="n-kicker">FAQ</div>
+            <h2 class="is-h2">Frequently Asked Questions</h2>
+        </div>
+        <div class="is-faq">
+            <details><summary>Is Pieware 2 free?</summary><p>Yes — every feature, no account needed. It runs entirely in your browser.</p></details>
+            <details><summary>Does it work offline?</summary><p>Yes. Install it as a PWA and the full Helper, calculators and dictionary work without internet.</p></details>
+            <details><summary>Are the pinouts accurate?</summary><p>Famous boards use exact pin maps; niche boards use verified family templates. Anything unverified is clearly flagged ⚪, never claimed as safe.</p></details>
+            <details><summary>Where do the buy links go?</summary><p>Straight to Cytron Malaysia — the component catalog mirrors what students there actually buy.</p></details>
+            <details><summary>Can I use the generated code commercially?</summary><p>The code is generated for you with no strings — flash it, modify it, ship it.</p></details>
+            <details><summary>How do I report a wrong pinout?</summary><p>Use the Feedback tab — reports go straight to the developer and fixes ship fast.</p></details>
         </div>
 
-        <!-- CTA -->
-        <div class="n-cta">
-            <h2>Start your next build.</h2>
-            <button class="btn btn-nomu" onclick="navTo('helper')">OPEN THE HELPER →</button>
+        <!-- OPEN SOURCE CTA -->
+        <div class="is-gh">
+            <div class="is-gh-border"></div>
+            <div class="is-gh-hex">⬡</div>
+            <h2 class="is-gh-title">Open Source on GitHub</h2>
+            <p>MIT-spirited. Read the code, change it, ship it.<br>Every validation rule and pin map is visible in the source.</p>
+            <div class="is-gh-path">github.com/haziq12-lgtm/pieware2</div>
+            <div class="is-ctas center">
+                <a class="btn-is-green" href="https://github.com/haziq12-lgtm/pieware2" target="_blank" rel="noopener">◎ VIEW REPOSITORY</a>
+                <button class="btn-is-ghost" onclick="navTo('helper')">Start Building →</button>
+            </div>
         </div>
     </div>
 </section>
