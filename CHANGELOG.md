@@ -1,5 +1,23 @@
 # PIEWARE 2 — CHANGELOG
 
+**v2.3.0** — 31 August 2026 🔥 LIVE RELEASE
+"UI & Performance Enhancements"
+
+## ✨ New Features
+- **Hero animations** — 3 random display fonts per visit (Black Ops One / Alfa Slab One / Betania Patmos), staggered entrance, gold shimmer on title, glow pulse, typewriter subline with caret (reduced-motion safe)
+- **About tab redesign** — Our Story (admin-editable via Firebase), Roadmap 3-column (In Progress/Planned/Future), Support & Feedback CTA buttons, Version History + changelog link, x2_Hzq signature line
+- **Hero subline** — "Learn, Build & Understand Electronics Easily"
+
+## 🔧 Fixes
+- **CRITICAL FIX** — restore 7 functions lost in hub splice (openGuide, setPinOverride, toggleSchematic, wireColor, buildSchematicSVG, renderSchematic, closeGuide) — was crashing renderHelper, breaking pins/table/schematic
+
+## ⚡ Performance
+- Guard duplicate admin Firebase listeners
+- Stop simulation interval on navigation away
+- Remove expensive text-shadow animation
+
+---
+
 **v2.2.0** — 24 August 2026 🔥 LIVE RELEASE
 "Deploy & PWA"
 
