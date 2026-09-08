@@ -155,6 +155,12 @@ function navTo(target) {
         li.classList.toggle('active', li.dataset.target === target);
     });
 
+    // Randomize hero font when navigating to home
+    if (target === 'home') {
+        heroRandomFont();
+        typeHeroSub();
+    }
+
     currentSection = target;
     window.scrollTo({ top: 0, behavior: 'auto' });
 
@@ -2312,11 +2318,11 @@ function renderLiveStats() {
 }
 
 
-// --- Hero: random font (3 pilihan) + typewriter subline ---
+// --- Hero: random font (5 pilihan) + typewriter subline ---
 function heroRandomFont() {
     const t = document.querySelector('.is-title');
     if (!t) return;
-    const fonts = ['f-blackops', 'f-alfaslab', 'f-betania'];
+    const fonts = ['f-blackops', 'f-alfaslab', 'f-betania', 'f-lobster', 'f-notosans'];
     t.classList.add(fonts[Math.floor(Math.random() * fonts.length)]);
 }
 function typeHeroSub() {

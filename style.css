@@ -1700,6 +1700,8 @@ html, body { overflow-x: hidden !important; }
 .f-blackops { font-family: 'Black Ops One', var(--font-main) !important; font-weight: 400 !important; letter-spacing: 1px; }
 .f-alfaslab { font-family: 'Alfa Slab One', var(--font-main) !important; font-weight: 400 !important; letter-spacing: 0; }
 .f-betania { font-family: 'Betania Patmos', cursive !important; font-weight: 400 !important; letter-spacing: 1px; }
+.f-lobster { font-family: 'Lobster Two', cursive !important; font-weight: 400 !important; letter-spacing: 0.5px; }
+.f-notosans { font-family: 'Noto Sans JP', var(--font-main) !important; font-weight: 700 !important; letter-spacing: 0; }
 /* Entrance staggered */
 .is-hero > * { animation: heroUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .is-hero > *:nth-child(1) { animation-delay: 0.05s; }
