@@ -42,6 +42,8 @@ let currentSection = 'home';
 let salesChart = null;
 let pieChart = null;
 let lightningAnimId = null;
+let currentFeedbackFilter = 'all';
+let allFeedbackData = {};
 
 // Escape HTML — halakan injection melalui data dari database
 function esc(s) {
@@ -841,6 +843,7 @@ function setRating(n) {
 function submitFeedback() {
     const name = document.getElementById('fb-name').value.trim();
     const msg = document.getElementById('fb-msg').value.trim();
+    const type = document.getElementById('fb-type').value;
     if (!name) return showToast(t('Please enter your name'));
     if (!msg) return showToast(t('Please write your review message'));
     if (feedbackRating < 1 || feedbackRating > 5) return showToast(t('Invalid rating'));
@@ -853,6 +856,7 @@ function submitFeedback() {
         name: name,
         rating: feedbackRating,
         message: msg,
+        type: type,
         timestamp: Date.now()
     };
     db.ref('feedback').push(entry, function(err) {
@@ -861,6 +865,9 @@ function submitFeedback() {
         if (err) { showToast(t('Failed to send! Please try again.')); console.error(err); return; }
         document.getElementById('fb-name').value = '';
         document.getElementById('fb-msg').value = '';
+        if (document.getElementById('fb-type')) {
+            document.getElementById('fb-type').value = 'feedback';
+        }
         setRating(3);
         showToast(t('Thank you for your review!'));
     });
@@ -869,8 +876,17 @@ function submitFeedback() {
 function loadFeedback() {
     db.ref('feedback').on('value', snap => {
         const data = snap.val() || {};
+        allFeedbackData = data;
         renderFeedback(data);
     });
+}
+
+function filterFeedback(filter) {
+    currentFeedbackFilter = filter;
+    document.querySelectorAll('.feedback-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    renderFeedback(allFeedbackData);
 }
 
 function renderFeedback(data) {
@@ -887,14 +903,20 @@ function renderFeedback(data) {
     }
     const list = document.getElementById('feedback-list');
     if (!list) return;
-    const entries = Object.entries(data).sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
+
+    let entries = Object.entries(data).sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
+
+    // Apply filter
+    if (currentFeedbackFilter !== 'all') {
+        entries = entries.filter(([key, f]) => f.type === currentFeedbackFilter);
+    }
 
     if (!entries.length) {
         list.innerHTML = `
         <div class="empty-state">
             <div class="empty-state-icon">💬</div>
-            <div class="empty-state-title">{t('No reviews yet')}</div>
-            <div class="empty-state-sub">{t('Be the first to share your thoughts!')}</div>
+            <div class="empty-state-title">${currentFeedbackFilter === 'all' ? '{t(\'No reviews yet\')}' : 'No ' + currentFeedbackFilter + ' entries yet'}</div>
+            <div class="empty-state-sub">${currentFeedbackFilter === 'all' ? '{t(\'Be the first to share your thoughts!\')}' : 'Filter for another category'}</div>
         </div>`;
         return;
     }
@@ -912,16 +934,27 @@ function renderFeedback(data) {
         const d = new Date(f.timestamp || Date.now());
         const dateStr = d.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' });
         const stars = '★'.repeat(Math.max(0, Math.min(5, parseInt(f.rating) || 0)));
+        const typeLabel = f.type ? `<span style="font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:var(--radius-full); background:${getTypeColor(f.type)}; color:var(--text-main); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">${f.type}</span>` : '';
         return `
         <div class="feedback-item">
             <div class="feedback-meta">
                 <span class="feedback-name">${esc(f.name)}</span>
                 <span class="feedback-date">${dateStr}</span>
+                ${typeLabel}
             </div>
             <div class="feedback-stars">${stars}</div>
             <div class="feedback-msg">${esc(f.message)}</div>
         </div>`;
     }).join('');
+}
+
+function getTypeColor(type) {
+    switch(type) {
+        case 'feedback': return 'rgba(212,175,55,0.15)';
+        case 'suggestion': return 'rgba(16,185,129,0.15)';
+        case 'issue': return 'rgba(239,68,68,0.15)';
+        default: return 'rgba(148,163,184,0.15)';
+    }
 }
 
 function copyCode() {

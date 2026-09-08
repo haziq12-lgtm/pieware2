@@ -585,6 +585,8 @@ section { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) fo
         .feedback-date { font-size: 0.72rem; color: var(--text-muted); }
         .feedback-msg { font-size: 0.85rem; color: var(--text-muted); white-space: pre-wrap; word-break: break-word; }
         #feedback-list { max-height: 520px; overflow-y: auto; }
+        .feedback-filter { transition: all 0.2s ease; }
+        .feedback-filter.active { background: var(--gold); color: var(--bg-dark); border-color: var(--gold); }
 
                 /* Footer */
         .site-footer {

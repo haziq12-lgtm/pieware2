@@ -188,17 +188,14 @@
             <div class="road-card">
                 <div class="road-head">🟢 In Progress</div>
                 <ul>
-                    <li>Split-pane interactive UI for Helper</li>
-                    <li>New Home tab presentation</li>
-                    <li>Balanced design overhaul</li>
+                    <li>User accounts &amp; project cloud sync upgrades</li>
+                    <li>More components and MCUs</li>
+                    <li>Community project sharing</li>
                 </ul>
             </div>
             <div class="road-card">
                 <div class="road-head">🟡 Planned</div>
                 <ul>
-                    <li>User accounts &amp; project cloud sync upgrades</li>
-                    <li>More components and MCUs</li>
-                    <li>Community project sharing</li>
                     <li>Affiliate integration with Cytron</li>
                 </ul>
             </div>
@@ -229,7 +226,7 @@
         <h3 style="margin-bottom:0.4rem;">📋 Version History</h3>
         <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom: var(--space-md);">Recent releases.</p>
         <div class="ver-list">
-            <div class="ver-row"><span class="ver-tag">v2.3.0</span> Live on Vercel · PWA · Mini Projects · Validation engine · Code Studio · Hero animations</div>
+            <div class="ver-row"><span class="ver-tag">v2.3.0</span> New Ui/Ux Design · Split-pane interactive UI for Helper · Code Studio · Hero animations</div>
             <div class="ver-row"><span class="ver-tag">v2.1.1</span> CSS moved to external stylesheet — faster loads</div>
             <div class="ver-row"><span class="ver-tag">v2.1.0</span> Search &amp; filter, auto-save, dark mode &amp; more</div>
             <div class="ver-row"><span class="ver-tag">v2.0.5</span> Mobile responsive &amp; bug fixes</div>
@@ -643,6 +640,14 @@
                 <input type="text" id="fb-name" class="form-control" placeholder="Your name" maxlength="50">
             </div>
             <div class="form-group">
+                <label for="fb-type">Type *</label>
+                <select id="fb-type" class="form-control">
+                    <option value="feedback">Feedback</option>
+                    <option value="suggestion">Suggestion</option>
+                    <option value="issue">Issue</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Rating *</label>
                 <div class="star-picker" id="star-picker">
                     <button type="button" class="star-btn" onclick="setRating(1)" aria-label="1 star">★</button>
@@ -660,6 +665,12 @@
         </div>
         <div class="card">
             <h3 style="margin-bottom: var(--space-md);">User Reviews</h3>
+            <div id="feedback-filters" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-md);">
+                <button class="btn btn-sm btn-outline feedback-filter active" data-filter="all" onclick="filterFeedback('all')">All</button>
+                <button class="btn btn-sm btn-outline feedback-filter" data-filter="feedback" onclick="filterFeedback('feedback')">Feedback</button>
+                <button class="btn btn-sm btn-outline feedback-filter" data-filter="suggestion" onclick="filterFeedback('suggestion')">Suggestion</button>
+                <button class="btn btn-sm btn-outline feedback-filter" data-filter="issue" onclick="filterFeedback('issue')">Issue</button>
+            </div>
             <div id="feedback-list">
                 <div class="skeleton-card"><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w60"></div></div>
             </div>
