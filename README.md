@@ -21,8 +21,14 @@ NEW DOMAIN [Live Demo](https://pieware2.vercel.app)
 |  **Component Dictionary** | 57 MCU boards, 123 components |
 |  **Dark Mode** | Toggle light/dark theme |
 |  **i18n** | English, Bahasa Indonesia, Tagalog | ✅ Working
-|  **My Projects** | Save up to 20 projects locally |
+|  **User Authentication** | Firebase Auth with cloud project sync |
+|  **Advanced Search** | Categorized search across all sections |
+|  **Export Formats** | JSON, text, CSV, and more export options |
+|  **Interactive Tutorial** | Welcome guide for new users |
+|  **My Projects** | Save up to 20 projects locally + cloud sync |
 |  **Shareable URL** | Share project configuration via link |
+|  **Community Projects** | Share and discover user projects |
+|  **Accessibility** | ARIA labels, keyboard navigation, screen reader support |
 
 ---
 
