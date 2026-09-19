@@ -349,46 +349,86 @@
     <div id="helper-steps" style="display:flex; align-items:center; justify-content:center; gap:0.4rem; flex-wrap:wrap; margin-bottom: var(--space-xl); font-size:0.78rem; font-weight:700;"></div>
     <div class="helper-split">
     <div class="helper-left">
-    <div class="card" style="margin-bottom: var(--space-md);">
-        <div class="form-group" style="margin-bottom: 0;">
-            <label for="mcu-select">1. Select MCU Board</label>
-            <select id="mcu-select" class="form-control" onchange="onMcuChange()">
+    <!-- MCU Selection Card -->
+    <div class="card helper-card" style="margin-bottom: var(--space-md);">
+        <div class="card-header">
+            <span class="step-number">1</span>
+            <h3>Select MCU Board</h3>
+        </div>
+        <div class="form-group">
+            <select id="mcu-select" class="form-control enhanced-select" onchange="onMcuChange()">
                 <option value="" disabled selected>-- Choose MCU --</option>
             </select>
-            <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; font-weight:600; cursor:pointer; margin-top:0.6rem;">
-                <input type="checkbox" id="wifi-toggle" onchange="setWifiOnly(this.checked)" style="width:16px; height:16px; accent-color: var(--gold); cursor:pointer;">
-                📶 WiFi boards only
-            </label>
-            <div id="mcu-info-chips" style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-top:0.5rem;"></div>
         </div>
-        <div class="form-group" style="margin-bottom: 0; margin-top: var(--space-md);">
-            <label for="comp-select">2. Select Component</label>
-            <select id="comp-select" class="form-control" onchange="onCompChange()" disabled>
+        <div class="filter-options">
+            <label class="filter-toggle">
+                <input type="checkbox" id="wifi-toggle" onchange="setWifiOnly(this.checked)">
+                <span class="toggle-icon">📶</span>
+                <span>WiFi boards only</span>
+            </label>
+        </div>
+        <div id="mcu-info-chips" class="info-chips"></div>
+    </div>
+
+    <!-- Component Selection Card -->
+    <div class="card helper-card" style="margin-bottom: var(--space-md);">
+        <div class="card-header">
+            <span class="step-number">2</span>
+            <h3>Select Component</h3>
+        </div>
+        <div class="form-group">
+            <select id="comp-select" class="form-control enhanced-select" onchange="onCompChange()" disabled>
                 <option value="" disabled selected>-- Select MCU First --</option>
             </select>
         </div>
     </div>
-    <div class="card" style="margin-bottom: var(--space-md); display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap;">
-        <button class="btn btn-gold btn-sm" id="btn-add-comp" onclick="addComponent()" disabled>+ Add More Component</button>
-        <button class="btn btn-outline btn-sm" onclick="clearAllComps()" id="btn-clear-comps" disabled>🔄 Clear All</button>
-        <span id="comp-count" style="font-size:0.78rem; color: var(--text-muted); font-weight:600;">0 / 10 components</span>
-        <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.85rem; font-weight:600; cursor:pointer; margin-left:auto;">
-            <input type="checkbox" id="breadboard-toggle" onchange="onBreadboardToggle()" style="width:17px; height:17px; accent-color: var(--gold); cursor:pointer;">
-            🍞 Use Breadboard
-        </label>
-    </div>
-    <div id="active-comps" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: var(--space-lg);"></div>
 
-    <!-- Project Management -->
-    <div class="card" style="margin-bottom: var(--space-md);">
-        <h3 style="margin-bottom:0.4rem;">💾 Project Management</h3>
-        <div style="display:flex; gap:0.5rem; margin-bottom:var(--space-sm);">
-            <input type="text" id="proj-name" class="form-control" placeholder="Project name" style="flex:1;">
-            <button class="btn btn-gold btn-sm" onclick="saveMyProject()">Save</button>
+    <!-- Actions Card -->
+    <div class="card helper-card" style="margin-bottom: var(--space-md);">
+        <div class="action-bar">
+            <button class="btn btn-gold btn-add-comp" id="btn-add-comp" onclick="addComponent()" disabled>
+                <span class="btn-icon">+</span>
+                <span>Add Component</span>
+            </button>
+            <button class="btn btn-outline btn-clear" onclick="clearAllComps()" id="btn-clear-comps" disabled>
+                <span class="btn-icon">🔄</span>
+                <span>Clear All</span>
+            </button>
         </div>
-        <div style="display:flex; gap:0.5rem; margin-top:var(--space-sm);">
-            <button class="btn btn-outline btn-sm" onclick="cloudSaveProjects()" style="flex:1;">☁️ Sync to Cloud</button>
-            <button class="btn btn-outline btn-sm" onclick="cloudLoadProjects()" style="flex:1;">☁️ Load from Cloud</button>
+        <div class="comp-status">
+            <span class="comp-count" id="comp-count">0 / 5 components</span>
+            <label class="breadboard-toggle">
+                <input type="checkbox" id="breadboard-toggle" onchange="onBreadboardToggle()">
+                <span class="toggle-icon">🍞</span>
+                <span>Use Breadboard</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Active Components -->
+    <div id="active-comps" class="active-comps"></div>
+
+    <!-- Project Management Card -->
+    <div class="card helper-card project-card">
+        <div class="card-header">
+            <span class="card-icon">💾</span>
+            <h3>Project Management</h3>
+        </div>
+        <div class="project-actions">
+            <div class="input-group">
+                <input type="text" id="proj-name" class="form-control" placeholder="Project name">
+                <button class="btn btn-gold btn-sm" onclick="saveMyProject()">Save</button>
+            </div>
+            <div class="cloud-actions">
+                <button class="btn btn-outline btn-sm cloud-btn" onclick="cloudSaveProjects()">
+                    <span>☁️</span>
+                    <span>Sync to Cloud</span>
+                </button>
+                <button class="btn btn-outline btn-sm cloud-btn" onclick="cloudLoadProjects()">
+                    <span>☁️</span>
+                    <span>Load from Cloud</span>
+                </button>
+            </div>
         </div>
     </div>
     </div>

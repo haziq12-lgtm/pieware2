@@ -2505,6 +2505,7 @@ function addComponent() {
 function removeHelperComp(name) {
     helperComps = helperComps.filter(c => c !== name);
     Object.keys(pinOverrides).forEach(k => { if (k.split('::')[0] === name) delete pinOverrides[k]; });
+    updateCompCount();
     renderHelper();
 }
 
@@ -2516,15 +2517,16 @@ function onBreadboardToggle() {
 function renderActiveComps() {
     const area = document.getElementById('active-comps');
     if (!area) return;
-    document.getElementById('comp-count').textContent = helperComps.length + ' / ' + MAX_COMPS + ' components';
+    updateCompCount();
     if (!helperComps.length) {
         area.innerHTML = '<span style="font-size:0.8rem; color:var(--text-muted);">No components added yet — select one above and press "+ Add More Component".</span>';
         return;
     }
     area.innerHTML = helperComps.map(c =>
-        `<span style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.4); color:var(--gold-light); padding:0.35rem 0.7rem; border-radius:var(--radius-full); font-size:0.78rem; font-weight:600;">
-            ${esc(c)} <button onclick="removeHelperComp('${esc(c)}')" style="background:none; color:var(--danger); font-weight:800; font-size:0.85rem; cursor:pointer;">✕</button>
-        </span>`
+        `<div class="active-comp-chip">
+            ${esc(c)}
+            <button class="remove-btn" onclick="removeHelperComp('${esc(c)}')" aria-label="Remove component">✕</button>
+        </div>`
     ).join('');
 }
 
@@ -3672,6 +3674,14 @@ function updateHeroStats() {
     if (heroProjects) {
         const userProjects = getMyProjects().length;
         heroProjects.textContent = userProjects > 0 ? userProjects : 0;
+    }
+}
+
+// Update component count in helper
+function updateCompCount() {
+    const compCount = document.getElementById('comp-count');
+    if (compCount) {
+        compCount.textContent = helperComps.length + ' / ' + MAX_COMPS + ' components';
     }
 }
 
