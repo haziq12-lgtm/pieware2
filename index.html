@@ -378,7 +378,21 @@
         </label>
     </div>
     <div id="active-comps" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: var(--space-lg);"></div>
+
+    <!-- Project Management -->
+    <div class="card" style="margin-bottom: var(--space-md);">
+        <h3 style="margin-bottom:0.4rem;">💾 Project Management</h3>
+        <div style="display:flex; gap:0.5rem; margin-bottom:var(--space-sm);">
+            <input type="text" id="proj-name" class="form-control" placeholder="Project name" style="flex:1;">
+            <button class="btn btn-gold btn-sm" onclick="saveMyProject()">Save</button>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-top:var(--space-sm);">
+            <button class="btn btn-outline btn-sm" onclick="cloudSaveProjects()" style="flex:1;">☁️ Sync to Cloud</button>
+            <button class="btn btn-outline btn-sm" onclick="cloudLoadProjects()" style="flex:1;">☁️ Load from Cloud</button>
+        </div>
     </div>
+    </div>
+
     <div class="helper-right">
     <!-- VALIDATION CARD -->
     <div class="card hidden" id="validation-card" style="margin-bottom: var(--space-xl); padding: var(--space-lg);"></div>
@@ -439,7 +453,7 @@
     <!-- ==================== MY PROJECTS ==================== -->
     <div class="card" style="margin-top: var(--space-2xl);">
         <h3 style="margin-bottom: 0.4rem;">💾 My Projects</h3>
-        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">Save your MCU + component selections and reload them anytime (stored in this browser).</p>
+        <p style="font-size:0.82rem; margin-bottom: var(--space-md);">Save your MCU + component selections and reload them anytime (stored locally + cloud sync for logged-in users).</p>
         <div style="margin-bottom: var(--space-md);">
             <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--gold); margin-bottom:0.5rem;">⚡ Quick Start Templates</div>
             <div id="template-chips" style="display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
@@ -449,7 +463,7 @@
             <button class="btn btn-gold btn-sm" onclick="saveMyProject()">💾 Save Current</button>
         </div>
         <div style="display:flex; gap:0.5rem; margin-bottom: var(--space-md); flex-wrap:wrap; align-items:center;">
-            <span style="font-size:0.72rem; color:var(--text-muted);">☁️ Cloud sync (same browser account):</span>
+            <span style="font-size:0.72rem; color:var(--text-muted);">☁️ Cloud sync (requires sign-in):</span>
             <button class="btn btn-outline btn-sm" style="font-size:0.72rem;" onclick="cloudSaveProjects()">☁️ Save to Cloud</button>
             <button class="btn btn-outline btn-sm" style="font-size:0.72rem;" onclick="cloudLoadProjects()">⬇️ Load from Cloud</button>
         </div>

@@ -161,6 +161,8 @@ window.addEventListener('load', () => {
     loadAbout();
     // Show tutorial for first-time users
     showTutorial();
+    // Update hero stats
+    updateHeroStats();
     // Hub: set href chip "Buy parts" — carian Cytron + affiliate tag
     document.querySelectorAll('.hub-buy-chip').forEach(a => {
         a.href = affiliateSearchUrl(a.dataset.query || 'arduino');
@@ -708,6 +710,7 @@ function saveMyProject() {
     catch (e) { return showToast('Storage full — delete old projects'); }
     document.getElementById('proj-name').value = '';
     renderMyProjects();
+    updateHeroStats();
     showToast('Project saved!');
 
     // Auto-sync to cloud if user is logged in
@@ -736,6 +739,7 @@ function deleteMyProject(idx) {
     projects.splice(idx, 1);
     try { localStorage.setItem('pieware_projects', JSON.stringify(projects)); } catch (e) {}
     renderMyProjects();
+    updateHeroStats();
 }
 
 // --- Cloud sync (Prioriti 4.1): anonymous auth + userProjects/{uid} ---
@@ -783,9 +787,23 @@ function autoSyncProjects() {
                 try { localStorage.setItem('pieware_projects', JSON.stringify(v.projects)); } catch (e) {}
                 renderMyProjects();
                 showToast('☁️ Projects synced from cloud');
+            } else {
+                // Merge cloud and local projects
+                const mergedProjects = [...localProjects];
+                v.projects.forEach(cloudProj => {
+                    if (!localProjects.find(local => local.name === cloudProj.name)) {
+                        mergedProjects.push(cloudProj);
+                    }
+                });
+                try { localStorage.setItem('pieware_projects', JSON.stringify(mergedProjects.slice(0, 20))); } catch (e) {}
+                renderMyProjects();
+                showToast('☁️ Projects merged from cloud');
             }
         }
-    }).catch(err => console.error('Auto-sync failed:', err));
+    }).catch(err => {
+        console.error('Auto-sync failed:', err);
+        // Don't show error on auto-sync failure, just log it
+    });
 }
 
 function renderMyProjects() {
@@ -3646,6 +3664,15 @@ function renderAdminStats() {
     document.getElementById('stat-rating').textContent = avgRating.toFixed(1);
     document.getElementById('stat-users').textContent = activeUsers;
     document.getElementById('stat-projects').textContent = totalProjects;
+}
+
+// Update hero stats
+function updateHeroStats() {
+    const heroProjects = document.getElementById('stat-projects');
+    if (heroProjects) {
+        const userProjects = getMyProjects().length;
+        heroProjects.textContent = userProjects > 0 ? userProjects : 0;
+    }
 }
 
 function renderAdminCharts() {
