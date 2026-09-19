@@ -1,5 +1,45 @@
 # PIEWARE 2 — CHANGELOG
 
+**v2.4.0** — 19 September 2026 🔥 LIVE RELEASE
+"Major Feature Expansion"
+
+## ✨ New Features
+- **User Authentication** — Firebase Auth integration with sign up, sign in, and user accounts
+- **Cloud Project Sync** — Automatic project synchronization across devices for logged-in users
+- **Advanced Search** — Enhanced search across pages, products, user projects, and mini projects with categorized results
+- **Export Formats** — New JSON and text export options for projects in addition to existing formats
+- **Interactive Tutorial** — Welcome tutorial modal for first-time users with dismiss option
+- **Enhanced Admin Dashboard** — Added review analytics, user activity metrics, and community project statistics
+- **Community Project Attribution** — Enhanced community projects with author information and engagement metrics
+
+## 🔧 Fixes
+- **i18n Restoration** — Fixed internationalization feature now working properly across the app
+- **Enhanced Error Handling** — Specific Firebase error messages for better user experience
+- **Font Rotation** — Added Lobster Two and Noto Sans JP to hero font rotation system
+- **Feedback Filters** — Added filtering by type (Feedback/Suggestion/Issue) to reviews
+
+## ⚡ Performance
+- **Loading States** — Added loading spinners and skeleton screens for better UX
+- **DNS Prefetching** — Added DNS prefetch for external resources to improve load times
+- **Resource Optimization** — Preloaded critical CSS and optimized script loading
+- **Image Lazy Loading** — Product images now load lazily for better performance
+
+## ♿ Accessibility
+- **ARIA Labels** — Added comprehensive ARIA labels for screen readers
+- **Keyboard Navigation** — Enhanced keyboard support with Escape key for modals and Enter key for navigation
+- **Role Attributes** — Added proper role attributes for navigation and status elements
+- **Focus Management** — Improved focus states and tab indexing throughout the app
+
+## 🔒 Security
+- **Input Validation** — Added email and password validation functions
+- **Input Sanitization** — Implemented input sanitization to prevent XSS attacks
+- **Error Handling** - Enhanced security through specific error messages
+
+## 📦 Data
+- **Components:** 127 · **Mini Projects:** 62 · **Community Projects:** Enhanced with author tracking
+
+---
+
 **v2.3.0** — 31 August 2026 🔥 LIVE RELEASE
 "UI & Performance Enhancements"
 

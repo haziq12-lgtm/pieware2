@@ -44,6 +44,67 @@ let pieChart = null;
 let lightningAnimId = null;
 let currentFeedbackFilter = 'all';
 let allFeedbackData = {};
+let allCommunityProjects = {};
+
+// Firebase Error Handler
+function handleFirebaseError(err, context = 'Operation') {
+    console.error(`Firebase Error [${context}]:`, err);
+    let message = 'An error occurred. Please try again.';
+
+    if (err.code === 'PERMISSION_DENIED') {
+        message = 'Permission denied. You may not have access to this operation.';
+    } else if (err.code === 'NETWORK_ERROR') {
+        message = 'Network error. Please check your internet connection.';
+    } else if (err.code === 'TIMED_OUT') {
+        message = 'Request timed out. Please try again.';
+    } else if (err.code === 'UNAUTHORIZED') {
+        message = 'Unauthorized. Please check your login credentials.';
+    } else if (err.code === 'EMAIL_NOT_FOUND' || err.code === 'INVALID_PASSWORD') {
+        message = 'Invalid email or password.';
+    } else if (err.code === 'EMAIL_ALREADY_IN_USE') {
+        message = 'This email is already registered.';
+    } else if (err.code === 'WEAK_PASSWORD') {
+        message = 'Password is too weak. Please use a stronger password.';
+    }
+
+    showToast(message);
+    return message;
+}
+
+// Input Validation
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validatePassword(password) {
+    return password.length >= 6;
+}
+
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    return input.replace(/[<>]/g, '');
+}
+
+// Keyboard Navigation Enhancement
+document.addEventListener('keydown', function(e) {
+    // Handle Escape key to close modals
+    if (e.key === 'Escape') {
+        const modals = document.querySelectorAll('.modal-overlay.active');
+        modals.forEach(modal => modal.classList.remove('active'));
+
+        const searchModal = document.getElementById('search-modal');
+        if (searchModal && searchModal.classList.contains('active')) {
+            toggleSearch();
+        }
+    }
+
+    // Handle Enter key on navigation items
+    if (e.key === 'Enter' && e.target.classList.contains('nav-links') || e.target.parentElement.classList.contains('nav-links')) {
+        const target = e.target.dataset.target;
+        if (target) navTo(target);
+    }
+});
 
 // Escape HTML — halakan injection melalui data dari database
 function esc(s) {
@@ -60,7 +121,7 @@ function esc(s) {
 // Contoh Shopee: tag: 'af_siteid=ABC123&af_sub1=pieware'
 // ===================================================================
 const AFFILIATE = {
-    tag: '',  // kosongkan jika tiada lagi affiliate ID
+    tag: '',  // Add your affiliate ID here when available (e.g., 'af_siteid=ABC123&af_sub1=pieware')
     defaultSearch: 'https://my.cytron.io/search?q={q}' // {q} diganti nama produk
 };
 function affiliateSuffix() {
@@ -98,6 +159,8 @@ window.addEventListener('load', () => {
     loadAnnouncement();
     loadFeedback();
     loadAbout();
+    // Show tutorial for first-time users
+    showTutorial();
     // Hub: set href chip "Buy parts" — carian Cytron + affiliate tag
     document.querySelectorAll('.hub-buy-chip').forEach(a => {
         a.href = affiliateSearchUrl(a.dataset.query || 'arduino');
@@ -333,7 +396,10 @@ function setLang(l) {
     lang = l;
     try { localStorage.setItem('pieware_lang', l); } catch (e) {}
     showToast(t('Language updated'));
+    // Re-render sections that use translations
     renderShop();
+    renderFeedback(allFeedbackData);
+    typeHeroSub();
     loadFeedback();
 }
 
@@ -391,6 +457,11 @@ function performSearch(q) {
     const res = document.getElementById('search-results');
     if (!q.trim()) { res.innerHTML = ''; return; }
     q = q.toLowerCase();
+
+    let html = '';
+    let resultCount = 0;
+
+    // Search pages
     const pages = [
         { label: 'Home', target: 'home', icon: '🏠' },
         { label: 'Hub', target: 'hub', icon: '🧭' },
@@ -398,21 +469,54 @@ function performSearch(q) {
         { label: 'Source Code Generator', target: 'source', icon: '💻' },
         { label: 'Electronics Calculator', target: 'calculator', icon: '🧮' },
         { label: 'Hardware Store', target: 'shop', icon: '🛒' },
-        { label: 'Login (Admin)', target: 'admin', icon: '👑' },
+        { label: 'Feedback', target: 'feedback', icon: '💬' },
+        { label: 'About', target: 'about', icon: 'ℹ️' },
     ];
-    let html = '';
+
+    html += '<div class="search-category">Pages</div>';
     pages.forEach(p => {
         if (p.label.toLowerCase().includes(q)) {
             html += `<div class="search-result-item" onclick="toggleSearch(); navTo('${p.target}')">${p.icon} <span>${p.label}</span></div>`;
+            resultCount++;
         }
     });
-    // Cari produk
+
+    // Search products
+    html += '<div class="search-category">Products</div>';
     Object.values(allProducts).forEach(p => {
         if (p.name && p.name.toLowerCase().includes(q)) {
             html += `<div class="search-result-item" onclick="toggleSearch(); navTo('shop')">${esc(p.icon) || '📦'} <span>${esc(p.name)} — RM${esc(p.price)}</span></div>`;
+            resultCount++;
         }
     });
-    if (!html) html = '<p style="padding:1rem; color:var(--text-muted); text-align:center;">' + t('No results found.') + '</p>';
+
+    // Search user projects
+    const userProjects = getMyProjects();
+    if (userProjects.length > 0) {
+        html += '<div class="search-category">My Projects</div>';
+        userProjects.forEach((proj, idx) => {
+            if (proj.name && proj.name.toLowerCase().includes(q)) {
+                html += `<div class="search-result-item" onclick="toggleSearch(); loadMyProject(${idx})">📁 <span>${esc(proj.name)}</span></div>`;
+                resultCount++;
+            }
+        });
+    }
+
+    // Search mini projects
+    if (typeof miniProjects !== 'undefined' && miniProjects.length > 0) {
+        html += '<div class="search-category">Mini Projects</div>';
+        miniProjects.forEach((proj, idx) => {
+            if (proj.name && proj.name.toLowerCase().includes(q)) {
+                html += `<div class="search-result-item" onclick="toggleSearch(); loadMiniProject(${idx})">🎯 <span>${esc(proj.name)}</span></div>`;
+                resultCount++;
+            }
+        });
+    }
+
+    if (resultCount === 0) {
+        html = '<p style="padding:1rem; color:var(--text-muted); text-align:center;">' + t('No results found.') + '</p>';
+    }
+
     res.innerHTML = html;
 }
 
@@ -605,6 +709,11 @@ function saveMyProject() {
     document.getElementById('proj-name').value = '';
     renderMyProjects();
     showToast('Project saved!');
+
+    // Auto-sync to cloud if user is logged in
+    if (currentUser) {
+        cloudSaveProjects();
+    }
 }
 
 function loadMyProject(idx) {
@@ -634,17 +743,19 @@ function cloudSaveProjects() {
     const projects = getMyProjects();
     if (!projects.length) return showToast('No projects to sync — save one first');
     const user = auth.currentUser;
+    if (!user) return showToast('Please sign in to sync projects to cloud');
+
     const doSave = u => db.ref('userProjects/' + u.uid).set({ projects: projects, ts: Date.now() }, function(err) {
-        if (err) { showToast('Cloud save failed — check database rules'); console.error(err); return; }
+        if (err) { handleFirebaseError(err, 'Cloud Save Projects'); return; }
         showToast('☁️ ' + projects.length + ' project(s) synced to cloud');
     });
-    if (user) doSave(user);
-    else auth.signInAnonymously().then(res => doSave(res.user)).catch(function(err) {
-        showToast('Cloud sign-in failed — enable Anonymous auth in Firebase');
-        console.error(err);
-    });
+    doSave(user);
 }
+
 function cloudLoadProjects() {
+    const user = auth.currentUser;
+    if (!user) return showToast('Please sign in to load projects from cloud');
+
     const apply = snap => {
         const v = snap.val();
         if (!v || !v.projects || !v.projects.length) return showToast('No cloud projects found');
@@ -652,10 +763,29 @@ function cloudLoadProjects() {
         renderMyProjects();
         showToast('☁️ ' + v.projects.length + ' project(s) loaded from cloud');
     };
-    const fail = err => { showToast('Cloud load failed — check rules/auth'); console.error(err); };
+    const fail = err => { handleFirebaseError(err, 'Cloud Load Projects'); };
+
+    db.ref('userProjects/' + user.uid).once('value').then(apply).catch(fail);
+}
+
+// Auto-sync projects when user logs in
+function autoSyncProjects() {
     const user = auth.currentUser;
-    if (user) db.ref('userProjects/' + user.uid).once('value').then(apply).catch(fail);
-    else auth.signInAnonymously().then(res => db.ref('userProjects/' + res.user.uid).once('value').then(apply).catch(fail)).catch(fail);
+    if (!user) return;
+
+    // Load projects from cloud on login
+    db.ref('userProjects/' + user.uid).once('value').then(snap => {
+        const v = snap.val();
+        if (v && v.projects && v.projects.length) {
+            const localProjects = getMyProjects();
+            if (localProjects.length === 0) {
+                // No local projects, load from cloud
+                try { localStorage.setItem('pieware_projects', JSON.stringify(v.projects)); } catch (e) {}
+                renderMyProjects();
+                showToast('☁️ Projects synced from cloud');
+            }
+        }
+    }).catch(err => console.error('Auto-sync failed:', err));
 }
 
 function renderMyProjects() {
@@ -743,6 +873,10 @@ function renderCatalog(q) {
 }
 
 function loadProducts() {
+    const grid = document.getElementById('shop-grid');
+    if (grid) {
+        grid.innerHTML = '<div class="loading-spinner"></div> Loading products...';
+    }
     db.ref('shopProducts').on('value', snap => {
         allProducts = snap.val() || {};
         renderShop();
@@ -823,7 +957,7 @@ function saveAbout() {
     db.ref('about').set({ text: text, updatedAt: Date.now() }, function(err) {
         btn.disabled = false;
         btn.textContent = 'Save About';
-        if (err) { showToast(t('Save failed! Are you logged in as admin?')); console.error(err); return; }
+        if (err) { handleFirebaseError(err, 'Save About'); return; }
         showToast(t('About updated'));
     });
 }
@@ -850,6 +984,7 @@ function submitFeedback() {
 
     const btn = document.getElementById('btn-feedback');
     btn.disabled = true;
+    btn.classList.add('loading');
     btn.textContent = 'Sending...';
 
     const entry = {
@@ -861,8 +996,9 @@ function submitFeedback() {
     };
     db.ref('feedback').push(entry, function(err) {
         btn.disabled = false;
+        btn.classList.remove('loading');
         btn.textContent = 'Send Review';
-        if (err) { showToast(t('Failed to send! Please try again.')); console.error(err); return; }
+        if (err) { handleFirebaseError(err, 'Submit Feedback'); return; }
         document.getElementById('fb-name').value = '';
         document.getElementById('fb-msg').value = '';
         if (document.getElementById('fb-type')) {
@@ -874,6 +1010,10 @@ function submitFeedback() {
 }
 
 function loadFeedback() {
+    const list = document.getElementById('feedback-list');
+    if (list) {
+        list.innerHTML = '<div class="loading-spinner"></div> Loading reviews...';
+    }
     db.ref('feedback').on('value', snap => {
         const data = snap.val() || {};
         allFeedbackData = data;
@@ -1090,6 +1230,54 @@ function downloadCode() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('Downloaded pieware2_sketch.' + ext);
+}
+
+// Export as JSON
+function exportJSON() {
+    if (!helperMcu || !helperComps.length) return showToast('Select components first');
+
+    const projectData = {
+        name: helperMcu + ' Project',
+        mcu: helperMcu,
+        components: helperComps,
+        breadboard: helperBreadboard,
+        timestamp: new Date().toISOString(),
+        generatedBy: 'Pieware 2'
+    };
+
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'pieware2_project.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📄 Project exported as JSON');
+}
+
+// Export as simple text format
+function exportText() {
+    if (!helperMcu || !helperComps.length) return showToast('Select components first');
+
+    let text = `PIEWARE 2 PROJECT EXPORT\n`;
+    text += `========================\n\n`;
+    text += `MCU: ${helperMcu}\n`;
+    text += `Components: ${helperComps.length}\n`;
+    text += `Date: ${new Date().toLocaleDateString()}\n\n`;
+    text += `COMPONENTS:\n`;
+    helperComps.forEach((comp, i) => {
+        text += `${i + 1}. ${comp}\n`;
+    });
+    text += `\nGenerated by Pieware 2 - https://pieware2.vercel.app\n`;
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'pieware2_project.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📝 Project exported as text');
 }
 
 // ===================================================================
@@ -2027,6 +2215,7 @@ function closeView() {
 function loadCommunity() {
     db.ref('communityProjects').on('value', snap => {
         communityProjects = snap.val() || {};
+        allCommunityProjects = communityProjects;
         renderMiniProjects(document.getElementById('mini-search') ? document.getElementById('mini-search').value : '');
     });
 }
@@ -2041,7 +2230,8 @@ function deleteCommunity(key) {
     if (!isAdmin) return;
     if (!confirm('Remove this community project?')) return;
     db.ref('communityProjects/' + key).remove(function(err) {
-        if (err) showToast('Failed to remove'); else showToast('Community project removed');
+        if (err) { handleFirebaseError(err, 'Remove Community Project'); return; }
+        showToast('Community project removed');
     });
 }
 function commAddComp() {
@@ -2071,9 +2261,9 @@ function submitCommunityProject() {
     if (!name) return showToast('Project name required');
     if (!mcu || !MCU_INDEX[mcu]) return showToast('Select a valid MCU board');
     if (!commComps.length) return showToast('Add at least 1 component');
-    const entry = { name: name, emoji: emoji || guessEmoji(name), level: level, mcu: mcu, components: commComps.slice(), desc: desc, author: 'community', ts: Date.now() };
+    const entry = { name: name, emoji: emoji || guessEmoji(name), level: level, mcu: mcu, components: commComps.slice(), desc: desc, author: currentUser?.displayName || currentUser?.email?.split('@')[0] || 'community', authorEmail: currentUser?.email || '', ts: Date.now(), likes: 0, views: 0 };
     db.ref('communityProjects').push(entry, function(err) {
-        if (err) { showToast('Failed to publish — check connection'); console.error(err); return; }
+        if (err) { handleFirebaseError(err, 'Publish Community Project'); return; }
         document.getElementById('comm-name').value = '';
         document.getElementById('comm-emoji').value = '';
         document.getElementById('comm-desc').value = '';
@@ -3434,10 +3624,28 @@ function renderAdminStats() {
     const totalOrders = completed.length;
     const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
+    // Feedback stats
+    const feedbackEntries = Object.values(allFeedbackData);
+    const totalReviews = feedbackEntries.length;
+    const ratings = feedbackEntries.map(f => parseInt(f.rating) || 0).filter(r => r > 0);
+    const avgRating = ratings.length ? (ratings.reduce((s, r) => s + r, 0) / ratings.length) : 0;
+
+    // Community projects stats
+    const communityProjects = Object.values(allCommunityProjects || {});
+    const totalProjects = communityProjects.length;
+
+    // Active users (estimate from feedback timestamps in last 30 days)
+    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    const activeUsers = new Set(feedbackEntries.filter(f => f.timestamp > thirtyDaysAgo).map(f => f.name)).size;
+
     document.getElementById('stat-total-sales').textContent = totalSales;
     document.getElementById('stat-revenue').textContent = 'RM ' + totalRevenue.toFixed(2);
     document.getElementById('stat-orders').textContent = totalOrders;
     document.getElementById('stat-avg').textContent = 'RM ' + avgOrder.toFixed(2);
+    document.getElementById('stat-reviews').textContent = totalReviews;
+    document.getElementById('stat-rating').textContent = avgRating.toFixed(1);
+    document.getElementById('stat-users').textContent = activeUsers;
+    document.getElementById('stat-projects').textContent = totalProjects;
 }
 
 function renderAdminCharts() {
@@ -3574,8 +3782,7 @@ function deleteOrder(key, btn) {
         if (err) {
             btn.disabled = false;
             btn.textContent = 'Remove';
-            showToast(t('Failed to delete order!'));
-            console.error(err);
+            handleFirebaseError(err, 'Delete Order');
             return;
         }
         restockOrder(o);
@@ -3681,7 +3888,7 @@ function saveProduct() {
 
     const ref = key ? db.ref('shopProducts/' + key) : db.ref('shopProducts').push();
     ref.set(product, function(err) {
-        if (err) { showToast(t('Failed to save product!')); console.error(err); return; }
+        if (err) { handleFirebaseError(err, 'Save Product'); return; }
         closeProductForm();
         showToast(key ? t('Product updated') : t('Product added'));
     });
@@ -3695,8 +3902,7 @@ function deleteProduct(key, btn) {
     db.ref('shopProducts/' + key).remove(function(err) {
         if (err) {
             btn.disabled = false;
-            showToast(t('Failed to delete product!'));
-            console.error(err);
+            handleFirebaseError(err, 'Delete Product');
             return;
         }
         // Item cart yang berkaitan akan dibuang automatik oleh loadProducts
@@ -3779,9 +3985,11 @@ const ADMIN_EMAIL = 'admin@pieware.com';
 const auth = firebase.auth();
 let isAdmin = false;
 let pendingAdminLogin = false;
+let currentUser = null;
 
 // Sesi admin kekal automatik merentas refresh (Firebase Auth persistence)
 auth.onAuthStateChanged(function(user) {
+    currentUser = user;
     const btn = document.getElementById('admin-login-btn');
     const admin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
     isAdmin = admin;
@@ -3793,6 +4001,10 @@ auth.onAuthStateChanged(function(user) {
         showToast('Admin access granted');
         navTo('admin');
     }
+    // Update user UI if user is logged in
+    updateUserUI(user);
+    // Auto-sync projects when user logs in
+    if (user) autoSyncProjects();
 });
 
 // Butang 🔐 di sebelah cart — login admin / terus ke panel
@@ -3802,6 +4014,103 @@ function onLoginBtnClick() {
         document.getElementById('login-modal').classList.add('active');
         setTimeout(() => document.getElementById('admin-email').focus(), 200);
     }
+}
+
+// Update user UI based on authentication state
+function updateUserUI(user) {
+    const userSection = document.getElementById('user-section');
+    if (!userSection) return;
+
+    if (user) {
+        const displayName = user.displayName || user.email?.split('@')[0] || 'User';
+        userSection.innerHTML = `
+            <div class="user-info">
+                <span class="user-name">${displayName}</span>
+                <button class="btn btn-sm btn-outline" onclick="userLogout()">Logout</button>
+            </div>
+        `;
+    } else {
+        userSection.innerHTML = `
+            <button class="btn btn-sm btn-gold" onclick="showUserLogin()">Sign In</button>
+        `;
+    }
+}
+
+// Show user login modal
+function showUserLogin() {
+    document.getElementById('user-login-modal').classList.add('active');
+    setTimeout(() => document.getElementById('user-email').focus(), 200);
+}
+
+// Close user login modal
+function closeUserLogin() {
+    document.getElementById('user-login-modal').classList.remove('active');
+}
+
+// User sign up
+async function userSignUp() {
+    const email = document.getElementById('user-email').value.trim();
+    const password = document.getElementById('user-password').value;
+    const name = document.getElementById('user-name').value.trim();
+
+    if (!email || !password) {
+        showToast('Please fill in all fields');
+        return;
+    }
+
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await userCredential.user.updateProfile({ displayName: name });
+        showToast('Account created successfully!');
+        closeUserLogin();
+    } catch (error) {
+        handleFirebaseError(error, 'Sign Up');
+    }
+}
+
+// User login
+async function userLogin() {
+    const email = document.getElementById('user-email').value.trim();
+    const password = document.getElementById('user-password').value;
+
+    if (!email || !password) {
+        showToast('Please fill in all fields');
+        return;
+    }
+
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
+        showToast('Logged in successfully!');
+        closeUserLogin();
+    } catch (error) {
+        handleFirebaseError(error, 'Login');
+    }
+}
+
+// User logout
+async function userLogout() {
+    try {
+        await auth.signOut();
+        showToast('Logged out successfully');
+    } catch (error) {
+        handleFirebaseError(error, 'Logout');
+    }
+}
+
+// Tutorial Modal Functions
+function showTutorial() {
+    const dontShow = localStorage.getItem('pieware_tutorial_dismissed');
+    if (dontShow === 'true') return;
+
+    document.getElementById('tutorial-modal').classList.add('active');
+}
+
+function closeTutorial() {
+    const dontShow = document.getElementById('dont-show-tutorial').checked;
+    if (dontShow) {
+        localStorage.setItem('pieware_tutorial_dismissed', 'true');
+    }
+    document.getElementById('tutorial-modal').classList.remove('active');
 }
 
 async function checkAdminLogin() {

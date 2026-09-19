@@ -21,6 +21,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Betania+Patmos&family=Black+Ops+One&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preload" href="style.css" as="style">
+    <script defer src="app.js"></script>
     <style>
     </style>
 </head>
@@ -40,24 +45,25 @@
             <span>Pieware 2 <span style="color:var(--text-muted); font-family:var(--font-mono); font-size:0.7em; font-weight:600;">:: COMMAND</span></span>
         </a>
         <button class="hamburger" aria-label="Toggle Menu" onclick="toggleMenu()" id="hamburger-btn">☰</button>
-        <ul class="nav-links" id="nav-links">
-            <li data-target="home" class="active" onclick="navTo('home')">Home</li>
-            <li data-target="hub" onclick="navTo('hub')">Hub</li>
-            <li data-target="helper" onclick="navTo('helper')">Helper</li>
-            <li data-target="source" onclick="navTo('source')">Source Code</li>
-            <li data-target="calculator" onclick="navTo('calculator')">Calculator</li>
-            <li data-target="shop" onclick="navTo('shop')">Shop</li>
-            <li data-target="feedback" onclick="navTo('feedback')">Feedback</li>
-            <li data-target="about" onclick="navTo('about')">About</li>
+        <ul class="nav-links" id="nav-links" role="menubar">
+            <li data-target="home" class="active" onclick="navTo('home')" role="menuitem" tabindex="0">Home</li>
+            <li data-target="hub" onclick="navTo('hub')" role="menuitem" tabindex="0">Hub</li>
+            <li data-target="helper" onclick="navTo('helper')" role="menuitem" tabindex="0">Helper</li>
+            <li data-target="source" onclick="navTo('source')" role="menuitem" tabindex="0">Source Code</li>
+            <li data-target="calculator" onclick="navTo('calculator')" role="menuitem" tabindex="0">Calculator</li>
+            <li data-target="shop" onclick="navTo('shop')" role="menuitem" tabindex="0">Shop</li>
+            <li data-target="feedback" onclick="navTo('feedback')" role="menuitem" tabindex="0">Feedback</li>
+            <li data-target="about" onclick="navTo('about')" role="menuitem" tabindex="0">About</li>
         </ul>
         <div class="nav-actions">
-            <div class="fb-status" id="fb-status">
-                <span class="fb-dot" id="fb-dot"></span>
+            <div class="fb-status" id="fb-status" role="status" aria-live="polite">
+                <span class="fb-dot" id="fb-dot" aria-hidden="true"></span>
                 <span id="fb-status-text">Offline</span>
             </div>
-            <button class="icon-btn" aria-label="Search" onclick="toggleSearch()">🔍</button>
-            <button class="icon-btn" aria-label="Settings" onclick="openSettings()">⚙️</button>
-            <button class="icon-btn" aria-label="Admin Login" id="admin-login-btn" onclick="onLoginBtnClick()">🔐</button>
+            <button class="icon-btn" aria-label="Search" onclick="toggleSearch()" tabindex="0">🔍</button>
+            <button class="icon-btn" aria-label="Settings" onclick="openSettings()" tabindex="0">⚙️</button>
+            <div id="user-section" class="user-section" role="navigation" aria-label="User account"></div>
+            <button class="icon-btn" aria-label="Admin Login" id="admin-login-btn" onclick="onLoginBtnClick()" tabindex="0">🔐</button>
         </div>
     </div>
 </header>
@@ -191,6 +197,7 @@
                     <li>User accounts &amp; project cloud sync upgrades</li>
                     <li>More components and MCUs</li>
                     <li>Community project sharing</li>
+                    <li>Different languages support</li>
                 </ul>
             </div>
             <div class="road-card">
@@ -417,6 +424,8 @@
                     <button class="btn btn-outline btn-sm" onclick="copyWiring()" title="Copy wiring instructions as text">📋 Copy Wiring</button>
                     <button class="btn btn-outline btn-sm" onclick="shareProject()" title="Copy shareable project link">📤 Share</button>
                     <button class="btn btn-outline btn-sm" onclick="exportBOM()" title="Download Bill of Materials as CSV">📦 BOM</button>
+                    <button class="btn btn-outline btn-sm" onclick="exportJSON()" title="Export project as JSON">📄 JSON</button>
+                    <button class="btn btn-outline btn-sm" onclick="exportText()" title="Export project as text">📝 Text</button>
                     <button class="btn btn-outline btn-sm" onclick="exportChatGPT()" title="Copy a ready prompt for ChatGPT / AI assistants">🤖 AI Prompt</button>
                 </div>
             </div>
@@ -458,7 +467,8 @@
 <!-- ==================== SOURCE CODE ==================== -->
 <section id="source">
     <h2>Source Code</h2>
-    <p style="margin-bottom: var(--space-xl);">Source code generated from your Helper selections — pick an MCU and components in the Helper tab, then press "Generate Source Code".</p>
+    <p style="margin-bottom: var(--space-xl);">Source code generated from your Helper selections — pick an MCU and components in the Helper tab, then press "Generate Source Code". 
+        <li>if the generated source code is not working, copy and paste it into your preferred Ai assistant.</li></p>
     <button class="btn btn-outline btn-sm" style="margin-bottom: var(--space-xl);" onclick="navTo('helper')">⬅ Back to Helper</button>
     <div class="card" id="code-params" style="margin-bottom: var(--space-xl);">
         <h3 style="margin-bottom: 0.4rem;">⚙️ Code Parameters</h3>
@@ -709,6 +719,22 @@
             <div class="stat-label">Avg. Order Value</div>
             <div class="stat-value" id="stat-avg">RM 0</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Reviews</div>
+            <div class="stat-value" id="stat-reviews">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg. Rating</div>
+            <div class="stat-value" id="stat-rating">0.0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Users</div>
+            <div class="stat-value" id="stat-users">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Community Projects</div>
+            <div class="stat-value" id="stat-projects">0</div>
+        </div>
     </div>
 
 <!-- Charts -->
@@ -898,6 +924,62 @@
     </div>
 </div>
 
+<!-- ==================== USER LOGIN MODAL ==================== -->
+<div class="modal-overlay" id="user-login-modal">
+    <div class="modal-box" style="max-width:400px;">
+        <div style="font-size:3rem; margin-bottom:var(--space-md);">👤</div>
+        <h3 style="margin-bottom:var(--space-sm);">User Account</h3>
+        <p style="font-size:0.82rem; margin-bottom:var(--space-lg);">Sign in to save your projects to the cloud and sync across devices.</p>
+        <input type="text" id="user-name" class="form-control" placeholder="Your Name" style="margin-bottom:var(--space-sm);">
+        <input type="email" id="user-email" class="form-control" placeholder="Email Address" style="margin-bottom:var(--space-sm);" onkeydown="if(event.key==='Enter')document.getElementById('user-password').focus()">
+        <input type="password" id="user-password" class="form-control" placeholder="Password" style="margin-bottom:var(--space-md);" onkeydown="if(event.key==='Enter')userLogin()">
+        <div style="display:flex; gap:0.5rem; margin-bottom:var(--space-sm);">
+            <button class="btn btn-gold" style="flex:1;" onclick="userLogin()">Sign In</button>
+            <button class="btn btn-outline" style="flex:1;" onclick="userSignUp()">Sign Up</button>
+        </div>
+        <button class="btn btn-sm btn-outline btn-block" onclick="closeUserLogin()">Cancel</button>
+    </div>
+</div>
+
+<!-- ==================== TUTORIAL MODAL ==================== -->
+<div class="modal-overlay" id="tutorial-modal">
+    <div class="modal-box" style="max-width:500px;">
+        <div style="font-size:3rem; margin-bottom:var(--space-md);">🎓</div>
+        <h3 style="margin-bottom:var(--space-sm);">Welcome to Pieware 2!</h3>
+        <p style="font-size:0.82rem; margin-bottom:var(--space-lg);">Quick guide to get you started with electronics planning.</p>
+        <div style="max-height:300px; overflow-y:auto; margin-bottom:var(--space-lg);">
+            <div style="margin-bottom:var(--space-md);">
+                <strong style="color:var(--gold);">1. Pinout Helper</strong>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Select an MCU board and components to get wiring diagrams and pin assignments.</p>
+            </div>
+            <div style="margin-bottom:var(--space-md);">
+                <strong style="color:var(--gold);">2. Code Generator</strong>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Auto-generate Arduino/ESP32 code based on your selections.</p>
+            </div>
+            <div style="margin-bottom:var(--space-md);">
+                <strong style="color:var(--gold);">3. Hardware Store</strong>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Browse and purchase components with direct links to Cytron.</p>
+            </div>
+            <div style="margin-bottom:var(--space-md);">
+                <strong style="color:var(--gold);">4. Calculators</strong>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Use Ohm's Law, Voltage Divider, and RC Time Constant calculators.</p>
+            </div>
+            <div style="margin-bottom:var(--space-md);">
+                <strong style="color:var(--gold);">5. Project Hub</strong>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Explore mini projects and share your own creations.</p>
+            </div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-gold" style="flex:1;" onclick="closeTutorial()">Got it!</button>
+            <button class="btn btn-outline" style="flex:1;" onclick="closeTutorial(); navTo('helper')">Start Building</button>
+        </div>
+        <label style="display:flex; align-items:center; gap:0.5rem; margin-top:var(--space-md); font-size:0.85rem; color:var(--text-muted);">
+            <input type="checkbox" id="dont-show-tutorial">
+            Don't show this again
+        </label>
+    </div>
+</div>
+
 <!-- ==================== SETTINGS MODAL ==================== -->
 <div class="modal-overlay" id="settings-modal">
     <div class="modal-box" style="max-width:400px;">
@@ -935,9 +1017,10 @@
 </div>
 
 <!-- TOAST NOTIFICATION -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
 
 <!-- ==================== JAVASCRIPT ==================== -->
-<script defer src="app.js"></script>
+<!-- Performance: Preload critical resources -->
+<link rel="preload" href="style.css" as="style">
 </body>
 </html>

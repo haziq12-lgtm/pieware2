@@ -20,7 +20,7 @@ NEW DOMAIN [Live Demo](https://pieware2.vercel.app)
 |  **Electronics Calculators** | Ohm's Law, Voltage Divider, RC Time Constant |
 |  **Component Dictionary** | 57 MCU boards, 123 components |
 |  **Dark Mode** | Toggle light/dark theme |
-|  **i18n** | English, Bahasa Indonesia, Tagalog | [currently not working]
+|  **i18n** | English, Bahasa Indonesia, Tagalog | ✅ Working
 |  **My Projects** | Save up to 20 projects locally |
 |  **Shareable URL** | Share project configuration via link |
 
