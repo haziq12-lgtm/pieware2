@@ -1,5 +1,19 @@
 # PIEWARE 2 — CHANGELOG
 
+**v2.4.1** — 24 September 2026 🔥 LIVE RELEASE
+"UX & Accessibility Improvements"
+
+## ✨ New Features
+- **Physical Calibration Alerts System** — Automatic detection and display of calibration requirements for components requiring manual setup (trimpots, potentiometers, burn-in periods)
+- **GitHub Pages Redirect** — Automatic redirect from legacy GitHub Pages to current Vercel deployment
+- **Enhanced Component Database** — Added calibration flags and instructions for sensors, displays, motors, and drivers
+
+## 🔧 Fixes
+- **Redirect Compatibility** — Users accessing from GitHub Pages now automatically redirected to Vercel for consistent experience
+- **Setup Guidance** — Specific calibration instructions now shown for components requiring physical adjustment
+
+---
+
 **v2.4.0** — 19 September 2026 🔥 LIVE RELEASE
 "Major Feature Expansion"
 
