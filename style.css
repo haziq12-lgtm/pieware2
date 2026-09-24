@@ -313,6 +313,15 @@ section { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) fo
         .alert-danger { background-color: rgba(244, 63, 94, 0.1); border-left: 4px solid var(--danger); color: var(--text-main); }
         .alert-success { background-color: rgba(16,185,129,0.1); border-left: 4px solid var(--secondary); color: var(--text-main); }
 
+        /* Calibration Alerts */
+        .calibration-alert {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .calibration-alert:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+
 /* ===================================================================
    HOME PREMIUM — BLACK & GOLD WITH LIGHTNING
    =================================================================== */

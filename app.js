@@ -1515,28 +1515,28 @@ const WIFI_MCUS = new Set([
 // kinds: din dout dht us ana i2c spi uart servo stepper4 stepper2 motor rgb color nrf passive
 const COMPONENT_CATEGORIES = {
     'Sensors': [
-        { n: 'DHT11 Temperature & Humidity Sensor', k: 'dht', p: ['VCC', 'DATA', 'GND'], warn: 'Add a 10K pull-up resistor between DATA and VCC for stable readings.' },
-        { n: 'DHT22 Temperature & Humidity Sensor', k: 'dht', p: ['VCC', 'DATA', 'GND'], warn: 'Add a 10K pull-up resistor between DATA and VCC.' },
+        { n: 'DHT11 Temperature & Humidity Sensor', k: 'dht', p: ['VCC', 'DATA', 'GND'], warn: 'Add a 10K pull-up resistor between DATA and VCC for stable readings.', calibration: { required: true, instructions: 'Add a 10K pull-up resistor between DATA and VCC pin before first use.' } },
+        { n: 'DHT22 Temperature & Humidity Sensor', k: 'dht', p: ['VCC', 'DATA', 'GND'], warn: 'Add a 10K pull-up resistor between DATA and VCC.', calibration: { required: true, instructions: 'Add a 10K pull-up resistor between DATA and VCC pin before first use.' } },
         { n: 'HC-SR04 Ultrasonic Sensor', k: 'us', p: ['VCC', 'TRIG', 'ECHO', 'GND'], v: '5', warn: 'On 3.3V MCUs, use a voltage divider (1K/2K) on ECHO.' },
         { n: 'JSN-SR04T Ultrasonic (Waterproof)', k: 'us', p: ['VCC', 'TRIG', 'ECHO', 'GND'], v: '5', warn: 'Blind zone ~25cm. Use divider on ECHO for 3.3V MCUs.' },
-        { n: 'HC-SR501 PIR Motion Sensor', k: 'din', p: ['VCC', 'OUT', 'GND'], v: '5' },
+        { n: 'HC-SR501 PIR Motion Sensor', k: 'din', p: ['VCC', 'OUT', 'GND'], v: '5', calibration: { required: true, instructions: 'Adjust the two onboard potentiometers: sensitivity (clockwise) and time delay (counter-clockwise) for your application.' } },
         { n: 'IR Sensor Module (TCRT5000)', k: 'din', p: ['VCC', 'OUT', 'GND'] },
         { n: 'LDR Light Sensor Module', k: 'ana', p: ['VCC', 'AO', 'GND'] },
-        { n: 'MQ-2 Gas Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5', warn: 'Allow 24-48h burn-in before trusting readings.' },
-        { n: 'MQ-3 Alcohol Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5' },
-        { n: 'MQ-7 Carbon Monoxide Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5' },
-        { n: 'MQ-135 Air Quality Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5' },
+        { n: 'MQ-2 Gas Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5', warn: 'Allow 24-48h burn-in before trusting readings.', calibration: { required: true, instructions: 'Allow 24-48h burn-in period before trusting readings for accurate gas detection.' } },
+        { n: 'MQ-3 Alcohol Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5', calibration: { required: true, instructions: 'Allow 24-48h burn-in period before trusting readings for accurate alcohol detection.' } },
+        { n: 'MQ-7 Carbon Monoxide Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5', calibration: { required: true, instructions: 'Allow 24-48h burn-in period before trusting readings for accurate CO detection.' } },
+        { n: 'MQ-135 Air Quality Sensor', k: 'ana', p: ['VCC', 'A0', 'GND'], v: '5', calibration: { required: true, instructions: 'Allow 24-48h burn-in period before trusting readings for accurate air quality detection.' } },
         { n: 'MPU-6050 Gyro + Accelerometer', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'MPU-9250 9-axis Sensor', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'BMP280 Barometric Pressure Sensor', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'BME280 Temperature/Humidity/Pressure', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'SHT20 Temperature & Humidity', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
-        { n: 'DS18B20 Waterproof Temperature', k: 'din', p: ['VCC', 'DATA', 'GND'], warn: 'Needs 4.7K pull-up on DATA. Use the OneWire + DallasTemperature libraries.' },
+        { n: 'DS18B20 Waterproof Temperature', k: 'din', p: ['VCC', 'DATA', 'GND'], warn: 'Needs 4.7K pull-up on DATA. Use the OneWire + DallasTemperature libraries.', calibration: { required: true, instructions: 'Add a 4.7K pull-up resistor between DATA and VCC pin before first use.' } },
         { n: 'Soil Moisture Sensor', k: 'ana', p: ['VCC', 'AO', 'GND'] },
         { n: 'Rain Sensor Module', k: 'din', p: ['VCC', 'OUT', 'GND'] },
-        { n: 'Sound Sensor (LM393)', k: 'din', p: ['VCC', 'OUT', 'GND'] },
-        { n: 'KY-037 Microphone Sound Sensor', k: 'din', p: ['VCC', 'GND', 'DO', 'AO'], warn: 'DO is digital (threshold via potentiometer); AO is analog — connect AO to an ADC pin for volume readings.' },
-        { n: 'KY-038 Sound Detection Sensor', k: 'din', p: ['VCC', 'GND', 'DO', 'AO'], warn: 'Adjust the onboard potentiometer to set the detection threshold. AO gives analog output.' },
+        { n: 'Sound Sensor (LM393)', k: 'din', p: ['VCC', 'OUT', 'GND'], calibration: { required: true, instructions: 'Adjust the onboard potentiometer to set the sound detection threshold. Turn clockwise to increase sensitivity.' } },
+        { n: 'KY-037 Microphone Sound Sensor', k: 'din', p: ['VCC', 'GND', 'DO', 'AO'], warn: 'DO is digital (threshold via potentiometer); AO is analog — connect AO to an ADC pin for volume readings.', calibration: { required: true, instructions: 'Adjust the onboard potentiometer to set the sound detection threshold. AO gives analog output for volume readings.' } },
+        { n: 'KY-038 Sound Detection Sensor', k: 'din', p: ['VCC', 'GND', 'DO', 'AO'], warn: 'Adjust the onboard potentiometer to set the detection threshold. AO gives analog output.', calibration: { required: true, instructions: 'Adjust the blue potentiometer clockwise to lower the noise threshold for sound detection. AO pin provides analog output for volume readings.' } },
         { n: 'Hall Effect Sensor (A3144)', k: 'din', p: ['VCC', 'OUT', 'GND'] },
         { n: 'Flame Sensor Module', k: 'din', p: ['VCC', 'OUT', 'GND'] },
         { n: 'TCS3200 Color Sensor', k: 'color', p: ['VCC', 'GND', 'S0', 'S1', 'S2', 'S3', 'OUT'] },
@@ -1559,8 +1559,8 @@ const COMPONENT_CATEGORIES = {
         { n: 'WS2812B NeoPixel Strip/Ring', k: 'dout', p: ['5V', 'DIN', 'GND'], output: 'led', warn: 'Use the FastLED or Adafruit NeoPixel library. Add 300-500 ohm resistor on DIN.' },
         { n: 'Light Bulb (5V)', k: 'dout', p: ['+', '-'], output: 'led', warn: 'Use with appropriate relay for mains voltage.' },
         { n: 'Strip Light LED', k: 'dout', p: ['+', '-'], output: 'led', warn: 'May require external power supply for long strips.' },
-        { n: 'LCD 16x2 Character (parallel)', k: 'lcd', p: ['VSS', 'VDD', 'VO', 'RS', 'E', 'D4', 'D5', 'D6', 'D7'], warn: 'Use a potentiometer on VO for contrast. Consider the I2C version to save pins.' },
-        { n: 'LCD 20x4 Character (parallel)', k: 'lcd', p: ['VSS', 'VDD', 'VO', 'RS', 'E', 'D4', 'D5', 'D6', 'D7'] },
+        { n: 'LCD 16x2 Character (parallel)', k: 'lcd', p: ['VSS', 'VDD', 'VO', 'RS', 'E', 'D4', 'D5', 'D6', 'D7'], warn: 'Use a potentiometer on VO for contrast. Consider the I2C version to save pins.', calibration: { required: true, instructions: 'Adjust the VO potentiometer to set the display contrast. Turn clockwise to darken, counter-clockwise to lighten the display.' } },
+        { n: 'LCD 20x4 Character (parallel)', k: 'lcd', p: ['VSS', 'VDD', 'VO', 'RS', 'E', 'D4', 'D5', 'D6', 'D7'], calibration: { required: true, instructions: 'Adjust the VO potentiometer to set the display contrast. Turn clockwise to darken, counter-clockwise to lighten the display.' } },
         { n: 'LCD 16x2 with I2C Adapter', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'], warn: 'I2C address is usually 0x27 or 0x3F — run an I2C scanner if unsure.' },
         { n: 'OLED 0.96" SSD1306 (I2C)', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
         { n: 'OLED 1.3" SH1106 (I2C)', k: 'i2c', p: ['VCC', 'GND', 'SDA', 'SCL'] },
@@ -1573,19 +1573,19 @@ const COMPONENT_CATEGORIES = {
         { n: 'Speaker 8 ohm (0.25W/0.5W)', k: 'dout', p: ['+', '-'], output: 'buzzer', warn: 'Do not drive directly from a pin — use a transistor or amplifier.' }
     ],
     'Actuators & Motors': [
-        { n: 'Servo SG90', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'May draw more current than USB provides — use external 5V supply.' },
-        { n: 'Servo MG996R', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'High current — external 5-6V supply with common GND is required.' },
+        { n: 'Servo SG90', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'May draw more current than USB provides — use external 5V supply.', calibration: { required: false, instructions: 'Check servo range: should be 0-180 degrees. If binding issues, adjust servo arm to center position before uploading code.' } },
+        { n: 'Servo MG996R', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'High current — external 5-6V supply with common GND is required.', calibration: { required: false, instructions: 'High-torque servo requires external power supply. Check mechanical limits before moving to prevent damage.' } },
         { n: 'Servo MG995', k: 'servo', p: ['VCC', 'SIG', 'GND'], output: 'servo', warn: 'High current — external 5-6V supply required.' },
         { n: 'DC Motor (3V-6V)', k: 'motor', p: ['IN1', 'IN2', 'EN'], output: 'motor', warn: 'Never connect directly to MCU pins — use a motor driver (L298N/L293D).' },
         { n: 'DC Geared Motor (TT Motor)', k: 'motor', p: ['IN1', 'IN2', 'EN'], output: 'motor', warn: 'Use a driver module (L298N or L9110S).' },
         { n: 'DC Fan 5V', k: 'motor', p: ['+', '-'], output: 'fan', warn: 'Check current rating - may need transistor for high-power fans.' },
         { n: 'Stepper Motor 28BYJ-48', k: 'stepper4', p: ['IN1', 'IN2', 'IN3', 'IN4'], output: 'motor', warn: 'Driven via ULN2003 driver board (usually bundled).' },
-        { n: 'Stepper Motor NEMA17', k: 'stepper2', p: ['STEP', 'DIR'], output: 'motor', warn: 'Requires a stepper driver (A4988/DRV8825). Set current limit before connecting!' },
+        { n: 'Stepper Motor NEMA17', k: 'stepper2', p: ['STEP', 'DIR'], output: 'motor', warn: 'Requires a stepper driver (A4988/DRV8825). Set current limit before connecting!', calibration: { required: true, instructions: 'CRITICAL: Set current limit on stepper driver before connecting motor. Start with low current (0.5A) and increase only if motor stalls.' } },
         { n: 'Brushless DC Motor', k: 'motor', p: ['ESC Signal'], output: 'motor', warn: 'Requires ESC controller - not direct MCU connection.' },
         { n: 'L298N Motor Driver', k: 'motor', p: ['IN1', 'IN2', 'ENA'] },
         { n: 'L293D Motor Driver', k: 'motor', p: ['IN1', 'IN2', 'EN1,2'] },
-        { n: 'DRV8825 Stepper Driver', k: 'stepper2', p: ['STEP', 'DIR'], warn: 'Adjust Vref current limit before connecting the motor.' },
-        { n: 'A4988 Stepper Driver', k: 'stepper2', p: ['STEP', 'DIR'], warn: 'Adjust Vref current limit before connecting the motor.' },
+        { n: 'DRV8825 Stepper Driver', k: 'stepper2', p: ['STEP', 'DIR'], warn: 'Adjust Vref current limit before connecting the motor.', calibration: { required: true, instructions: 'CRITICAL: Adjust Vref potentiometer to set current limit. Start with low current (0.5A) and increase only if motor stalls.' } },
+        { n: 'A4988 Stepper Driver', k: 'stepper2', p: ['STEP', 'DIR'], warn: 'Adjust Vref current limit before connecting the motor.', calibration: { required: true, instructions: 'CRITICAL: Adjust Vref potentiometer to set current limit. Start with low current (0.5A) and increase only if motor stalls.' } },
         { n: 'BTS7960 Motor Driver (High Power)', k: 'motor', p: ['RPWM', 'LPWM', 'R_EN'] }
     ],
     'Relay & Switching': [
@@ -2747,6 +2747,45 @@ function buildWiring() {
     return { fam, rows, steps, warnings, applied };
 }
 
+// Calibration Alerts System
+function renderCalibrationAlerts() {
+    const alertArea = document.getElementById('calibration-alerts');
+    if (!alertArea) return;
+
+    const calibrationRequired = helperComps.filter(compName => {
+        const comp = COMP_INDEX[compName];
+        return comp && comp.calibration && comp.calibration.required;
+    });
+
+    if (calibrationRequired.length === 0) {
+        alertArea.innerHTML = '';
+        alertArea.classList.add('hidden');
+        return;
+    }
+
+    alertArea.classList.remove('hidden');
+    alertArea.innerHTML = `
+        <div class="calibration-alert" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-lg);">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom: var(--space-sm);">
+                <span style="font-size:1.2rem;">⚠️</span>
+                <strong style="color:var(--gold);">Physical Setup Required</strong>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: var(--space-sm);">
+                The following components require manual calibration before they will work properly:
+            </p>
+            ${calibrationRequired.map(compName => {
+                const comp = COMP_INDEX[compName];
+                return `
+                <div style="background:var(--bg-base); border:1px solid var(--border-glass); border-radius:var(--radius-md); padding:var(--space-sm); margin-bottom:0.5rem;">
+                    <div style="font-weight:700; color:var(--text-main); font-size:0.85rem;">${esc(compName)}</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">${esc(comp.calibration.instructions)}</div>
+                </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
 // ===================================================================
 // VALIDATION — hanya berdasarkan data yang ada; tiada data = ⚪
 // ===================================================================
@@ -2991,6 +3030,7 @@ function renderHelper() {
     renderStepper();
     renderMcuChips();
     renderValidation();
+    renderCalibrationAlerts();
     renderPowerEstimate();
     renderActiveComps();
     const clearBtn = document.getElementById('btn-clear-comps');
