@@ -83,7 +83,7 @@ function validatePassword(password) {
 
 function sanitizeInput(input) {
     if (typeof input !== 'string') return input;
-    return input.replace(/[<>]/g, '');
+    return input.replace(/[<>"']/g, '').trim();
 }
 
 // Keyboard Navigation Enhancement
@@ -909,8 +909,8 @@ function renderShop() {
         grid.innerHTML = `
         <div class="empty-state">
             <div class="empty-state-icon">📦</div>
-            <div class="empty-state-title">{t('No products available')}</div>
-            <div class="empty-state-sub">{t('New products will appear here soon.')}</div>
+            <div class="empty-state-title">${t('No products available')}</div>
+            <div class="empty-state-sub">${t('New products will appear here soon.')}</div>
         </div>`;
         return;
     }
@@ -993,8 +993,8 @@ function setRating(n) {
 }
 
 function submitFeedback() {
-    const name = document.getElementById('fb-name').value.trim();
-    const msg = document.getElementById('fb-msg').value.trim();
+    const name = sanitizeInput(document.getElementById('fb-name').value);
+    const msg = sanitizeInput(document.getElementById('fb-msg').value);
     const type = document.getElementById('fb-type').value;
     if (!name) return showToast(t('Please enter your name'));
     if (!msg) return showToast(t('Please write your review message'));
@@ -1073,8 +1073,8 @@ function renderFeedback(data) {
         list.innerHTML = `
         <div class="empty-state">
             <div class="empty-state-icon">💬</div>
-            <div class="empty-state-title">${currentFeedbackFilter === 'all' ? '{t(\'No reviews yet\')}' : 'No ' + currentFeedbackFilter + ' entries yet'}</div>
-            <div class="empty-state-sub">${currentFeedbackFilter === 'all' ? '{t(\'Be the first to share your thoughts!\')}' : 'Filter for another category'}</div>
+            <div class="empty-state-title">${currentFeedbackFilter === 'all' ? t('No reviews yet') : 'No ' + currentFeedbackFilter + ' entries yet'}</div>
+            <div class="empty-state-sub">${currentFeedbackFilter === 'all' ? t('Be the first to share your thoughts!') : 'Filter for another category'}</div>
         </div>`;
         return;
     }
@@ -2271,11 +2271,11 @@ function renderCommChips() {
     ).join('') || '<span style="font-size:0.72rem; color:var(--text-muted);">No components yet — pick from the catalog.</span>';
 }
 function submitCommunityProject() {
-    const name = (document.getElementById('comm-name').value || '').trim();
-    const emoji = (document.getElementById('comm-emoji').value || '').trim();
+    const name = sanitizeInput(document.getElementById('comm-name').value);
+    const emoji = sanitizeInput(document.getElementById('comm-emoji').value);
     const level = document.getElementById('comm-level').value;
     const mcu = document.getElementById('comm-mcu').value;
-    const desc = (document.getElementById('comm-desc').value || '').trim();
+    const desc = sanitizeInput(document.getElementById('comm-desc').value);
     if (!name) return showToast('Project name required');
     if (!mcu || !MCU_INDEX[mcu]) return showToast('Select a valid MCU board');
     if (!commComps.length) return showToast('Add at least 1 component');

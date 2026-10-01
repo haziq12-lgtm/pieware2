@@ -1,0 +1,49 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "userProjects": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "shopProducts": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'admin@pieware.com'"
+    },
+
+    "orders": {
+      ".read": "auth != null && auth.token.email === 'admin@pieware.com'",
+      "$orderId": {
+        ".write": "auth != null && auth.token.email === 'admin@pieware.com' || (!data.exists() && newData.exists())"
+      }
+    },
+
+    "announcements": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'admin@pieware.com'"
+    },
+
+    "about": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'admin@pieware.com'"
+    },
+
+    "feedback": {
+      ".read": true,
+      "$feedbackId": {
+        ".write": "auth != null && auth.token.email === 'admin@pieware.com' || (!data.exists() && newData.exists())"
+      }
+    },
+
+    "communityProjects": {
+      ".read": true,
+      "$projectId": {
+        ".write": "auth != null && auth.token.email === 'admin@pieware.com' || (!data.exists() && newData.exists())"
+      }
+    }
+  }
+}

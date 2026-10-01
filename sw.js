@@ -1,10 +1,11 @@
 // Pieware 2 Service Worker — offline-first untuk app shell
-const CACHE_NAME = 'pieware2-v1';
+const CACHE_NAME = 'pieware2-v2.4.1';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './app.js',
+    './guides.js',
     './manifest.json',
     './icons/icon.svg',
     './icons/icon-maskable.svg'
